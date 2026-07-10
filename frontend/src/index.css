@@ -18,7 +18,7 @@
 /* Root CSS Variables */
 @layer base {
   :root {
-    --background: 0 0% 98%;
+    --background: 150 20% 95%;
     --foreground: 222 28% 12%;
     --card: 0 0% 100%;
     --card-foreground: 222 28% 12%;
@@ -28,9 +28,9 @@
     --secondary-foreground: 0 0% 100%;
     --accent: 159 58% 34%;
     --accent-foreground: 0 0% 100%;
-    --muted: 150 18% 96%;
+    --muted: 150 18% 92%;
     --muted-foreground: 220 9% 46%;
-    --border: 220 14% 90%;
+    --border: 220 14% 88%;
     --input: 220 14% 90%;
     --ring: 159 58% 34%;
     --destructive: 0 72% 50%;
@@ -70,6 +70,11 @@
 /* Base Styles */
 body {
   background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(circle at 12% 8%, hsl(var(--primary) / 0.06), transparent 32%),
+    radial-gradient(circle at 88% 4%, rgba(139, 92, 246, 0.05), transparent 28%),
+    radial-gradient(circle at 50% 100%, hsl(var(--primary) / 0.05), transparent 30%);
+  background-attachment: fixed;
   color: hsl(var(--foreground));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -170,16 +175,16 @@ samp {
 }
 
 .section-padding {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
 }
 
 @media (min-width: 768px) {
   .section-padding {
-    padding-top: 8rem;
-    padding-bottom: 8rem;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
     padding-left: 2rem;
     padding-right: 2rem;
   }
@@ -446,8 +451,48 @@ samp {
   transition: box-shadow 0.5s ease, transform 0.5s ease;
 }
 
-.about-intent-card:hover {
+.about-intent-card:hover,
+.about-intent-card.is-active {
   box-shadow: 0 16px 40px -12px rgba(15, 23, 42, 0.18);
+}
+
+/* Icon box, icon, title and description swap from the "resting" palette to
+   the "lit" palette either on hover (desktop pointer) or when the card is
+   scrolled into view (.is-active), so the effect works while scrolling. */
+.about-intent-icon-box {
+  transition: background-color 0.5s ease;
+}
+
+.about-intent-card:hover .about-intent-icon-box,
+.about-intent-card.is-active .about-intent-icon-box {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.about-intent-icon {
+  transition: color 0.5s ease;
+}
+
+.about-intent-card:hover .about-intent-icon,
+.about-intent-card.is-active .about-intent-icon {
+  color: hsl(var(--foreground));
+}
+
+.about-intent-title {
+  transition: color 0.5s ease;
+}
+
+.about-intent-card:hover .about-intent-title,
+.about-intent-card.is-active .about-intent-title {
+  color: hsl(var(--foreground));
+}
+
+.about-intent-desc {
+  transition: color 0.5s ease;
+}
+
+.about-intent-card:hover .about-intent-desc,
+.about-intent-card.is-active .about-intent-desc {
+  color: hsl(var(--foreground) / 0.9);
 }
 
 .about-intent-orb {
@@ -481,14 +526,16 @@ samp {
   transition: all 0.5s ease;
 }
 
-.about-intent-card:hover .about-intent-orb-top {
+.about-intent-card:hover .about-intent-orb-top,
+.about-intent-card.is-active .about-intent-orb-top {
   top: -1.5rem;
   left: -1.5rem;
   width: 11rem;
   height: 11rem;
 }
 
-.about-intent-card:hover .about-intent-panel {
+.about-intent-card:hover .about-intent-panel,
+.about-intent-card.is-active .about-intent-panel {
   right: 0;
   bottom: 0;
   width: 100%;
@@ -854,8 +901,9 @@ samp {
   --vc-shadow: rgba(22, 163, 74, 0.38);
 }
 
-/* ── hover: lift + coloured shadow ── */
-.value-card:hover {
+/* ── hover / scroll-in-view: lift + coloured shadow ── */
+.value-card:hover,
+.value-card.is-active {
   transform: translateY(-5px) scale(1.005) translateZ(0);
   box-shadow:
     0 24px 36px rgba(0, 0, 0, 0.22),
@@ -877,7 +925,8 @@ samp {
   opacity: 0.55;
 }
 
-.value-card:hover .value-card-overlay {
+.value-card:hover .value-card-overlay,
+.value-card.is-active .value-card-overlay {
   transform: scale(4.2) translateZ(0);
   opacity: 1;
 }
@@ -897,7 +946,8 @@ samp {
   transition: all 0.35s ease-out;
 }
 
-.value-card:hover .value-card-circle {
+.value-card:hover .value-card-circle,
+.value-card.is-active .value-card-circle {
   border-color: var(--vc-accent-light);
   background: var(--vc-accent);
 }
@@ -917,7 +967,8 @@ samp {
   transition: background 0.35s ease-out;
 }
 
-.value-card:hover .value-card-circle-inner {
+.value-card:hover .value-card-circle-inner,
+.value-card.is-active .value-card-circle-inner {
   background: var(--vc-accent-light);
 }
 
@@ -932,7 +983,8 @@ samp {
   transition: color 0.35s ease-out;
 }
 
-.value-card:hover .value-card-icon {
+.value-card:hover .value-card-icon,
+.value-card.is-active .value-card-icon {
   color: hsl(var(--card));
 }
 
@@ -948,7 +1000,8 @@ samp {
   position: relative;
 }
 
-.value-card:hover .value-card-label {
+.value-card:hover .value-card-label,
+.value-card.is-active .value-card-label {
   color: #fff;
 }
 
@@ -966,7 +1019,8 @@ samp {
   line-height: 1.45;
 }
 
-.value-card:hover .value-card-desc {
+.value-card:hover .value-card-desc,
+.value-card.is-active .value-card-desc {
   opacity: 1;
   transform: translateY(0);
   color: hsl(142 76% 90%);
@@ -1792,4 +1846,3 @@ samp {
     font-size: 0.94rem;
   }
 }
-
