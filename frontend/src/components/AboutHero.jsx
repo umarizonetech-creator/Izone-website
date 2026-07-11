@@ -107,7 +107,7 @@
 //                 }}
 //               >
 //                 <img
-//                   src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&h=1600&fit=crop"
+//                   src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=800&fit=crop&auto=format&q=75"
 //                   alt="About Izone showcase"
 //                   className="h-full w-full object-cover object-center opacity-95"
 //                 />

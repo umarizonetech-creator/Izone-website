@@ -335,20 +335,40 @@ export const AdminProvider = ({ children }) => {
     ]);
   };
 
+  const [loadedKeys, setLoadedKeys] = useState({ popups: true });
+
+  const ensureLoaded = async (key) => {
+    if (loadedKeys[key]) return;
+    setLoadedKeys(prev => ({ ...prev, [key]: true }));
+    try {
+      if (key === "testimonials") {
+        await loadTestimonials("");
+      } else {
+        const setter = {
+          popups: setPopups,
+          jobRoles: setJobRoles,
+          clients: setClients,
+          internRoles: setInternRoles,
+          sitePhotos: setSitePhotos,
+          team: setTeamMembers,
+          portfolios: setPortfolios,
+          courses: setCourses,
+          departments: setDepartments,
+        }[key];
+        if (setter) {
+          await loadList(key, setter, "");
+        }
+      }
+    } catch (err) {
+      console.error(`Failed to load public data for ${key}:`, err);
+      setLoadedKeys(prev => ({ ...prev, [key]: false }));
+    }
+  };
+
   useEffect(() => {
-    Promise.all([
-      loadList("popups", setPopups, ""),
-      loadTestimonials(""),
-      loadList("jobRoles", setJobRoles, ""),
-      loadList("clients", setClients, ""),
-      loadList("internRoles", setInternRoles, ""),
-      loadList("sitePhotos", setSitePhotos, ""),
-      loadList("team", setTeamMembers, ""),
-      loadList("portfolios", setPortfolios, ""),
-      loadList("courses", setCourses, "").catch(() => {}),
-      loadList("departments", setDepartments, "").catch(() => {}),
-    ])
-      .catch((error) => console.error("Failed to load public site data", error))
+    // Only load popups on initial mount to avoid loading latency on site entry
+    loadList("popups", setPopups, "")
+      .catch((error) => console.error("Failed to load popups on mount", error))
       .finally(() => setPublicDataLoaded(true));
   }, []);
 
@@ -504,6 +524,7 @@ export const AdminProvider = ({ children }) => {
         courseApplications, courseAppOps: makeApiCrud("courseApplications", setCourseApplications), addCourseApplication: addPublicItem("courseApplications", setCourseApplications),
         departments, departmentOps: makeApiCrud("departments", setDepartments, () => departments),
         readIds, markRead,
+        ensureLoaded,
       }}
     >
       {children}

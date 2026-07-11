@@ -1,21 +1,28 @@
+import { useEffect } from "react";
 import { useAdmin } from "@/context/AdminContext";
 
-export default function ClientMarquee() {
-  const { clients = [] } = useAdmin() || {};
-  const names = clients.map(c => c.name || c.companyName).filter(Boolean);
-
-  const items = [...names, ...names, ...names];
-
-  const Item = ({ name, i }) => (
-    <span key={i} className="flex items-center gap-2 pr-12 whitespace-nowrap">
-      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full border border-[#6b7280]/50 dark:border-white/25 shrink-0">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#9ca3af] dark:bg-white/35" />
-      </span>
-      <span className="text-[15px] font-semibold text-[#374151] dark:text-white/50 tracking-tight">
-        {name}
-      </span>
+const MarqueeItem = ({ name }) => (
+  <span className="flex items-center gap-2 pr-12 whitespace-nowrap">
+    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full border border-[#6b7280]/50 dark:border-white/25 shrink-0">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#9ca3af] dark:bg-white/35" />
     </span>
-  );
+    <span className="text-[15px] font-semibold text-[#374151] dark:text-white/50 tracking-tight">
+      {name}
+    </span>
+  </span>
+);
+
+export default function ClientMarquee() {
+  const { clients = [], ensureLoaded } = useAdmin() || {};
+
+  useEffect(() => {
+    if (ensureLoaded) {
+      ensureLoaded("clients");
+    }
+  }, [ensureLoaded]);
+
+  const names = clients.map(c => c.name || c.companyName).filter(Boolean);
+  const items = [...names, ...names, ...names];
 
   return (
     <div className="mt-6 w-full min-w-0 max-w-full overflow-hidden" aria-hidden="true">
@@ -28,10 +35,10 @@ export default function ClientMarquee() {
         }}
       >
         <div className="flex shrink-0 items-center" style={{ animation: "marquee-scroll 24s linear infinite" }}>
-          {items.map((name, i) => <Item key={i} name={name} i={i} />)}
+          {items.map((name, i) => <MarqueeItem key={i} name={name} />)}
         </div>
         <div className="flex shrink-0 items-center" style={{ animation: "marquee-scroll 24s linear infinite" }} aria-hidden>
-          {items.map((name, i) => <Item key={i} name={name} i={i} />)}
+          {items.map((name, i) => <MarqueeItem key={i} name={name} />)}
         </div>
       </div>
     </div>

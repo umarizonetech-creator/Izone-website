@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -27,7 +28,14 @@ const itemVariants = {
 };
 
 const Portfolio = () => {
-  const { portfolios = [], publicDataLoaded } = useAdmin();
+  const { portfolios = [], publicDataLoaded, ensureLoaded } = useAdmin();
+
+  useEffect(() => {
+    if (ensureLoaded) {
+      ensureLoaded("portfolios");
+    }
+  }, [ensureLoaded]);
+
   const projects = portfolios.length > 0 ? portfolios : [];
 
   if (!publicDataLoaded) {

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, MapPin, Clock, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,7 +32,14 @@ const itemVariants = {
 };
 
 const JobOpenings = () => {
-  const { jobRoles, addJobApplication } = useAdmin();
+  const { jobRoles = [], addJobApplication, ensureLoaded } = useAdmin();
+
+  useEffect(() => {
+    if (ensureLoaded) {
+      ensureLoaded("jobRoles");
+    }
+  }, [ensureLoaded]);
+
   const [isOpen, setIsOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

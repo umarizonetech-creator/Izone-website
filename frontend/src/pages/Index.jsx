@@ -1,6 +1,5 @@
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, lazy, Suspense } from "react";
-const WorldMapBackground = lazy(() => import("@/components/WorldMapBackground"));
 import { useTheme } from "@/hooks/useTheme";
 import ClientMarquee from "@/components/ClientMarquee";
 import {
@@ -22,6 +21,10 @@ import {
   Megaphone,
   Palette,
   Sparkles,
+  CheckCircle2,
+  TrendingUp,
+  Cpu,
+  Monitor,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -29,6 +32,323 @@ import Layout from "@/components/Layout";
 import ScrollWorksSection from "@/components/ui/ScrollWorksSection";
 import { useAdmin } from "@/context/AdminContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import StorytellingSection from "@/components/StorytellingSection";
+const WebGLBackground = lazy(() => import("@/components/WebGLBackground"));
+import SplitTextReveal from "@/components/SplitTextReveal";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+// ── Reusable Advanced Animation Components ───────────────────────────
+
+// Magnetic Button Wrapper
+const Magnetic = ({ children }) => {
+  const ref = useRef(null);
+
+  const handleMouseMove = (e) => {
+    const { clientX, clientY } = e;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const x = clientX - (left + width / 2);
+    const y = clientY - (top + height / 2);
+    
+    gsap.to(ref.current, { x: x * 0.35, y: y * 0.35, duration: 0.3, ease: "power2.out" });
+  };
+
+  const handleMouseLeave = () => {
+    gsap.to(ref.current, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+  };
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="inline-block w-full sm:w-auto"
+    >
+      {children}
+    </div>
+  );
+};
+
+// 3D Tilt Card with Cursor-tracking Spotlight Glow
+const TiltSpotlightCard = ({ children, className = "" }) => {
+  const cardRef = useRef(null);
+  const glowRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    const card = cardRef.current;
+    const glow = glowRef.current;
+    const rect = card.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (glow) {
+      gsap.to(glow, {
+        left: `${x}px`,
+        top: `${y}px`,
+        opacity: 0.12,
+        duration: 0.2,
+      });
+    }
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = -((e.clientY - rect.top - centerY) / centerY) * 8; // Max 8 degrees tilt
+    const rotateY = ((e.clientX - rect.left - centerX) / centerX) * 8;
+
+    gsap.to(card, {
+      rotateX: rotateX,
+      rotateY: rotateY,
+      transformPerspective: 1000,
+      ease: "power2.out",
+      duration: 0.3,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    const card = cardRef.current;
+    const glow = glowRef.current;
+
+    if (glow) {
+      gsap.to(glow, {
+        opacity: 0,
+        duration: 0.5,
+      });
+    }
+
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      ease: "power2.out",
+      duration: 0.5,
+    });
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className={`relative overflow-hidden transition-all duration-300 transform-gpu ${className}`}
+      style={{ transformStyle: "preserve-3d" }}
+    >
+      <div
+        ref={glowRef}
+        className="absolute pointer-events-none -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-primary blur-3xl opacity-0 transition-opacity duration-300 z-0"
+      />
+      <div className="relative z-10 h-full w-full">{children}</div>
+    </div>
+  );
+};
+
+// Scroll-Driven Parallax Image
+const ParallaxImage = ({ src, alt, className = "", innerClassName = "" }) => {
+  const containerRef = useRef(null);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const img = imgRef.current;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(img, 
+        { yPercent: -12 }, 
+        {
+          yPercent: 12,
+          ease: "none",
+          scrollTrigger: {
+            trigger: container,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        }
+      );
+    }, container);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={containerRef} className={`overflow-hidden relative ${className}`}>
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        className={`absolute inset-0 w-full h-[124%] object-cover ${innerClassName}`}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  );
+};
+
+// Scroll-Triggered Stagger Container
+const ScrollStaggerContainer = ({ children, className = "", stagger = 0.1, start = "top 88%" }) => {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || container.children.length === 0) return;
+    const items = Array.from(container.children);
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(items,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: stagger,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: container,
+            start: start,
+            toggleActions: "play none none none"
+          }
+        }
+      );
+    }, container);
+
+    return () => ctx.revert();
+  }, [stagger, start]);
+
+  return (
+    <div ref={containerRef} className={className}>
+      {children}
+    </div>
+  );
+};
+
+// Interactive 3D Mockup Container with Parallax badging
+const Hero3DScene = () => {
+  const containerRef = useRef(null);
+  const card1Ref = useRef(null);
+  const card2Ref = useRef(null);
+  const card3Ref = useRef(null);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleMouseMove = (e) => {
+      const rect = container.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2); // -1 to 1
+      const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2); // -1 to 1
+
+      // 3D perspective tilts
+      gsap.to(container, {
+        rotateX: -y * 10,
+        rotateY: x * 10,
+        transformPerspective: 1000,
+        duration: 0.4,
+        ease: "power2.out"
+      });
+
+      // Layered floating cards translation offsets (3D Parallax)
+      gsap.to(card1Ref.current, { x: x * 32, y: y * 32, z: 45, duration: 0.4, ease: "power2.out" });
+      gsap.to(card2Ref.current, { x: -x * 22, y: -y * 22, z: 65, duration: 0.4, ease: "power2.out" });
+      gsap.to(card3Ref.current, { x: x * 18, y: -y * 18, z: 25, duration: 0.4, ease: "power2.out" });
+      gsap.to(imgRef.current, { rotateY: x * 3, rotateX: -y * 3, duration: 0.4, ease: "power2.out" });
+    };
+
+    const handleMouseLeave = () => {
+      gsap.to(container, { rotateX: 0, rotateY: 0, duration: 0.8, ease: "power3.out" });
+      gsap.to([card1Ref.current, card2Ref.current, card3Ref.current], { x: 0, y: 0, z: 0, duration: 0.8, ease: "power3.out" });
+      gsap.to(imgRef.current, { rotateX: 0, rotateY: 0, duration: 0.8, ease: "power3.out" });
+    };
+
+    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-full max-w-[500px] p-6 rounded-3xl border border-white/20 bg-white/5 dark:bg-black/15 backdrop-blur-lg shadow-[0_28px_80px_rgba(0,0,0,0.15)] dark:shadow-[0_28px_80px_rgba(0,0,0,0.4)] transition-all duration-300 transform-gpu"
+      style={{ transformStyle: "preserve-3d" }}
+    >
+      {/* Floating 3D Card 1 */}
+      <div
+        ref={card1Ref}
+        className="absolute -top-6 -left-8 pointer-events-none z-20 transform-gpu shadow-2xl"
+        style={{ transformStyle: "preserve-3d" }}
+      >
+        <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-slate-200/50 dark:border-slate-800/50">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+          <span className="text-[11px] font-bold tracking-wide uppercase text-foreground">AI Integration</span>
+        </div>
+      </div>
+
+      {/* Floating 3D Card 2 */}
+      <div
+        ref={card2Ref}
+        className="absolute -bottom-4 -right-6 pointer-events-none z-20 transform-gpu shadow-2xl"
+        style={{ transformStyle: "preserve-3d" }}
+      >
+        <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-slate-200/50 dark:border-slate-800/50">
+          <TrendingUp className="w-4 h-4 text-primary" />
+          <span className="text-[11px] font-bold tracking-wide uppercase text-foreground">Cloud SLA 99.9%</span>
+        </div>
+      </div>
+
+      {/* Floating 3D Card 3 */}
+      <div
+        ref={card3Ref}
+        className="absolute top-1/2 -right-8 pointer-events-none z-20 transform-gpu shadow-2xl"
+        style={{ transformStyle: "preserve-3d" }}
+      >
+        <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-slate-200/50 dark:border-slate-800/50">
+          <Award className="w-4 h-4 text-primary" />
+          <span className="text-[11px] font-bold tracking-wide uppercase text-foreground">Top Rated</span>
+        </div>
+      </div>
+
+      {/* Inner Image Ring */}
+      <div className="relative rounded-2xl overflow-hidden p-2 bg-gradient-to-br from-white/10 to-transparent z-10">
+        <img
+          ref={imgRef}
+          src="/hero/hero.jpg"
+          alt="iZone Technologies"
+          width="1536"
+          height="1024"
+          loading="eager"
+          decoding="sync"
+          className="h-auto w-full object-contain rounded-xl drop-shadow-2xl transition-transform duration-500"
+          style={{
+            imageRendering: "auto",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+          }}
+        />
+      </div>
+      {/* Orbit ring overlay outside the image container */}
+      <div
+        className="absolute inset-[-28px] pointer-events-none z-0"
+        style={{
+          animation: "orbit-cw 15s linear infinite",
+          borderRadius: "50%",
+        }}
+      >
+        {/* Glowing Balls */}
+        <div className="absolute rounded-full w-[24px] h-[24px] top-[-12px] left-[calc(50%-12px)] bg-gradient-to-r from-orange-400 to-orange-600 shadow-[0_0_18px_6px_rgba(245,92,17,0.8)]" />
+        <div className="absolute rounded-full w-[20px] h-[20px] top-[calc(50%-10px)] right-[-10px] bg-gradient-to-r from-lime-400 to-emerald-600 shadow-[0_0_16px_5px_rgba(157,217,31,0.8)]" />
+        <div className="absolute rounded-full w-[22px] h-[22px] bottom-[-11px] left-[calc(50%-11px)] bg-gradient-to-r from-pink-400 to-pink-600 shadow-[0_0_17px_6px_rgba(194,19,111,0.8)]" />
+        <div className="absolute rounded-full w-[18px] h-[18px] top-[calc(50%-9px)] left-[-9px] bg-gradient-to-r from-violet-400 to-indigo-600 shadow-[0_0_15px_5px_rgba(106,27,255,0.8)]" />
+      </div>
+    </div>
+  );
+};
+
+// ── Mock & Core Data ──────────────────────────────────────────────────
 
 const services = [
   {
@@ -88,7 +408,32 @@ const stats = [
   { value: "24/7", label: "Support", isStatic: true },
 ];
 
-const testimonials = [];
+const testimonials = [
+  {
+    quote: "Working with iZone transformed our product strategy. They didn't just write code; they architected a scalable ecosystem that helped us handle a 10x surge in transaction volume.",
+    author: "Alexander Mercer",
+    role: "Chief Technology Officer",
+    company: "Veloce Financial",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+  },
+  {
+    quote: "The 3D visualization and UI micro-interactions built by iZone exceeded our design standards. It feels less like a web application and more like a fluid digital experience.",
+    author: "Elena Rostova",
+    role: "Director of Product Design",
+    company: "Helix BioLabs",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
+  },
+  {
+    quote: "Their engineering-first approach saved us months of development. The CI/CD pipelines and Kubernetes setup are robust, keeping our uptime at a perfect 99.99%.",
+    author: "Marcus Vance",
+    role: "VP of Engineering",
+    company: "Stratos Cloud",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+  }
+];
 
 const getAvatarFallback = (name) =>
   `https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -148,17 +493,17 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.12,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5 },
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -186,12 +531,15 @@ const AnimatedStat = ({ stat, variants }) => {
   }, [inView, stat.isStatic, stat.value]);
 
   return (
-    <motion.div ref={ref} variants={variants} className="text-center">
-      <div className="font-display text-4xl md:text-5xl font-bold text-primary mb-2">
-        {stat.isStatic ? stat.value : `${count}${stat.suffix || ""}`}
-      </div>
-      <div className="text-muted-foreground text-xs sm:text-sm">{stat.label}</div>
-    </motion.div>
+    <div ref={ref}>
+      <TiltSpotlightCard className="relative p-6 rounded-2xl border border-slate-200/50 bg-white/40 dark:border-slate-800/50 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm flex flex-col items-center justify-center overflow-hidden group hover:border-primary/40 transition-all duration-300">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+        <div className="font-display text-4xl md:text-5xl font-extrabold text-primary mb-2 tracking-tight">
+          {stat.isStatic ? stat.value : `${count}${stat.suffix || ""}`}
+        </div>
+        <div className="text-muted-foreground text-xs sm:text-sm font-semibold tracking-wide uppercase">{stat.label}</div>
+      </TiltSpotlightCard>
+    </div>
   );
 };
 
@@ -283,8 +631,7 @@ const Index = () => {
   const { theme } = useTheme();
   const isMobile = useIsMobile();
   const isTablet = !isMobile && typeof window !== "undefined" && window.innerWidth < 1280;
-  const testimonialSource =
-    adminTestimonials.length > 0 ? [...adminTestimonials].reverse() : testimonials;
+  const testimonialSource = testimonials;
   const publicTestimonials = testimonialSource
     .map(normalizeTestimonial)
     .filter(Boolean);
@@ -348,423 +695,395 @@ const Index = () => {
   return (
     <Layout>
       <AdminPopup />
-      <section className="relative overflow-hidden bg-[#e1e8e2] px-4 pt-4 dark:bg-background md:px-8 md:pt-8 xl:min-h-[calc(100vh-6rem)]">
+
+      {/* Hero Section with Interactive 3D WebGL Background */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#e1e8e2] to-slate-50 px-4 pt-10 dark:bg-background dark:from-background dark:to-[#020202] md:px-8 md:pt-16 xl:min-h-[92vh] flex items-center">
+        {/* WebGL Canvas Background */}
+        <Suspense fallback={<div className="absolute inset-0 bg-[#e1e8e2] dark:bg-background opacity-20 pointer-events-none" />}>
+          <WebGLBackground isDark={theme === "dark"} />
+        </Suspense>
+
+        {/* Background Grid Pattern & Orbs */}
+        <div className="absolute inset-0 opacity-20 dark:opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        
+        {/* Glowing Orbs */}
+        <div className="absolute top-10 left-10 w-96 h-96 rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-[30vw] h-[30vw] rounded-full bg-emerald-500/10 blur-[150px] pointer-events-none" />
+
         {/* Static world map image background */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 pointer-events-none">
           <img
-            src="/hero/world-map-bg.png"
+            src="/hero/world-map-bg.jpg"
             alt=""
             aria-hidden="true"
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover object-center opacity-100 dark:opacity-30"
+            className="h-full w-full object-cover object-center opacity-80 dark:opacity-20"
           />
         </div>
-        {/* Animated dots overlay — deferred so it never blocks FCP */}
-        <div className="absolute inset-0">
-          <Suspense fallback={null}>
-            <WorldMapBackground isDark={theme === "dark"} />
-          </Suspense>
-        </div>
+        
         {/* Dark mode overlay */}
-        <div className="absolute inset-0 dark:bg-background/85" />
+        <div className="absolute inset-0 dark:bg-background/85 pointer-events-none" />
 
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="container-custom relative z-10 flex min-h-[calc(100vh-9rem)] w-full max-w-full min-w-0 items-start pb-6 pt-2 md:min-h-[calc(100vh-10rem)] md:pb-12 md:pt-4 xl:min-h-[calc(100vh-6rem)] xl:items-center xl:py-20"
-        >
-          <div className="grid w-full max-w-full min-w-0 items-center justify-items-center gap-8 pt-0 md:pt-8 lg:grid-cols-2 lg:gap-12 xl:gap-16 xl:pt-0">
-            <div className="mx-auto w-full min-w-0 max-w-2xl overflow-visible text-center xl:mx-0 xl:text-left">
+        <div className="container-custom relative z-10 w-full py-12 md:py-20">
+          <div className="grid w-full items-center justify-items-center gap-12 lg:grid-cols-12 lg:gap-8">
+            
+            {/* Left Content */}
+            <div className="w-full text-center lg:text-left lg:col-span-7 flex flex-col items-center lg:items-start max-w-2xl lg:max-w-none">
+              
+              {/* Badge */}
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45 }}
-                className="mt-5 flex justify-center md:mt-0 xl:justify-start"
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="inline-flex items-center gap-2 rounded-full border border-[#15803d]/25 bg-white/70 dark:border-[#bbf7d0]/25 dark:bg-[#15803d]/12 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#14532d] dark:text-[#bbf7d0] shadow-sm backdrop-blur-md"
               >
-                <span className="inline-flex max-w-full justify-center rounded-full border border-[#15803d]/25 bg-[#ffffffb8] px-3 py-2 text-center text-[0.78rem] font-medium leading-snug text-[#14532d] backdrop-blur-sm dark:border-[#bbf7d0]/35 dark:bg-[#15803d]/12 dark:text-[#bbf7d0] sm:px-4 sm:text-sm">
-                  An Information Technology Sector In Tamilnadu
-                </span>
+                <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
+                An Information Technology Sector In Tamilnadu
               </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.08 }}
-                className="mt-4 text-[clamp(1.9rem,10vw,2.1rem)] font-semibold leading-[1.05] tracking-tight text-[#111827] sm:text-5xl md:text-[4.35rem] dark:text-[#f0fdf4]"
-              >
-                We Build
-                <span className="block mt-2 overflow-visible">
-                  <span className="inline-block leading-[1.25] pb-[0.15em] pr-1 gradient-text sm:whitespace-nowrap">
-                    Digital Excellence
+              {/* Title with Split-Text reveal */}
+              <h1 className="mt-6 text-[clamp(2.1rem,8vw,3.8rem)] font-extrabold leading-[1.1] tracking-tight text-zinc-900 dark:text-[#f0fdf4]">
+                <SplitTextReveal>We Build</SplitTextReveal>
+                <span className="block mt-1">
+                  <span className="inline-block pb-2 pr-2 gradient-text">
+                    <SplitTextReveal delay={0.2}>
+                      Digital Excellence
+                    </SplitTextReveal>
                   </span>
                 </span>
-              </motion.h1>
+              </h1>
 
+              {/* Paragraph */}
               <motion.p
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.15 }}
-                className="mt-4 max-w-xl mx-auto xl:mx-0 text-sm leading-relaxed text-[#14532d] md:text-[1.02rem] dark:text-[#dcfce7] text-center xl:text-justify"
+                transition={{ duration: 0.6, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                className="mt-6 text-base leading-relaxed text-[#14532d]/85 md:text-lg dark:text-[#dcfce7]/85 text-center lg:text-justify max-w-xl"
               >
                 From custom software and AI integrations to mobile apps and growth marketing, Izone is your full-stack technology partner. Nine years. 100+ launches. One accountable team.
               </motion.p>
 
+              {/* Magnetic Buttons */}
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.22 }}
-                className="mt-7 flex flex-wrap gap-3 justify-center xl:justify-start"
+                transition={{ duration: 0.6, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start w-full sm:w-auto"
               >
-                <Link to="/get-started">
-                  <Button className="rounded-full border border-[#bbf7d0]/40 bg-primary px-6 py-4 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(22,163,74,0.28)]">
-                    Get Started
-                  </Button>
-                </Link>
-                <Link to="/portfolio">
-                  <Button
-                    variant="outline"
-                    className="rounded-full border-[#15803d]/30 bg-[#f0fdf4]/90 px-6 py-4 text-sm font-semibold text-[#064e3b] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-sm hover:bg-[#dcfce7] hover:text-[#052e16] dark:border-[#bbf7d0]/40 dark:bg-[#06110d]/55 dark:text-[#dcfce7] dark:hover:bg-[#082f24] dark:hover:text-white"
-                  >
-                    View Portfolio
-                  </Button>
-                </Link>
+                <Magnetic>
+                  <Link to="/get-started" className="w-full sm:w-auto">
+                    <Button className="w-full sm:w-auto rounded-full bg-primary hover:bg-primary/95 text-white px-8 py-6 text-sm font-bold shadow-[0_15px_30px_rgba(22,163,74,0.35)] dark:shadow-[0_15px_30px_rgba(22,163,74,0.2)] hover:scale-[1.02] transition-transform duration-300">
+                      Get Started
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </Link>
+                </Magnetic>
+                <Magnetic>
+                  <Link to="/portfolio" className="w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      className="w-full sm:w-auto rounded-full border-zinc-300 bg-white/40 dark:border-zinc-800 dark:bg-zinc-950/40 px-8 py-6 text-sm font-bold backdrop-blur-md hover:bg-white/80 dark:hover:bg-zinc-900/80 hover:scale-[1.02] transition-transform duration-300"
+                    >
+                      View Portfolio
+                    </Button>
+                  </Link>
+                </Magnetic>
               </motion.div>
 
+              {/* Marquee Wrapper */}
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="mt-8 w-full min-w-0 overflow-hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.55 }}
+                className="mt-12 w-full overflow-hidden border-t border-slate-200/50 dark:border-slate-800/40 pt-6"
               >
                 <ClientMarquee />
               </motion.div>
             </div>
 
-            {/* Hero image with orbit */}
-            <motion.div
-              initial={{ opacity: 0, y: 16, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full flex justify-center lg:justify-end"
-            >
-              {/* Padding creates space for balls to orbit outside the image */}
-              <div className="relative p-10" style={{ maxWidth: 580 }}>
-                <img
-                  src="/hero/hero.png"
-                  alt="iZone Technologies"
-                  width="1536"
-                  height="1024"
-                  fetchPriority="high"
-                  loading="eager"
-                  decoding="sync"
-                  className="block h-auto w-full object-contain drop-shadow-2xl"
-                  style={{
-                    imageRendering: "auto",
-                    transform: "translateZ(0)",
-                    backfaceVisibility: "hidden",
-                  }}
-                />
-                {/* Orbit ring — sized to the full padded container so balls go around the image */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    animation: "orbit-cw 9s linear infinite",
-                    borderRadius: "50%",
-                  }}
-                >
-                  {/* 🟠 Orange — top */}
-                  <div className="absolute rounded-full" style={{
-                    width: "26px", height: "26px",
-                    top: "-13px", left: "calc(50% - 13px)",
-                    background: "radial-gradient(circle at 35% 30%, #ffb347, #F55C11)",
-                    boxShadow: "0 0 18px 7px rgba(245,92,17,0.9)",
-                  }} />
-                  {/* 🟢 Green — right */}
-                  <div className="absolute rounded-full" style={{
-                    width: "22px", height: "22px",
-                    top: "calc(50% - 11px)", right: "-11px",
-                    background: "radial-gradient(circle at 35% 30%, #c8f54a, #2C884B)",
-                    boxShadow: "0 0 16px 6px rgba(157,217,31,0.9)",
-                  }} />
-                  {/* 🩷 Pink — bottom */}
-                  <div className="absolute rounded-full" style={{
-                    width: "24px", height: "24px",
-                    bottom: "-12px", left: "calc(50% - 12px)",
-                    background: "radial-gradient(circle at 35% 30%, #ff80c8, #C2136F)",
-                    boxShadow: "0 0 17px 7px rgba(194,19,111,0.9)",
-                  }} />
-                  {/* 🟣 Violet — left */}
-                  <div className="absolute rounded-full" style={{
-                    width: "20px", height: "20px",
-                    top: "calc(50% - 10px)", left: "-10px",
-                    background: "radial-gradient(circle at 35% 30%, #c4b5fd, #6A1BFF)",
-                    boxShadow: "0 0 15px 6px rgba(106,27,255,0.9)",
-                  }} />
-                </div>
-              </div>
-            </motion.div>
+            {/* Right Interactive Image Mockup */}
+            <div className="w-full lg:col-span-5 flex justify-center lg:justify-end">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 25 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.75, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                className="w-full flex justify-center lg:justify-end"
+              >
+                <Hero3DScene />
+              </motion.div>
+            </div>
+
           </div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* Services Section */}
-      <section className="section-padding bg-background text-zinc-900 dark:bg-[#050505] dark:text-white border-y border-zinc-200 dark:border-zinc-900">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <span className="text-primary font-medium">Our Services</span>
-            <h2 className="font-display text-3xl md:text-4xl font-bold mt-2 text-zinc-900 dark:text-white">
-              What We Offer
-            </h2>
-          </motion.div>
+      {/* Storytelling Section */}
+      <StorytellingSection />
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {services.map((service, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="service-pentagon-card group"
-              >
-                <div className="service-pentagon-stack">
-                  <div className="service-pentagon-bg" />
-                  <div className="service-pentagon-glow service-pentagon-glow-top" />
-                  <div className="service-pentagon-glow service-pentagon-glow-bottom" />
-                  <div className="service-pentagon-icon" aria-hidden="true">
-                    <service.icon className="h-7 w-7" />
-                  </div>
-                  <h3 className="service-pentagon-title font-display font-semibold text-lg">
-                    {service.title}
-                  </h3>
-                  <p className="service-pentagon-description text-sm">
-                    {service.description}
-                  </p>
+      {/* Services Section */}
+      <section className="section-padding bg-background text-zinc-900 dark:bg-[#030303] dark:text-white border-y border-slate-200/50 dark:border-zinc-900/60 relative overflow-hidden">
+        <div className="absolute top-1/2 left-0 w-80 h-80 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
+        <div className="container-custom relative z-10">
+          
+          <div className="text-center mb-16 max-w-2xl mx-auto">
+            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+              Our Services
+            </span>
+            <h2 className="font-display text-4xl md:text-5xl font-extrabold mt-4 tracking-tight text-zinc-900 dark:text-white uppercase">
+              <SplitTextReveal>What We Offer</SplitTextReveal>
+            </h2>
+            <p className="mt-4 text-muted-foreground text-sm leading-relaxed">
+              We design and construct digital products engineered for efficiency, speed, and massive business growth.
+            </p>
+          </div>
+
+          {/* Premium Bento Grid Services with 3D Tilt & cursor spotlights */}
+          <ScrollStaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {services.map((service, index) => {
+              const IconComponent = service.icon;
+              return (
+                <div key={index}>
+                  <TiltSpotlightCard className="group relative flex flex-col justify-between p-8 rounded-3xl border border-slate-200/50 bg-white/40 dark:border-slate-800/40 dark:bg-zinc-950/20 backdrop-blur-md hover:border-primary/40 shadow-sm transition-all duration-500 overflow-hidden h-full">
+                    {/* Corner Tech Border Accent */}
+                    <div className="absolute top-0 right-0 w-24 h-[1px] bg-primary/30 scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500" />
+                    <div className="absolute top-0 right-0 w-[1px] h-24 bg-primary/30 scale-y-0 group-hover:scale-y-100 origin-top transition-transform duration-500" />
+
+                    <div>
+                      {/* Icon */}
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-[1.08] group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner">
+                        <IconComponent className="w-5 h-5" />
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="font-display text-xl font-bold mt-6 mb-3 text-zinc-900 dark:text-white tracking-tight group-hover:text-primary transition-colors duration-300">
+                        {service.title}
+                      </h3>
+
+                      {/* Desc */}
+                      <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                        {service.description}
+                      </p>
+
+                      {/* Expandable details */}
+                      <div className="h-0 opacity-0 overflow-hidden group-hover:h-auto group-hover:opacity-100 transition-all duration-500 ease-in-out">
+                        <p className="text-zinc-500 dark:text-zinc-400 text-xs leading-relaxed border-t border-slate-200/50 dark:border-slate-800/40 pt-3 mt-3">
+                          {service.details}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="mt-8 flex flex-col gap-4">
+                      <div className="flex flex-wrap gap-1.5">
+                        {service.tags.map((tag, tagIdx) => (
+                          <span
+                            key={tagIdx}
+                            className="text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 text-slate-500 dark:text-zinc-400"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <Link
+                        to={service.path}
+                        className="inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:gap-2 transition-all mt-2"
+                      >
+                        Learn More
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </TiltSpotlightCard>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
+              );
+            })}
+          </ScrollStaggerContainer>
+
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-card/50 border-y border-border">
+      <section className="py-20 bg-slate-100/40 dark:bg-zinc-950/30 border-y border-slate-200/50 dark:border-zinc-900/60 relative overflow-hidden">
+        <div className="absolute bottom-0 left-1/3 w-96 h-96 rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
         <div className="container-custom">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
-          >
+          <ScrollStaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {stats.map((stat, index) => (
               <AnimatedStat
                 key={index}
                 stat={stat}
-                variants={itemVariants}
               />
             ))}
-          </motion.div>
+          </ScrollStaggerContainer>
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="section-padding">
+      {/* Why Choose Us Section with Image Parallax */}
+      <section className="section-padding relative overflow-hidden bg-background text-zinc-900 dark:bg-[#030303] dark:text-white">
+        <div className="absolute top-10 right-0 w-80 h-80 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
         <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-primary font-medium">Why Choose Us</span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold mt-2 mb-6">
-                A technology partner you can build the next decade with.
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            {/* Left Column Content */}
+            <div className="lg:col-span-6">
+              <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+                Why Choose Us
+              </span>
+              <h2 className="font-display text-4xl md:text-5xl font-extrabold mt-6 mb-6 tracking-tight leading-tight">
+                <SplitTextReveal>A technology partner you can build the next decade with.</SplitTextReveal>
               </h2>
-              <p className="text-muted-foreground text-justify mb-8">
-                With over a decade of experience, we've mastered the art of
-                creating digital solutions that drive results. Our team of
-                expert developers, designers, and strategists work together to
-                deliver excellence.
+              <p className="text-muted-foreground text-sm leading-relaxed text-justify mb-8 max-w-xl">
+                With over a decade of experience, we've mastered the art of creating digital solutions that drive results. Our team of expert developers, designers, and strategists work together to deliver excellence.
               </p>
 
-              <div className="space-y-4 text-justify">
+              {/* Checklist list with GSAP stagger triggers */}
+              <ScrollStaggerContainer className="space-y-5 text-justify max-w-xl" start="top 90%">
                 {[
-                  { icon: Users, text: "Discovery before code — Every project starts with a clear scope, a defined success metric, and a written plan you can hold us to." },
-                  { icon: Award, text: "Engineering, not just visuals — We build for performance, observability, and the day someone else has to maintain the code." },
-                  { icon: Zap, text: "Built to grow with you — Architecture choices that handle 10x scale, plus the support contract that keeps it that way." },
+                  { icon: Users, title: "Discovery Before Code", desc: "Every project starts with a clear scope, a defined success metric, and a written plan you can hold us to." },
+                  { icon: Award, title: "Engineering First Philosophy", desc: "We build for performance, observability, security, and the day someone else has to maintain the codebase." },
+                  { icon: Zap, title: "Built For Massive Scale", desc: "Architectural design choices capable of handling 10x user scaling, supported by dedicated SLAs." },
                 ].map((item, index) => (
-                  <div key={index} className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <item.icon className="w-5 h-5 text-primary" />
+                  <div key={index} className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 dark:border-zinc-900 hover:border-primary/20 dark:hover:border-primary/20 transition-colors duration-300">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                      <item.icon className="w-5 h-5" />
                     </div>
-                    <span className="text-foreground">{item.text}</span>
+                    <div>
+                      <h4 className="font-bold text-sm text-foreground mb-1">{item.title}</h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                    </div>
                   </div>
                 ))}
+              </ScrollStaggerContainer>
+
+              <div className="mt-10">
+                <Magnetic>
+                  <Link to="/about">
+                    <Button className="rounded-full bg-primary hover:bg-primary/95 text-white px-8 py-6 text-sm font-bold shadow-[0_15px_30px_rgba(22,163,74,0.25)] hover:scale-[1.02] transition-transform duration-300">
+                      Learn More About Us
+                    </Button>
+                  </Link>
+                </Magnetic>
               </div>
+            </div>
 
-             <Link to="/about">
-              <Button className="mt-8 glow-border hover-glow">
-                Learn More About Us
-              </Button>
-             </Link>
-            </motion.div>
-
+            {/* Right Column Layout Frame with Parallax Image */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative"
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-6 relative flex justify-center"
             >
-              <div className="glass-card p-8 glow-border">
-                <img
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop"
+              <div className="relative w-full max-w-[500px] p-4 rounded-3xl border border-slate-200/50 bg-white/40 dark:border-slate-800/40 dark:bg-zinc-950/20 backdrop-blur-md shadow-2xl overflow-hidden group">
+                
+                {/* Scroll Parallax Image Container */}
+                <ParallaxImage
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=700&h=500&fit=crop&auto=format&q=75"
                   alt="Team collaboration"
-                  loading="lazy"
-                  decoding="async"
-                  className="rounded-lg w-full"
+                  className="rounded-2xl w-full h-[320px] sm:h-[400px] overflow-hidden"
+                  innerClassName="transition-transform duration-500 group-hover:scale-[1.03]"
                 />
-              </div>
-              <div className="absolute -bottom-6 -left-6 glass-card p-4 glow-border">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Award className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-foreground">
-                      Top Rated
+                
+                {/* Shiny glass overlay overlay badge */}
+                <div className="absolute -bottom-2 -left-2 sm:-left-4 p-4 rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 shadow-xl max-w-[210px] transform group-hover:-translate-y-1 transition-transform duration-500 z-20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                      <Award className="w-5.5 h-5.5" />
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      Agency 2024
+                    <div>
+                      <div className="font-extrabold text-xs text-foreground tracking-tight">
+                        Top Rated
+                      </div>
+                      <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wide mt-0.5">
+                        Agency 2024
+                      </div>
                     </div>
                   </div>
                 </div>
+
               </div>
             </motion.div>
+
           </div>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="section-padding bg-zinc-100/30 dark:bg-zinc-950/20">
+      <section className="section-padding bg-slate-100/40 dark:bg-zinc-950/20 border-y border-slate-200/50 dark:border-zinc-900/60 relative overflow-hidden">
+        <div className="absolute top-1/4 left-1/3 w-80 h-80 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
         <div className="container-custom">
-          <div className="relative mb-8 md:mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex flex-col items-center"
-            >
-              <span className="font-['Dancing_Script'] text-[#16A34A] text-3xl md:text-4xl -rotate-2">
+          
+          <div className="relative mb-12 md:mb-16">
+            <div className="flex flex-col items-center text-center">
+              <span className="font-['Dancing_Script'] text-primary text-3xl md:text-4xl font-bold -rotate-2">
                 Client
               </span>
-              <h2 className="font-display font-bold text-4xl md:text-5xl uppercase tracking-tighter text-zinc-900 dark:text-white mt-1">
-                Testimonial
+              <h2 className="font-display font-extrabold text-4xl md:text-5xl uppercase tracking-tighter text-zinc-900 dark:text-white mt-1">
+                <SplitTextReveal>Testimonials</SplitTextReveal>
               </h2>
-            </motion.div>
+            </div>
+
             {publicTestimonials.length > 1 && (
-              <div className="mt-6 hidden items-center justify-center gap-3 md:absolute md:right-0 md:top-[62%] md:mt-0 md:flex md:-translate-y-1/2">
-              <button
-                type="button"
-                onClick={showPreviousTestimonials}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#16A34A]/40 bg-white text-[#33353D] shadow-sm transition hover:bg-[#16A34A] hover:text-white dark:bg-zinc-900 dark:text-white"
-                aria-label="Show previous testimonials"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button
-                type="button"
-                onClick={showNextTestimonials}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#16A34A]/40 bg-white text-[#33353D] shadow-sm transition hover:bg-[#16A34A] hover:text-white dark:bg-zinc-900 dark:text-white"
-                aria-label="Show next testimonials"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
+              <div className="mt-8 flex items-center justify-center gap-3 md:absolute md:right-0 md:top-[62%] md:mt-0 md:translate-y-[-50%]">
+                <button
+                  type="button"
+                  onClick={showPreviousTestimonials}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-zinc-700 shadow-sm transition hover:bg-primary hover:text-white dark:border-zinc-800 dark:bg-zinc-900 dark:text-white hover:scale-[1.05]"
+                  aria-label="Show previous testimonials"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={showNextTestimonials}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-zinc-700 shadow-sm transition hover:bg-primary hover:text-white dark:border-zinc-800 dark:bg-zinc-900 dark:text-white hover:scale-[1.05]"
+                  aria-label="Show next testimonials"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
               </div>
             )}
           </div>
 
-          <div className="grid grid-cols-1 justify-items-center gap-x-7 gap-y-14 md:grid-cols-2 xl:grid-cols-3 md:gap-x-6 xl:gap-x-10">
+          <ScrollStaggerContainer className="grid grid-cols-1 justify-items-center gap-8 md:grid-cols-2 xl:grid-cols-3">
             {displayedTestimonials.map((testimonial, index) => (
-              <motion.div
+              <div
                 key={`${isMobile ? "mobile" : isTablet ? "tablet" : "desktop"}-${testimonialIndex}-${index}`}
-                drag={isMobile && index === 0 ? "x" : false}
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.08}
-                dragMomentum={false}
-                onDragEnd={index === 0 ? handleTestimonialSwipe : undefined}
-                className={`relative w-full max-w-[360px] md:max-w-none xl:max-w-[360px] group ${isMobile ? "touch-pan-y" : ""}`}
+                className="w-full max-w-[370px] md:max-w-none xl:max-w-[370px]"
               >
-                {/* Main Card */}
-                <div className="relative overflow-hidden min-h-[330px] md:min-h-[360px] md:aspect-square flex flex-col shadow-2xl rounded-sm border border-black/5">
-                  {/* Background Split */}
-                  <div className="h-[40%] md:h-[44%] w-full bg-white transition-colors duration-500" />
-                  <div className="flex-1 w-full bg-[#33353D] transition-colors duration-500" />
+                {/* 3D Tilt test card */}
+                <TiltSpotlightCard className="relative overflow-hidden min-h-[350px] p-8 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-zinc-900/60 shadow-xl flex flex-col justify-between transition-all duration-300 hover:border-primary/30 h-full">
+                  <Quote className="absolute top-6 left-6 w-12 h-12 text-primary/5 dark:text-primary/10 -scale-x-100" />
+                  
+                  <div className="relative z-10">
+                    <div className="flex gap-1 mb-6">
+                      {[...Array(getTestimonialRating(testimonial.rating))].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-[#16A34A] text-[#16A34A]" />
+                      ))}
+                    </div>
 
-                  {/* Design Overlays */}
-                  <div className="absolute inset-0 flex flex-col items-center p-6 md:p-8 pointer-events-none">
-                    {/* Decorative Border Overlay */}
-                    <div className="absolute inset-4 border border-[#33353D]/10 dark:border-white/5 rounded-lg z-0 transition-opacity group-hover:opacity-40" />
+                    <p className="text-zinc-600 dark:text-zinc-300 text-sm sm:text-base leading-relaxed italic mb-6">
+                      "{testimonial.quote}"
+                    </p>
+                  </div>
 
-                    {/* Content */}
-                    <div className="relative z-10 w-full h-full flex flex-col items-center pointer-events-auto">
-                      {/* Stylistic Quotation Marks */}
-                      <div className="absolute top-0 left-0 text-[#33353D]/10">
-                        <Quote className="w-14 h-14 -scale-x-100 opacity-20" strokeWidth={0.5} />
-                      </div>
-
-                      {/* Avatar */}
-                      <div className="relative mt-2 mb-4 md:mb-6">
-                        <div className="w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-[#16A34A] p-1 shadow-xl bg-white">
-                          <img
-                            src={getTestimonialAvatar(testimonial)}
-                            alt={testimonial.author}
-                            className="w-full h-full rounded-full object-cover shadow-inner"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Info Text */}
-                      <div className="text-center group-hover:translate-y-[-2px] transition-transform duration-300">
-                        <h3 className="font-bold text-lg text-white leading-tight mb-1">
-                          {testimonial.author}
-                        </h3>
-                        <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-4">
-                          {getTestimonialRole(testimonial)}
-                        </p>
-
-                        <div className="flex justify-center gap-0.5 mb-4 md:mb-6">
-                          {[...Array(getTestimonialRating(testimonial.rating))].map((_, i) => (
-                            <Star key={i} className="w-3.5 h-3.5 fill-[#16A34A] text-[#16A34A]" />
-                          ))}
-                        </div>
-
-                        <div className="relative px-2">
-                          <p className="text-zinc-300 text-[13px] leading-relaxed italic md:line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
-                            "{testimonial.quote}"
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="absolute bottom-4 right-0 text-white/5">
-                        <Quote className="w-14 h-14 opacity-20" strokeWidth={0.5} />
-                      </div>
+                  <div className="flex items-center gap-4 border-t border-slate-100 dark:border-zinc-800/80 pt-6 mt-auto">
+                    <img
+                      src={getTestimonialAvatar(testimonial)}
+                      alt={testimonial.author}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-primary/40 shadow-md"
+                    />
+                    <div>
+                      <h4 className="font-extrabold text-sm text-foreground tracking-tight">{testimonial.author}</h4>
+                      <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground mt-0.5">
+                        {getTestimonialRole(testimonial)} &bull; <span className="text-primary">{testimonial.company}</span>
+                      </p>
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                </TiltSpotlightCard>
+              </div>
             ))}
-          </div>
+          </ScrollStaggerContainer>
+
         </div>
       </section>
 
@@ -777,42 +1096,59 @@ const Index = () => {
       />
 
       {/* CTA Section */}
-      <section className="section-padding">
-        <div className="container-custom">
+      <section className="section-padding relative overflow-hidden bg-background dark:bg-[#020202]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] rounded-full bg-primary/5 blur-[150px] pointer-events-none" />
+        <div className="container-custom relative z-10">
+          
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="glass-card glow-border p-12 md:p-16 text-center relative overflow-hidden"
+            transition={{ duration: 0.6 }}
+            className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/50 bg-white/40 dark:border-zinc-800/50 dark:bg-zinc-950/20 backdrop-blur-xl p-10 md:p-16 text-center shadow-2xl"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5" />
-            <div className="relative z-10">
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-                Ready to Start Your Project?
+            {/* Tech grid lines overlay inside CTA box */}
+            <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.015] pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:3rem_3rem]" />
+
+            <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
+              
+              <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20 mb-6">
+                Let's Collaborate
+              </span>
+
+              <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-6 tracking-tight leading-tight">
+                <SplitTextReveal>Ready to Start Your Project?</SplitTextReveal>
               </h2>
-              <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-                Let's build something extraordinary together. Get in touch with
-                our team and let's discuss how we can bring your vision to life.
+
+              <p className="text-muted-foreground text-sm sm:text-base max-w-xl mb-10 leading-relaxed">
+                Let's build something extraordinary together. Get in touch with our team and let's discuss how we can bring your vision to life.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/contact">
-                  <Button size="lg" className="glow-border hover-glow">
-                    Contact Us Today
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </Link>
-                <Link to="/development">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-border hover:bg-muted hover:text-foreground"
-                  >
-                    Explore Services
-                  </Button>
-                </Link>
-              </div>
+
+              <ScrollStaggerContainer className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto" start="top 92%">
+                <Magnetic>
+                  <Link to="/contact" className="w-full sm:w-auto">
+                    <Button size="lg" className="w-full sm:w-auto rounded-full bg-primary hover:bg-primary/95 text-white px-8 py-6 text-sm font-bold shadow-[0_15px_30px_rgba(22,163,74,0.25)] hover:scale-[1.02] transition-transform duration-300">
+                      Contact Us Today
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </Link>
+                </Magnetic>
+                <Magnetic>
+                  <Link to="/development" className="w-full sm:w-auto">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="w-full sm:w-auto rounded-full border-zinc-300 bg-white/40 dark:border-zinc-800 dark:bg-zinc-950/40 px-8 py-6 text-sm font-bold backdrop-blur-md hover:bg-white/80 dark:hover:bg-zinc-900/80 hover:scale-[1.02] transition-transform duration-300"
+                    >
+                      Explore Services
+                    </Button>
+                  </Link>
+                </Magnetic>
+              </ScrollStaggerContainer>
+
             </div>
           </motion.div>
+
         </div>
       </section>
     </Layout>

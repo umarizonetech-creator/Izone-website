@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Code2, CheckCircle2, X, BookOpen, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,13 @@ const onlyDigits = (e) => {
 };
 
 export default function Courses() {
-  const { courses = [], addCourseApplication, publicDataLoaded } = useAdmin();
+  const { courses = [], addCourseApplication, publicDataLoaded, ensureLoaded } = useAdmin();
+
+  useEffect(() => {
+    if (ensureLoaded) {
+      ensureLoaded("courses");
+    }
+  }, [ensureLoaded]);
 
   const courseTitleFilters = ['All', ...Array.from(
     new Set(courses.map((course) => course.title).filter(Boolean))

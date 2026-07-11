@@ -63,7 +63,15 @@ const itemVariants = {
 };
 
 const Clients = () => {
-  const { clients: adminClients, testimonials: adminTestimonials, publicDataLoaded } = useAdmin();
+  const { clients: adminClients = [], testimonials: adminTestimonials = [], publicDataLoaded, ensureLoaded } = useAdmin();
+
+  useEffect(() => {
+    if (ensureLoaded) {
+      ensureLoaded("clients");
+      ensureLoaded("testimonials");
+    }
+  }, [ensureLoaded]);
+
   const [showAllClients, setShowAllClients] = useState(false);
   const clients = showAllClients ? adminClients : adminClients.slice(0, INITIAL_VISIBLE);
   const testimonialSource = [...adminTestimonials].reverse();

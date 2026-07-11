@@ -81,7 +81,15 @@ const itemVariants = {
 };
 
 const Career = () => {
-  const { jobRoles = [], internRoles = [], addJobApplication, addInternApplication, publicDataLoaded } = useAdmin();
+  const { jobRoles = [], internRoles = [], addJobApplication, addInternApplication, publicDataLoaded, ensureLoaded } = useAdmin();
+
+  useEffect(() => {
+    if (ensureLoaded) {
+      ensureLoaded("jobRoles");
+      ensureLoaded("internRoles");
+    }
+  }, [ensureLoaded]);
+
   const visibleOpenings = jobRoles.map(normalizeJobOpening);
   const [currentJobPage, setCurrentJobPage] = useState(1);
   const internshipRoleOptions = internRoles

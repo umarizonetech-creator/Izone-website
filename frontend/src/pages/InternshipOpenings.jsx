@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Laptop, Clock, CheckCircle2, GraduationCap, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,7 +22,14 @@ import { useAdmin } from '@/context/AdminContext';
 
 
 const InternshipOpenings = () => {
-  const { internRoles, addInternApplication } = useAdmin();
+  const { internRoles = [], addInternApplication, ensureLoaded } = useAdmin();
+
+  useEffect(() => {
+    if (ensureLoaded) {
+      ensureLoaded("internRoles");
+    }
+  }, [ensureLoaded]);
+
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
