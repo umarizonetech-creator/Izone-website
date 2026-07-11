@@ -862,6 +862,46 @@ samp {
 }
 
 /* ── Our Values — Wallet-style circle-overlay cards ────────────────────── */
+/* Scroll-triggered stagger: each card's --value-delay (set inline from its
+   grid index) only applies while .is-active is present, so cards animate
+   one after another as the row scrolls into view. Mouse hover (which
+   doesn't carry the .is-active class on its own) still responds instantly. */
+.value-card.is-active,
+.value-card.is-active .value-card-overlay,
+.value-card.is-active .value-card-circle,
+.value-card.is-active .value-card-circle-inner,
+.value-card.is-active .value-card-icon,
+.value-card.is-active .value-card-label,
+.value-card.is-active .value-card-desc {
+  transition-delay: var(--value-delay, 0ms);
+}
+
+/* The scroll reveal should feel slow and premium, not snappy like a hover
+   response — stretch the duration and use a soft ease-out curve just for
+   the .is-active path. Hover keeps its original quick 0.3–0.35s feel. */
+.value-card.is-active {
+  transition-duration: 0.75s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.value-card.is-active .value-card-overlay {
+  transition-duration: 0.9s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.value-card.is-active .value-card-circle,
+.value-card.is-active .value-card-circle-inner,
+.value-card.is-active .value-card-icon,
+.value-card.is-active .value-card-label {
+  transition-duration: 0.65s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.value-card.is-active .value-card-desc {
+  transition-duration: 0.6s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .value-card-wrapper {
   display: flex;
   justify-content: center;
