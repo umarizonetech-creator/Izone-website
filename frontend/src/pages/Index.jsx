@@ -410,7 +410,7 @@ const stats = [
 
 const testimonials = [
   {
-    quote: "Working with IZONE Technology was a seamless experience. They understood our vision and delivered a modern, user-friendly website that truly represents Kings Dental Academy.",
+    quote: "Working with IZONE Technologies was a seamless experience. They understood our vision and delivered a modern, user-friendly website that truly represents Kings Dental Academy.",
     author: "Kingz Dental Academy",
     role: "",
     company: "Academy for Dental Students",
@@ -458,7 +458,7 @@ const testimonials = [
     avatar: "testimonials/bni-logo.png",
   },
   {
-    quote: "Working with IZONE Technology was a great experience. They built a website and management system that made our sales and service follow-up much easier and more efficient",
+    quote: "Working with IZONE Technologies was a great experience. They built a website and management system that made our sales and service follow-up much easier and more efficient",
     author: "Vel Bio Med",
     role: "",
     company: "Hospital Equipment Sales & Service",
