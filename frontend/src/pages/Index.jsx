@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import ClientMarquee from "@/components/ClientMarquee";
@@ -25,6 +25,13 @@ import {
   TrendingUp,
   Cpu,
   Monitor,
+  Play,
+  ArrowUpRight,
+  LayoutGrid,
+  MessageSquare,
+  ChevronDown,
+  Menu,
+  Rocket,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -51,7 +58,7 @@ const Magnetic = ({ children }) => {
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const x = clientX - (left + width / 2);
     const y = clientY - (top + height / 2);
-    
+
     gsap.to(ref.current, { x: x * 0.35, y: y * 0.35, duration: 0.3, ease: "power2.out" });
   };
 
@@ -153,8 +160,8 @@ const ParallaxImage = ({ src, alt, className = "", innerClassName = "" }) => {
     const img = imgRef.current;
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(img, 
-        { yPercent: -12 }, 
+      gsap.fromTo(img,
+        { yPercent: -12 },
         {
           yPercent: 12,
           ease: "none",
@@ -316,7 +323,7 @@ const Hero3DScene = () => {
       <div className="relative rounded-2xl overflow-hidden p-2 bg-gradient-to-br from-white/10 to-transparent z-10">
         <img
           ref={imgRef}
-          src="/hero/hero.jpg"
+          src="/hero/hero.png"
           alt="iZone Technologies"
           width="1536"
           height="1024"
@@ -504,13 +511,13 @@ const normalizeTestimonial = (testimonial) => {
 
   return quote
     ? {
-        ...testimonial,
-        author,
-        quote,
-        role,
-        position: testimonial?.position?.trim() || role,
-        avatar,
-      }
+      ...testimonial,
+      author,
+      quote,
+      role,
+      position: testimonial?.position?.trim() || role,
+      avatar,
+    }
     : null;
 };
 
@@ -683,10 +690,121 @@ const AdminPopup = () => {
 };
 
 const Index = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
   const { testimonials: adminTestimonials = [] } = useAdmin() || {};
   const { theme } = useTheme();
   const isMobile = useIsMobile();
   const isTablet = !isMobile && typeof window !== "undefined" && window.innerWidth < 1280;
+
+  const heroBadgeRef = useRef(null);
+  const heroTitleRef = useRef(null);
+  const heroDescRef = useRef(null);
+  const heroCtasRef = useRef(null);
+  const heroRightRef = useRef(null);
+  const marqueeRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      tl.fromTo(heroBadgeRef.current, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, delay: 0.25 })
+        .fromTo(
+          heroTitleRef.current.querySelectorAll(".hero-title-line > span"),
+          { yPercent: 105, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 0.9, stagger: 0.18, ease: "power4.out" },
+          "-=0.4"
+        )
+        .fromTo(
+          heroDescRef.current.querySelectorAll(".hero-desc-line > span"),
+          { yPercent: 105, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" },
+          "-=0.6"
+        )
+        .fromTo(
+          heroCtasRef.current.children,
+          { opacity: 0, scale: 0.9, y: 15 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.7, stagger: 0.12, ease: "back.out(1.4)" },
+          "-=0.5"
+        )
+        .fromTo(heroRightRef.current, { opacity: 0, scale: 0.9, rotate: -2 }, { opacity: 1, scale: 1, rotate: 0, duration: 1.1, ease: "back.out(1.2)" }, "-=0.7")
+        .fromTo(marqueeRef.current, { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.8");
+    });
+    return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    const container = heroRightRef.current;
+    if (!container || isMobile) return;
+
+    const handleMouseMove = (e) => {
+      const rect = container.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2); // -1 to 1
+      const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2); // -1 to 1
+
+      gsap.to(container, {
+        rotateX: -y * 8,
+        rotateY: x * 8,
+        transformPerspective: 1000,
+        duration: 0.4,
+        ease: "power2.out"
+      });
+
+      const badges = container.querySelectorAll(".absolute");
+      badges.forEach((badge, index) => {
+        const factor = (index + 1) * 8;
+        gsap.to(badge, {
+          x: x * factor,
+          y: y * factor,
+          duration: 0.4,
+          ease: "power2.out"
+        });
+      });
+    };
+
+    const handleMouseLeave = () => {
+      gsap.to(container, { rotateX: 0, rotateY: 0, duration: 0.8, ease: "power3.out" });
+      const badges = container.querySelectorAll(".absolute");
+      badges.forEach((badge) => {
+        gsap.to(badge, { x: 0, y: 0, duration: 0.8, ease: "power3.out" });
+      });
+    };
+
+    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [isMobile]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.to(".drift-wave-1", {
+        y: 110,
+        x: 60,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "body",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.2
+        }
+      });
+      gsap.to(".drift-wave-2", {
+        y: -130,
+        x: -50,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "body",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.2
+        }
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   const testimonialSource = testimonials;
   const publicTestimonials = testimonialSource
     .map(normalizeTestimonial)
@@ -752,126 +870,240 @@ const Index = () => {
     <Layout>
       <AdminPopup />
 
-      {/* Hero Section with Interactive 3D WebGL Background */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#e1e8e2] to-slate-50 px-4 pt-10 dark:bg-background dark:from-background dark:to-[#020202] md:px-8 md:pt-16 xl:min-h-[92vh] flex items-center">
-        {/* WebGL Canvas Background */}
-        <Suspense fallback={<div className="absolute inset-0 bg-[#e1e8e2] dark:bg-background opacity-20 pointer-events-none" />}>
-          <WebGLBackground isDark={theme === "dark"} />
-        </Suspense>
+      <style>{`
+        @keyframes drift-slow {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          50% { transform: translate(12px, -12px) rotate(1deg); }
+        }
+        @keyframes drift-reverse {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          50% { transform: translate(-15px, 8px) rotate(-1deg); }
+        }
+        .drift-wave-1 {
+          animation: drift-slow 18s ease-in-out infinite;
+        }
+        .drift-wave-2 {
+          animation: drift-reverse 22s ease-in-out infinite;
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+        @media (max-width: 1023px) and (max-height: 720px) {
+          .hero-left-col {
+            padding-top: 2rem !important;
+            padding-bottom: 0.5rem !important;
+            gap: 0.5rem !important;
+          }
+          .hero-left-col h1 {
+            font-size: 1.6rem !important;
+            line-height: 1.12 !important;
+          }
+          .hero-left-col p {
+            font-size: 9.5px !important;
+            line-height: 1.4 !important;
+            max-width: 290px !important;
+            margin-bottom: 0.25rem !important;
+          }
+          .hero-left-col button {
+            padding: 0.5rem 1rem !important;
+            font-size: 11px !important;
+          }
+          .hero-right-col {
+            min-height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          .hero-right-col > div {
+            max-width: 185px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+        }
+      `}</style>
 
-        {/* Background Grid Pattern & Orbs */}
-        <div className="absolute inset-0 opacity-20 dark:opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-        
-        {/* Glowing Orbs */}
-        <div className="absolute top-10 left-10 w-96 h-96 rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-[30vw] h-[30vw] rounded-full bg-emerald-500/10 blur-[150px] pointer-events-none" />
+      {/* Hero Section */}
+      <section className="relative w-full h-[calc(100vh-5rem)] md:h-[calc(100vh-5.5rem)] xl:h-[calc(100vh-6rem)] bg-gradient-to-br from-[#f7faf8] via-[#ffffff] to-[#eff5f1] dark:from-zinc-950 dark:to-zinc-900 overflow-hidden flex flex-col font-sans select-none justify-between border-b border-zinc-200/30 dark:border-zinc-800/20">
 
-        {/* Static world map image background */}
-        <div className="absolute inset-0 pointer-events-none">
-          <img
-            src="/hero/world-map-bg.jpg"
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-cover object-center opacity-80 dark:opacity-20"
-          />
+        {/* Subtle grid pattern background */}
+        <div className="absolute inset-0 opacity-[0.15] dark:opacity-[0.02] pointer-events-none bg-[linear-gradient(to_right,#e3ebe6_1px,transparent_1px),linear-gradient(to_bottom,#e3ebe6_1px,transparent_1px)] bg-[size:4rem_4rem] z-0" />
+
+        {/* Morphing decorative backdrop waves */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+          <div className="drift-wave-1 absolute -top-[20%] -left-[10%] w-[60%] h-[70%] bg-[#eaf5ef]/40 dark:bg-emerald-950/5 blur-[120px] rounded-full" />
+          <div className="drift-wave-2 absolute -bottom-[30%] -right-[10%] w-[55%] h-[65%] bg-emerald-100/20 dark:bg-emerald-900/5 blur-[130px] rounded-full" />
         </div>
-        
-        {/* Dark mode overlay */}
-        <div className="absolute inset-0 dark:bg-background/85 pointer-events-none" />
 
-        <div className="container-custom relative z-10 w-full py-12 md:py-20">
-          <div className="grid w-full items-center justify-items-center gap-12 lg:grid-cols-12 lg:gap-8">
-            
-            {/* Left Content */}
-            <div className="w-full text-center lg:text-left lg:col-span-7 flex flex-col items-center lg:items-start max-w-2xl lg:max-w-none">
-              
-              {/* Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="inline-flex items-center gap-2 rounded-full border border-[#15803d]/25 bg-white/70 dark:border-[#bbf7d0]/25 dark:bg-[#15803d]/12 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#14532d] dark:text-[#bbf7d0] shadow-sm backdrop-blur-md"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
-                An Information Technology Sector In Tamilnadu
-              </motion.div>
+        {/* 2. Main Content Area */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 items-center min-h-0 overflow-hidden">
 
-              {/* Title with Split-Text reveal */}
-              <h1 className="mt-6 text-[clamp(2.1rem,8vw,3.8rem)] font-extrabold leading-[1.1] tracking-tight text-zinc-900 dark:text-[#f0fdf4]">
-                <SplitTextReveal>We Build</SplitTextReveal>
-                <span className="block mt-1">
-                  <span className="inline-block pb-2 pr-2 gradient-text">
-                    <SplitTextReveal delay={0.2}>
-                      Digital Excellence
-                    </SplitTextReveal>
+          {/* Left Column: Headline, CTAs */}
+          <div className="hero-left-col lg:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left gap-3.5 lg:gap-5 pt-12 pb-4 lg:py-6 z-10 lg:pr-8 h-full justify-center">
+            {/* IT Sector Badge */}
+            <div ref={heroBadgeRef} className="inline-flex items-center gap-2 px-3 py-1 bg-[#eaf5ef]/90 dark:bg-emerald-950/40 border border-[#bce4cf] dark:border-emerald-800/30 rounded-full text-[8.5px] lg:text-[9px] font-bold tracking-wider text-[#2f855a] dark:text-[#6ba67e] uppercase">
+              <Sparkles size={10} className="fill-[#2f855a]" />
+              An Information Technology Sector In Tamilnadu
+            </div>
+
+            {/* Title */}
+            <h1 ref={heroTitleRef} className="text-3xl sm:text-5xl lg:text-[2.8vw] xl:text-[3.3vw] font-[900] leading-[1.08] tracking-tight text-[#1a202c] dark:text-white select-none">
+              <span className="hero-title-line block overflow-hidden">
+                <span className="inline-block">We Build</span>
+              </span>
+              <span className="hero-title-line block overflow-hidden">
+                <span className="inline-block text-[#2f855a] dark:text-[#6ba67e] font-[950] tracking-tight">Digital Excellence</span>
+              </span>
+              <span className="hero-title-line block overflow-hidden">
+                <span className="inline-block">
+                  That Drives{" "}
+                  <span className="relative inline-block px-1">
+                    <span className="font-['Dancing_Script'] font-semibold text-[1.15em] text-[#2f855a] dark:text-[#6ba67e] tracking-normal lowercase italic pl-1.5">
+                      success
+                    </span>
+                    {/* Green curved underline SVG */}
+                    <svg className="absolute left-0 -bottom-1.5 w-full h-2.5 text-[#2f855a] dark:text-[#6ba67e]" viewBox="0 0 100 8" fill="none" preserveAspectRatio="none">
+                      <motion.path
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 0.9, delay: 0.6, ease: "easeInOut" }}
+                        d="M2 6 Q 50 1, 98 6"
+                        stroke="currentColor"
+                        strokeWidth="3.2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
                   </span>
                 </span>
-              </h1>
+              </span>
+            </h1>
 
-              {/* Paragraph */}
-              <motion.p
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-6 text-base leading-relaxed text-[#14532d]/85 md:text-lg dark:text-[#dcfce7]/85 text-center lg:text-justify max-w-xl"
-              >
-                From custom software and AI integrations to mobile apps and growth marketing, Izone is your full-stack technology partner. Nine years. 100+ launches. One accountable team.
-              </motion.p>
+            {/* Description */}
+            <p ref={heroDescRef} className="text-[10px] sm:text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0">
+              <span className="hero-desc-line block overflow-hidden">
+                <span className="inline-block">From modern websites and powerful digital campaigns to SEO and brand growth,</span>
+              </span>
+              <span className="hero-desc-line block overflow-hidden">
+                <span className="inline-block"><span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone</span> is your trusted digital partner. Nine years. 100+ successful launches.</span>
+              </span>
+              <span className="hero-desc-line block overflow-hidden">
+                <span className="inline-block">One expert team.</span>
+              </span>
+            </p>
 
-              {/* Magnetic Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start w-full sm:w-auto"
-              >
-                <Magnetic>
-                  <Link to="/get-started" className="w-full sm:w-auto">
-                    <Button className="w-full sm:w-auto rounded-full bg-primary hover:bg-primary/95 text-white px-8 py-6 text-sm font-bold shadow-[0_15px_30px_rgba(22,163,74,0.35)] dark:shadow-[0_15px_30px_rgba(22,163,74,0.2)] hover:scale-[1.02] transition-transform duration-300">
-                      Get Started
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
-                  </Link>
-                </Magnetic>
-                <Magnetic>
-                  <Link to="/portfolio" className="w-full sm:w-auto">
-                    <Button
-                      variant="outline"
-                      className="w-full sm:w-auto rounded-full border-zinc-300 bg-white/40 dark:border-zinc-800 dark:bg-zinc-950/40 px-8 py-6 text-sm font-bold backdrop-blur-md hover:bg-white/80 dark:hover:bg-zinc-900/80 hover:scale-[1.02] transition-transform duration-300"
-                    >
-                      View Portfolio
-                    </Button>
-                  </Link>
-                </Magnetic>
-              </motion.div>
+            {/* CTA Buttons */}
+            <div ref={heroCtasRef} className="flex flex-wrap justify-center lg:justify-start gap-3 w-full sm:w-auto mt-1 lg:mt-2">
+              <Magnetic>
+                <Link to="/portfolio" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto flex items-center justify-center gap-3 bg-[#2f855a] hover:bg-[#276749] text-white px-5 py-2.5 rounded-full text-xs lg:text-sm font-bold shadow-lg shadow-emerald-500/10 active:scale-95 transition-all duration-300">
+                    Explore Our Work
+                    <div className="w-5.5 h-5.5 rounded-full bg-white flex items-center justify-center text-[#2f855a]">
+                      <ArrowUpRight size={13} />
+                    </div>
+                  </button>
+                </Link>
+              </Magnetic>
 
-              {/* Marquee Wrapper */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.55 }}
-                className="mt-12 w-full overflow-hidden border-t border-slate-200/50 dark:border-slate-800/40 pt-6"
-              >
-                <ClientMarquee />
-              </motion.div>
+              <Magnetic>
+                <Link to="/services" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto flex items-center justify-center gap-3 bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-5 py-2.5 rounded-full text-xs lg:text-sm font-bold shadow-sm hover:shadow-md hover:bg-zinc-50 transition-all duration-300">
+                    Our Services
+                    <LayoutGrid size={13} className="text-[#2f855a]" />
+                  </button>
+                </Link>
+              </Magnetic>
             </div>
+          </div>
 
-            {/* Right Interactive Image Mockup */}
-            <div className="w-full lg:col-span-5 flex justify-center lg:justify-end">
+          {/* Right Column: Ball Element Mockup with Floating Cards */}
+          <div ref={heroRightRef} className="hero-right-col lg:col-span-6 relative flex justify-center items-center h-full min-h-[180px] lg:min-h-0 z-10 select-none py-0 lg:py-0">
+
+            {/* The 3D Ball Element Graphic */}
+            <div className="relative w-full max-w-[350px] sm:max-w-[440px] lg:max-w-none">
+              <img
+                src="/ball-element.png"
+                alt="iZone Core System"
+                className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(47,133,90,0.1)]"
+              />
+
+              {/* Badge 1: AI Integration (Top Left) */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 25 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.75, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                className="w-full flex justify-center lg:justify-end"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-[12%] left-[-2%] sm:left-[-5%] hidden sm:flex items-center gap-2.5 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md px-3 py-2 rounded-xl border border-zinc-100/50 shadow-md scale-90 sm:scale-100"
               >
-                <Hero3DScene />
+                <div className="w-6.5 h-6.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-[#2f855a]">
+                  <Cpu size={13} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[9px] font-bold text-[#1a202c] dark:text-white">AI Integration</span>
+                  <span className="text-[7.5px] text-zinc-500 font-semibold">Intelligent Solutions</span>
+                </div>
               </motion.div>
-            </div>
 
+              {/* Badge 2: Cloud SLA (Bottom Left) */}
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+                className="absolute bottom-[22%] left-[2%] sm:left-[0%] hidden sm:flex items-center gap-2.5 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md px-3 py-2 rounded-xl border border-zinc-100/50 shadow-md scale-90 sm:scale-100"
+              >
+                <div className="w-6.5 h-6.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-[#2f855a]">
+                  <Cloud size={13} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[9px] font-bold text-[#1a202c] dark:text-white flex items-center gap-1">
+                    Cloud SLA <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  </span>
+                  <span className="text-[7.5px] text-zinc-500 font-semibold">99.9% Uptime</span>
+                </div>
+              </motion.div>
+
+              {/* Badge 3: Top Rated (Bottom Right) */}
+              <motion.div
+                animate={{ y: [0, -7, 0] }}
+                transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}
+                className="absolute bottom-[25%] right-[0%] sm:right-[-2%] hidden sm:flex items-center gap-2.5 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md px-3 py-2 rounded-xl border border-zinc-100/50 shadow-md scale-90 sm:scale-100"
+              >
+                <div className="w-6.5 h-6.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-[#2f855a]">
+                  <Users size={13} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[9px] font-bold text-[#1a202c] dark:text-white flex items-center gap-1">
+                    Top Rated <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  </span>
+                  <span className="text-[7.5px] text-zinc-500 font-semibold">By Our Clients</span>
+                </div>
+              </motion.div>
+
+            </div>
+          </div>
+
+        </div>
+
+        {/* 3. Full-width Infinite Horizontal Scrolling Marquee */}
+        <div ref={marqueeRef} className="relative z-30 w-full border-t border-zinc-200/50 dark:border-zinc-800/30 bg-[#f7faf8]/80 dark:bg-zinc-950/40 py-4 lg:py-5 overflow-hidden select-none backdrop-blur-sm">
+          <div className="flex whitespace-nowrap overflow-hidden">
+            {/* Track 1 */}
+            <div className="flex shrink-0 items-center justify-around min-w-full animate-marquee gap-8 md:gap-12">
+              {["BUILD", "GROW", "AUTOMATE", "OPTIMIZE", "CONVERT", "SCALE", "RANK", "ENGAGE", "INNOVATE", "CREATE", "DESIGN", "DEVELOP", "LAUNCH", "ANALYZE", "IMPROVE"].map((word, idx) => (
+                <span key={idx} className="text-[11px] md:text-xs lg:text-[13px] font-[900] tracking-[0.25em] text-[#2f855a] dark:text-[#6ba67e] uppercase flex items-center gap-8 md:gap-12">
+                  {word} <span className="text-zinc-300 dark:text-zinc-700 font-medium select-none">•</span>
+                </span>
+              ))}
+            </div>
+            {/* Track 2 */}
+            <div className="flex shrink-0 items-center justify-around min-w-full animate-marquee gap-8 md:gap-12">
+              {["BUILD", "GROW", "AUTOMATE", "OPTIMIZE", "CONVERT", "SCALE", "RANK", "ENGAGE", "INNOVATE", "CREATE", "DESIGN", "DEVELOP", "LAUNCH", "ANALYZE", "IMPROVE"].map((word, idx) => (
+                <span key={`dup-${idx}`} className="text-[11px] md:text-xs lg:text-[13px] font-[900] tracking-[0.25em] text-[#2f855a] dark:text-[#6ba67e] uppercase flex items-center gap-8 md:gap-12">
+                  {word} <span className="text-zinc-300 dark:text-zinc-700 font-medium select-none">•</span>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
+
       </section>
 
       {/* Storytelling Section */}
@@ -881,7 +1113,7 @@ const Index = () => {
       <section className="section-padding bg-background text-zinc-900 dark:bg-[#030303] dark:text-white border-y border-slate-200/50 dark:border-zinc-900/60 relative overflow-hidden">
         <div className="absolute top-1/2 left-0 w-80 h-80 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
         <div className="container-custom relative z-10">
-          
+
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
               Our Services
@@ -978,7 +1210,7 @@ const Index = () => {
         <div className="absolute top-10 right-0 w-80 h-80 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
         <div className="container-custom">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            
+
             {/* Left Column Content */}
             <div className="lg:col-span-6">
               <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
@@ -1030,7 +1262,7 @@ const Index = () => {
               className="lg:col-span-6 relative flex justify-center"
             >
               <div className="relative w-full max-w-[500px] p-4 rounded-3xl border border-slate-200/50 bg-white/40 dark:border-slate-800/40 dark:bg-zinc-950/20 backdrop-blur-md shadow-2xl overflow-hidden group">
-                
+
                 {/* Scroll Parallax Image Container */}
                 <ParallaxImage
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=700&h=500&fit=crop&auto=format&q=75"
@@ -1038,7 +1270,7 @@ const Index = () => {
                   className="rounded-2xl w-full h-[320px] sm:h-[400px] overflow-hidden"
                   innerClassName="transition-transform duration-500 group-hover:scale-[1.03]"
                 />
-                
+
                 {/* Shiny glass overlay overlay badge */}
                 <div className="absolute -bottom-2 -left-2 sm:-left-4 p-4 rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 shadow-xl max-w-[210px] transform group-hover:-translate-y-1 transition-transform duration-500 z-20">
                   <div className="flex items-center gap-3">
@@ -1067,7 +1299,7 @@ const Index = () => {
       <section className="section-padding bg-slate-100/40 dark:bg-zinc-950/20 border-y border-slate-200/50 dark:border-zinc-900/60 relative overflow-hidden">
         <div className="absolute top-1/4 left-1/3 w-80 h-80 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
         <div className="container-custom">
-          
+
           <div className="relative mb-12 md:mb-16">
             <div className="flex flex-col items-center text-center">
               <span className="font-['Dancing_Script'] text-primary text-3xl md:text-4xl font-bold -rotate-2">
@@ -1109,7 +1341,7 @@ const Index = () => {
                 {/* 3D Tilt test card */}
                 <TiltSpotlightCard className="relative overflow-hidden min-h-[350px] p-8 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-zinc-900/60 shadow-xl flex flex-col justify-between transition-all duration-300 hover:border-primary/30 h-full">
                   <Quote className="absolute top-6 left-6 w-12 h-12 text-primary/5 dark:text-primary/10 -scale-x-100" />
-                  
+
                   <div className="relative z-10">
                     <div className="flex gap-1 mb-6">
                       {[...Array(getTestimonialRating(testimonial.rating))].map((_, i) => (
@@ -1155,7 +1387,7 @@ const Index = () => {
       <section className="section-padding relative overflow-hidden bg-background dark:bg-[#020202]">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] rounded-full bg-primary/5 blur-[150px] pointer-events-none" />
         <div className="container-custom relative z-10">
-          
+
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -1167,7 +1399,7 @@ const Index = () => {
             <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.015] pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:3rem_3rem]" />
 
             <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
-              
+
               <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20 mb-6">
                 Let's Collaborate
               </span>

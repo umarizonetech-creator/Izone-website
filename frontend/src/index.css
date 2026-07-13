@@ -1886,3 +1886,17 @@ samp {
     font-size: 0.94rem;
   }
 }
+
+/* Hide Adobe Acrobat Chrome extension in-page widget container */
+#shadow-container,
+[id^="adobe-acrobat"],
+[class^="adobe-acrobat"],
+#__adobe-acrobat-container,
+.adobe-acrobat-in-page-widget-container {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}

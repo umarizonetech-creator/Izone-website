@@ -169,7 +169,7 @@ export default function StorytellingSection() {
         );
       });
 
-      // Phase 5: Focus Animation (Sequential scaling of gathered items one by one)
+      // Phase 5: Focus Animation (Sequential scaling of gathered items one by one, keeping the scaled state)
       calculations.forEach((calc) => {
         tl.to(
           calc.el,
@@ -177,8 +177,6 @@ export default function StorytellingSection() {
             scale: calc.scaleRatio * 1.15,
             duration: 0.6,
             ease: "power2.inOut",
-            yoyo: true,
-            repeat: 1,
           }
         );
       });
@@ -203,7 +201,7 @@ export default function StorytellingSection() {
         <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] rounded-full bg-primary/10 blur-[150px] pointer-events-none" />
 
         {/* Section Heading Tag */}
-        <div className="absolute top-8 sm:top-12 z-20 flex flex-col items-center gap-2">
+        <div className="absolute top-[7.5rem] sm:top-[8.5rem] lg:top-[9rem] z-20 flex flex-col items-center gap-2">
           <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
             Our Purpose
           </span>
@@ -219,23 +217,28 @@ export default function StorytellingSection() {
             className="w-full text-center text-xl sm:text-3xl md:text-4xl font-medium leading-[1.8] sm:leading-[2] tracking-tight text-slate-800 dark:text-slate-100 z-10 select-none max-w-4xl"
           >
             {PARAGRAPH_WORDS.map((word, idx) => {
+              const space = idx < PARAGRAPH_WORDS.length - 1 ? " " : "";
               if (word.isHighlighted) {
                 return (
-                  <span
-                    key={idx}
-                    className="word-highlighted inline-block mx-1.5 sm:mx-2 text-slate-400 dark:text-zinc-600 transition-shadow duration-300 transform-gpu"
-                  >
-                    {word.text}
-                  </span>
+                  <React.Fragment key={idx}>
+                    <span
+                      className="word-highlighted inline-block text-slate-400 dark:text-zinc-600 transition-shadow duration-300 transform-gpu"
+                    >
+                      {word.text}
+                    </span>
+                    {space}
+                  </React.Fragment>
                 );
               }
               return (
-                <span
-                  key={idx}
-                  className="word-normal inline-block mx-1.5 sm:mx-2 text-slate-400 dark:text-zinc-600 transform-gpu"
-                >
-                  {word.text}
-                </span>
+                <React.Fragment key={idx}>
+                  <span
+                    className="word-normal inline-block text-slate-400 dark:text-zinc-600 transform-gpu"
+                  >
+                    {word.text}
+                  </span>
+                  {space}
+                </React.Fragment>
               );
             })}
           </p>
@@ -243,10 +246,10 @@ export default function StorytellingSection() {
           {/* Phase 4-5: Target Vertical Column (Hidden initially) */}
           <div
             ref={targetsContainerRef}
-            className="absolute inset-0 flex flex-col items-center justify-center gap-6 sm:gap-8 z-20 w-full pt-[90px]"
+            className="absolute left-0 right-0 bottom-8 top-[12.5rem] sm:top-[14.5rem] lg:top-[16rem] flex flex-col items-center justify-center gap-4 sm:gap-5 z-20"
             style={{ pointerEvents: "none" }}
           >
-            <div className="flex flex-col items-center justify-center gap-6 sm:gap-8">
+            <div className="flex flex-col items-center justify-center gap-4 sm:gap-5">
               {HIGHLIGHTED_WORDS.map((item, index) => (
                 <div
                   key={index}
