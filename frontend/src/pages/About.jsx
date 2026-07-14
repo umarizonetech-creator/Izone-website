@@ -167,8 +167,41 @@ const timelineLineVariants = {
 const timelinePath =
   "M 0,50 Q 100,5 200,50 T 400,50 T 600,50 T 800,50 T 1000,50";
 
+const sampleLifeImages = [
+  {
+    id: "sample-1",
+    url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop&q=75",
+    name: "Collaborative Team Brainstorming",
+  },
+  {
+    id: "sample-2",
+    url: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=600&fit=crop&q=75",
+    name: "Hands-on Development Workshop",
+  },
+  {
+    id: "sample-3",
+    url: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=600&fit=crop&q=75",
+    name: "Design and UX Ideation Session",
+  },
+  {
+    id: "sample-4",
+    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=600&fit=crop&q=75",
+    name: "Agile Planning and Stand-ups",
+  },
+  {
+    id: "sample-5",
+    url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&h=600&fit=crop&q=75",
+    name: "Interactive Technical Training",
+  },
+  {
+    id: "sample-6",
+    url: "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop&q=75",
+    name: "Presenting Modern Web Architecture",
+  },
+];
+
 const About = () => {
-  const { sitePhotos = [], refreshSitePhotos, teamMembers = [], departments = [], ensureLoaded, } = useAdmin() || {};
+  const { teamMembers = [], departments = [], ensureLoaded } = useAdmin() || {};
   // Mission / Vision cards: track whether each one is currently scrolled
   // into view so the "hover" glow/animation plays while scrolling instead
   // of only on mouse hover.
@@ -180,10 +213,8 @@ const About = () => {
   const hasMoreTeam = teamMembers.length > TEAM_LIMIT || departments.length > 0;
 
   useEffect(() => {
-    refreshSitePhotos?.();
     ensureLoaded?.("team");
     ensureLoaded?.("departments");
-
   }, []);
   const timelineRef = useRef(null);
   const timelineScrollRef = useRef(null);
@@ -197,9 +228,7 @@ const About = () => {
   const [timelineVisibleCount, setTimelineVisibleCount] = useState(0);
   const [timelineDotPoint, setTimelineDotPoint] = useState(null);
   const [selectedLifeImageIndex, setSelectedLifeImageIndex] = useState(null);
-  const lifeImages = (sitePhotos.length > 0 ? sitePhotos : [])
-    .map(normalizeLifeImage)
-    .filter((image) => image.url);
+  const lifeImages = sampleLifeImages;
   const visibleLifeImages = lifeImages.slice(0, MAX_VISIBLE_LIFE_IMAGES);
   const selectedLifeImage =
     selectedLifeImageIndex === null ? null : lifeImages[selectedLifeImageIndex];
