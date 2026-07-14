@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -9,6 +10,10 @@ import {
   Instagram,
 } from "lucide-react";
 import FacebookIcon from "@/components/icons/FacebookIcon";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const footerLinks = {
   company: [
@@ -61,13 +66,64 @@ const socialLinks = [
 ];
 
 export function Footer() {
+  const footerRef = useRef(null);
+
   const openDialer = (event) => {
     event.preventDefault();
     window.location.assign("tel:+919943077284");
   };
 
+  useEffect(() => {
+    const footer = footerRef.current;
+    if (!footer) return;
+
+    const logo = footer.querySelector(".footer-logo");
+    const desc = footer.querySelector(".footer-desc");
+    const socials = footer.querySelector(".footer-socials");
+    
+    const companyTitle = footer.querySelector(".footer-company-title");
+    const companyItems = footer.querySelectorAll(".footer-company-item");
+    
+    const servicesTitle = footer.querySelector(".footer-services-title");
+    const servicesItems = footer.querySelectorAll(".footer-services-item");
+    
+    const contactTitle = footer.querySelector(".footer-contact-title");
+    const contactItems = footer.querySelectorAll(".footer-contact-item");
+    
+    const bottomLinks = footer.querySelector(".footer-bottom-links");
+    const bottomCopy = footer.querySelector(".footer-bottom-copy");
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: footer,
+          start: "top 92%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      if (logo) tl.fromTo(logo, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" });
+      if (desc) tl.fromTo(desc, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, "-=0.35");
+      if (socials) tl.fromTo(socials.children, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.08, ease: "back.out(1.5)" }, "-=0.3");
+
+      if (companyTitle) tl.fromTo(companyTitle, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.35");
+      if (companyItems.length > 0) tl.fromTo(companyItems, { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.35, stagger: 0.08, ease: "power2.out" }, "-=0.3");
+
+      if (servicesTitle) tl.fromTo(servicesTitle, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.35");
+      if (servicesItems.length > 0) tl.fromTo(servicesItems, { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.35, stagger: 0.08, ease: "power2.out" }, "-=0.3");
+
+      if (contactTitle) tl.fromTo(contactTitle, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.35");
+      if (contactItems.length > 0) tl.fromTo(contactItems, { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.38, stagger: 0.1, ease: "power2.out" }, "-=0.3");
+
+      if (bottomLinks) tl.fromTo(bottomLinks.children, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.08, ease: "power2.out" }, "-=0.25");
+      if (bottomCopy) tl.fromTo(bottomCopy, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.2");
+    }, footer);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <footer className="relative bg-card border-t border-border">
+    <footer ref={footerRef} className="relative bg-card border-t border-border">
       <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
 
       <div className="container-custom relative z-10 px-4 pb-4 pt-5 md:px-6 md:pb-5 md:pt-7">
@@ -75,7 +131,7 @@ export function Footer() {
 
           {/* Brand — full width on tablet, 1 col on desktop */}
           <div className="sm:col-span-3 lg:col-span-1">
-            <Link to="/" className="mb-2.5 flex items-center justify-start gap-2">
+            <Link to="/" className="footer-logo mb-2.5 flex items-center justify-start gap-2">
               <div className="flex h-16 w-52 items-center justify-start md:h-20 md:w-64 lg:h-24 lg:w-80">
                 <img
                   src="/izone-logo.png"
@@ -84,11 +140,11 @@ export function Footer() {
                 />
               </div>
             </Link>
-            <p className="mb-2 max-w-xs text-xs leading-relaxed text-muted-foreground text-justify md:text-[0.8125rem]">
+            <p className="footer-desc mb-2 max-w-xs text-xs leading-relaxed text-muted-foreground text-justify md:text-[0.8125rem]">
               Transforming ideas into exceptional digital experiences. We build
               modern, scalable web solutions that drive business growth.
             </p>
-            <div className="flex justify-start gap-2">
+            <div className="footer-socials flex justify-start gap-2">
               {socialLinks.map((social) => (
                 <motion.a
                   key={social.label}
@@ -108,12 +164,12 @@ export function Footer() {
 
           {/* Company — 1 of 3 cols on tablet */}
           <div className="text-left text-xs md:text-[0.8125rem] lg:pl-1">
-            <h4 className="mb-2 font-display pt-5 text-sm font-semibold text-foreground text-center md:text-justify lg:text-justify ">
+            <h4 className="footer-company-title mb-2 font-display pt-5 text-sm font-semibold text-foreground text-center md:text-justify lg:text-justify ">
               Company
             </h4>
             <ul className="space-y-1.5 pl-5 md:pl-0 lg:pl-0">
               {footerLinks.company.map((link) => (
-                <li key={link.name}>
+                <li className="footer-company-item" key={link.name}>
                   <Link
                     to={link.path}
                     className="text-muted-foreground hover:text-primary transition-colors"
@@ -127,12 +183,12 @@ export function Footer() {
 
           {/* Services — 1 of 3 cols on tablet */}
           <div className="text-left text-xs md:text-[0.8125rem]">
-            <h4 className="mb-2 font-display text-sm font-semibold text-foreground text-center md:text-justify lg:text-justify">
+            <h4 className="footer-services-title mb-2 font-display text-sm font-semibold text-foreground text-center md:text-justify lg:text-justify">
               Services
             </h4>
             <ul className="space-y-1.5 pl-5 md:pl-0 lg:pl-0">
               {footerLinks.services.map((link) => (
-                <li key={link.name}>
+                <li className="footer-services-item" key={link.name}>
                   <Link
                     to={link.path}
                     className="text-muted-foreground hover:text-primary transition-colors"
@@ -146,18 +202,18 @@ export function Footer() {
 
           {/* Contact — 1 of 3 cols on tablet */}
           <div className="text-left">
-            <h4 className="mb-2 font-display text-sm font-semibold text-foreground text-center md:text-justify lg:text-justify">
+            <h4 className="footer-contact-title mb-2 font-display text-sm font-semibold text-foreground text-center md:text-justify lg:text-justify">
               Contact
             </h4>
             <ul className="space-y-2.5 pl-5 md:pl-0 lg:pl-0">
-              <li className="grid grid-cols-[16px_minmax(0,1fr)] items-start gap-2 text-left">
+              <li className="footer-contact-item grid grid-cols-[16px_minmax(0,1fr)] items-start gap-2 text-left">
                 <MapPin size={16} className="mt-0.5 flex-shrink-0 text-primary" />
                 <span className="text-xs text-justify leading-relaxed text-muted-foreground md:text-[0.8125rem]">
                   3rd Floor, Aruvi Arcade Complex, 5th Cross Thillainagar, North
                   Extension Road, Tiruchirapalli, Tamil Nadu-620018.
                 </span>
               </li>
-              <li className="grid grid-cols-[16px_minmax(0,1fr)] items-center gap-2">
+              <li className="footer-contact-item grid grid-cols-[16px_minmax(0,1fr)] items-center gap-2">
                 <Mail size={16} className="flex-shrink-0 text-primary" />
                 <a
                   href="https://mail.google.com/mail/?view=cm&fs=1&to=innovativezone.tech@gmail.com"
@@ -168,7 +224,7 @@ export function Footer() {
                   innovativezone.tech@gmail.com
                 </a>
               </li>
-              <li className="grid grid-cols-[16px_minmax(0,1fr)] items-center gap-2">
+              <li className="footer-contact-item grid grid-cols-[16px_minmax(0,1fr)] items-center gap-2">
                 <Phone size={16} className="flex-shrink-0 text-primary" />
                 <a
                   href="tel:+919943077284"
@@ -184,7 +240,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-4 flex flex-col items-start  gap-1.5 md:gap-20 border-t border-border pt-2 text-left md:mt-5 md:flex-row">
-          <div className="flex flex-wrap justify-start gap-3 sm:gap-4">
+          <div className="footer-bottom-links flex flex-wrap justify-start gap-3 sm:gap-4">
             <Link
               to="#"
               className="text-xs text-muted-foreground transition-colors hover:text-primary pl-[90px] md:pl-0 lg:pl-0"
@@ -198,7 +254,7 @@ export function Footer() {
               Terms of Service
             </Link>
           </div>
-          <p className="text-xs leading-4 text-muted-foreground pl-10 md:pl-20 pt-5 md:pt-0 lg:pl-20 lg:pt-0">
+          <p className="footer-bottom-copy text-xs leading-4 text-muted-foreground pl-10 md:pl-20 pt-5 md:pt-0 lg:pl-20 lg:pt-0">
             &copy; {new Date().getFullYear()} Izone Technologies. All rights
             reserved.
           </p>

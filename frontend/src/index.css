@@ -1940,3 +1940,18 @@ samp {
   width: 0 !important;
   height: 0 !important;
 }
+
+/* Footer animations initial hidden states */
+.footer-logo,
+.footer-desc,
+.footer-socials > *,
+.footer-company-title,
+.footer-company-item,
+.footer-services-title,
+.footer-services-item,
+.footer-contact-title,
+.footer-contact-item,
+.footer-bottom-links > *,
+.footer-bottom-copy {
+  opacity: 0;
+}
