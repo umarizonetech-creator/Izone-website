@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Heart, Coffee, Laptop, Globe, Users, Rocket, Clock, MapPin, Briefcase, CheckCircle2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
+import PageHero from '@/components/PageHero';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
@@ -302,49 +303,27 @@ const Career = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="pt-8 sm:pt-12 md:pt-16 pb-5 md:pb-24 md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-5 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
-              Join Our Team
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Build Your Career
-              <span className="gradient-text block">With Us</span>
-            </h1>
-            <p className="text-lg text-muted-foreground text-justify md:text-center md:p-0 p-3">
-              Join a team of passionate innovators shaping the future of web development.
-              We're always looking for talented individuals to grow with us.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 mt-10">
-              <a
-                href="#open-positions"
-                className="inline-flex items-center px-5 py-2 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 text-sm"
-              >
-                View Openings
-              </a>
-              <Button
-                variant="outline"
-                className="rounded-full px-3 py-1 bg-white border border-primary/30 text-primary font-medium hover:bg-primary/20 transition-all text-sm h-auto"
-                onClick={() => {
-                  setSelectedInternship({ title: 'General Internship', duration: 'Flexible' });
-                  setIsInternSubmitted(false);
-                  setAgreedToInternTerms(false);
-                  setIsInternOpen(true);
-                }}
-              >
-                Apply for Internship
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={Briefcase}
+        badgeText="Join Our Team"
+        titleLine1="Build Your Career"
+        titleLine2="With Us"
+        description="Join a team of passionate innovators shaping the future of web development. We're always looking for talented individuals to grow with us."
+        floatingIcons={[Briefcase, Rocket, Users, Globe]}
+        actions={[
+          { label: 'View Openings', href: '#open-positions' },
+          {
+            label: 'Apply for Internship',
+            variant: 'outline',
+            onClick: () => {
+              setSelectedInternship({ title: 'General Internship', duration: 'Flexible' });
+              setIsInternSubmitted(false);
+              setAgreedToInternTerms(false);
+              setIsInternOpen(true);
+            },
+          },
+        ]}
+      />
 
       {/* Company Culture */}
       <section className="section-padding">

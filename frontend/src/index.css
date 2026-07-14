@@ -203,47 +203,6 @@ samp {
 }
 
 @media (max-width: 767px) {
-  .portfolio-hero {
-    /* min-height: 100svh; */
-    display: flex;
-    align-items: center;
-    padding-top: 6.25rem;
-    padding-bottom: 5.5rem;
-  }
-
-  .portfolio-hero .container-custom {
-    max-width: 23rem;
-  }
-
-  .portfolio-hero h1 {
-    margin-bottom: 1rem;
-    font-size: clamp(2.15rem, 10vw, 2.75rem);
-    line-height: 1.08;
-  }
-
-  .portfolio-hero .gradient-text {
-    margin-top: 0.35rem;
-  }
-
-  .portfolio-hero-copy {
-    max-width: 21rem;
-    margin-inline: auto;
-    padding-inline: 0.25rem;
-    font-size: 0.95rem;
-    line-height: 1.72;
-    text-wrap: pretty;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1199px) {
-  .portfolio-hero {
-    min-height: 100svh;
-    display: flex;
-    align-items: center;
-  }
-}
-
-@media (max-width: 767px) {
   .get-started-hero {
     /* min-height: 100svh; */
     display: flex;
@@ -1896,37 +1855,6 @@ samp {
   animation: scroll-mouse 1.5s ease-in-out infinite;
 }
 
-/* ── Awwwards-Style Scroll Indicator ── */
-@keyframes scroll-orbit-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-@keyframes scroll-arrow-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
-}
-@keyframes scroll-pulse-expand {
-  0% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.35); opacity: 0; }
-  100% { transform: scale(1); opacity: 0; }
-}
-
-.scroll-orbit-ring {
-  animation: scroll-orbit-spin 12s linear infinite;
-}
-.scroll-arrow-bounce {
-  animation: scroll-arrow-float 2s ease-in-out infinite;
-}
-.scroll-pulse-ring {
-  animation: scroll-pulse-expand 2.5s ease-out infinite;
-}
-.scroll-orbit-container:hover .scroll-orbit-ring {
-  animation-duration: 4s;
-}
-.scroll-orbit-container:hover .scroll-center-arrow {
-  background: hsl(var(--primary) / 0.15);
-}
-
 /* Hide Adobe Acrobat Chrome extension in-page widget container */
 #shadow-container,
 [id^="adobe-acrobat"],
@@ -1939,19 +1867,4 @@ samp {
   pointer-events: none !important;
   width: 0 !important;
   height: 0 !important;
-}
-
-/* Footer animations initial hidden states */
-.footer-logo,
-.footer-desc,
-.footer-socials > *,
-.footer-company-title,
-.footer-company-item,
-.footer-services-title,
-.footer-services-item,
-.footer-contact-title,
-.footer-contact-item,
-.footer-bottom-links > *,
-.footer-bottom-copy {
-  opacity: 0;
 }

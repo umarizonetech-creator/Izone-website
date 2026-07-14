@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Globe } from 'lucide-react';
+import { ArrowRight, Globe, Layers, Sparkles, Rocket, Code2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
+import PageHero from '@/components/PageHero';
 import { useAdmin } from '@/context/AdminContext';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
@@ -51,29 +52,14 @@ const Portfolio = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="portfolio-hero pt-8 sm:pt-12 md:pt-16 pb-0 md:pb-24 md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-hm font-medium mb-6">
-              Our Portfolio
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Projects That
-              <span className="gradient-text block mt-2">Define Excellence</span>
-            </h1>
-            <p className="portfolio-hero-copy text-lg text-muted-foreground text-justify md:text-center lg:text-center">
-              Explore our collection of successful projects that showcase our expertise
-              in creating innovative digital solutions for businesses across industries.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={Sparkles}
+        badgeText="Our Portfolio"
+        titleLine1="Projects That"
+        titleLine2="Define Excellence"
+        description="Explore our collection of successful projects that showcase our expertise in creating innovative digital solutions for businesses across industries."
+        floatingIcons={[Layers, Code2, Rocket, Globe]}
+      />
 
       {/* Projects Grid — 3 columns on lg+, 2 on md, 1 on mobile */}
       <section className="section-padding">

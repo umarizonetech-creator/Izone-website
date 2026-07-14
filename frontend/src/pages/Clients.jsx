@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Building2, Users, Globe, Award, Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import Layout from "@/components/Layout";
+import PageHero from "@/components/PageHero";
 import { useAdmin } from "@/context/AdminContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -146,46 +147,18 @@ const Clients = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="pt-8 sm:pt-12 md:pt-16 pb-5 md:pb-24 md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
-              Our Clients
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Trusted by
-              <span className="block mt-2 overflow-visible">
-                <span className="inline-block leading-[1.25] pb-[0.15em] gradient-text -mt-7">
-                  Industry Leaders
-                </span>
-              </span>
-            </h1>
-            <p className="text-lg text-muted-foreground text-justify p-3 md:text-center md:p-0">
-              We partner with ambitious brands across industries and help them launch clearer, stronger digital experiences.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 mt-8">
-              <a
-                href="#our-valued-partners"
-                className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium hover:bg-primary/20 transition-all text-sm"
-              >
-                Explore partners
-              </a>
-              <a
-                href="/get-started"
-                className="inline-flex items-center px-5 py-2 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 text-sm"
-              >
-                Start a project
-              </a>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={Award}
+        badgeText="Our Clients"
+        titleLine1="Trusted by"
+        titleLine2="Industry Leaders"
+        description="We partner with ambitious brands across industries and help them launch clearer, stronger digital experiences."
+        floatingIcons={[Building2, Users, Globe, Award]}
+        actions={[
+          { label: 'Explore partners', href: '#our-valued-partners', variant: 'outline' },
+          { label: 'Start a project', to: '/get-started' },
+        ]}
+      />
 
       {/* Stats Section */}
       <section id="clients-stats" className="section-padding">

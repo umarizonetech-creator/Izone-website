@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Code2, CheckCircle2, X, BookOpen, Filter } from 'lucide-react';
+import { Clock, Code2, CheckCircle2, X, BookOpen, Filter, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Layout from '@/components/Layout';
+import PageHero from '@/components/PageHero';
 import { useAdmin } from '@/context/AdminContext';
 import { toast } from 'sonner';
 
@@ -84,28 +85,14 @@ export default function Courses() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="portfolio-hero pt-8 sm:pt-12 md:pt-16 pb-0 md:pb-24 md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container-custom relative z-10 w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
-              Learn & Grow
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Our Training
-              <span className="gradient-text block mt-1">Courses</span>
-            </h1>
-            <p className="text-lg text-muted-foreground px-3 md:px-0 text-center">
-              Hands-on programs designed to build real-world skills. Pick a course and start your journey today.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={GraduationCap}
+        badgeText="Learn & Grow"
+        titleLine1="Our Training"
+        titleLine2="Courses"
+        description="Hands-on programs designed to build real-world skills. Pick a course and start your journey today."
+        floatingIcons={[GraduationCap, BookOpen, Code2, Clock]}
+      />
 
       {/* Filter + Grid */}
       <section className="section-padding !pt-4">

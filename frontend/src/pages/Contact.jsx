@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
+import PageHero from "@/components/PageHero";
 import { useAdmin } from "@/context/AdminContext";
 import FacebookIcon from "@/components/icons/FacebookIcon";
 
@@ -149,29 +150,14 @@ const Contact = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="pt-8 sm:pt-12 md:pt-16 pb-5 md:pb-24 md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
-              Get In Touch
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Let's Start a
-              <span className="gradient-text block">Conversation</span>
-            </h1>
-            <p className="text-lg text-muted-foreground  text-justify md:text-center lg:text-center p-3">
-              Have a project in mind? We'd love to hear from you. Send us a
-              message and we'll respond as soon as possible.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={Mail}
+        badgeText="Get In Touch"
+        titleLine1="Let's Start a"
+        titleLine2="Conversation"
+        description="Have a project in mind? We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+        floatingIcons={[Mail, Phone, MapPin, Send]}
+      />
 
       {/* Contact Section */}
       <section className="section-padding">
