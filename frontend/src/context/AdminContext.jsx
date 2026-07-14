@@ -332,7 +332,35 @@ export const AdminProvider = ({ children }) => {
       loadList("internApplications", setInternApplications, tokenOverride),
       loadList("serviceRequests", setServiceRequests, tokenOverride),
       loadList("courseApplications", setCourseApplications, tokenOverride).catch(() => {}),
+      // These resources power dedicated Admin Dashboard sections (Team, Departments,
+      // Clients, Portfolio, Job Roles, Intern Roles, Photos, Courses, Testimonials).
+      // They were previously only fetched via ensureLoaded() from public-facing pages,
+      // so on a fresh admin session/page refresh these sections appeared empty even
+      // though the records exist in the database and render correctly on the public site.
+      loadList("team", setTeamMembers, tokenOverride).catch((error) => console.error("Failed to load team members", error)),
+      loadList("departments", setDepartments, tokenOverride).catch((error) => console.error("Failed to load departments", error)),
+      loadList("clients", setClients, tokenOverride).catch((error) => console.error("Failed to load clients", error)),
+      loadList("portfolios", setPortfolios, tokenOverride).catch((error) => console.error("Failed to load portfolios", error)),
+      loadList("jobRoles", setJobRoles, tokenOverride).catch((error) => console.error("Failed to load job roles", error)),
+      loadList("internRoles", setInternRoles, tokenOverride).catch((error) => console.error("Failed to load intern roles", error)),
+      loadList("sitePhotos", setSitePhotos, tokenOverride).catch((error) => console.error("Failed to load site photos", error)),
+      loadList("courses", setCourses, tokenOverride).catch((error) => console.error("Failed to load courses", error)),
+      loadTestimonials(tokenOverride).catch((error) => console.error("Failed to load testimonials", error)),
     ]);
+    // Mark these as loaded so ensureLoaded() (called from public pages) doesn't
+    // trigger a redundant duplicate fetch once the admin data is already in state.
+    setLoadedKeys((prev) => ({
+      ...prev,
+      team: true,
+      departments: true,
+      clients: true,
+      portfolios: true,
+      jobRoles: true,
+      internRoles: true,
+      sitePhotos: true,
+      courses: true,
+      testimonials: true,
+    }));
   };
 
   const [loadedKeys, setLoadedKeys] = useState({ popups: true });
