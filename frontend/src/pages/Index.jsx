@@ -892,35 +892,26 @@ const Index = () => {
         .animate-marquee {
           animation: marquee 30s linear infinite;
         }
-        @media (max-width: 1023px) and (max-height: 720px) {
-          .hero-left-col {
-            padding-top: 1rem !important;
-            padding-bottom: 0.25rem !important;
-            gap: 0.4rem !important;
-          }
+        @media (max-width: 1023px) and (max-height: 850px) {
           .hero-left-col h1 {
-            font-size: 1.45rem !important;
-            line-height: 1.12 !important;
+            font-size: 2rem !important;
           }
           .hero-left-col p {
-            font-size: 9.5px !important;
-            line-height: 1.35 !important;
-            max-width: 290px !important;
-            margin-bottom: 0.2rem !important;
+            font-size: 12px !important;
           }
-          .hero-left-col button {
-            padding: 0.45rem 0.9rem !important;
-            font-size: 10.5px !important;
+          .hero-right-col > div {
+            max-width: 270px !important;
           }
-          .hero-right-col {
-            min-height: 0 !important;
-            padding: 0 !important;
-            margin: 0 !important;
+        }
+        @media (max-width: 1023px) and (max-height: 750px) {
+          .hero-left-col h1 {
+            font-size: 1.65rem !important;
+          }
+          .hero-left-col p {
+            font-size: 11px !important;
           }
           .hero-right-col > div {
             max-width: 220px !important;
-            margin: 0 !important;
-            padding: 0 !important;
           }
         }
       `}</style>
@@ -957,8 +948,10 @@ const Index = () => {
                 <span className="inline-block text-[#2f855a] dark:text-[#6ba67e] font-[950] tracking-tight">Digital Excellence</span>
               </span>
               <span className="hero-title-line block overflow-hidden">
+                <span className="inline-block">That Drives</span>
+              </span>
+              <span className="hero-title-line block overflow-hidden">
                 <span className="inline-block">
-                  That Drives{" "}
                   <span className="relative inline-block px-1">
                     <span className="font-['Dancing_Script'] font-semibold text-[1.15em] text-[#2f855a] dark:text-[#6ba67e] tracking-normal lowercase italic pl-1.5">
                       success
