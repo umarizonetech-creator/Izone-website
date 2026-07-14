@@ -71,7 +71,7 @@ const Magnetic = ({ children }) => {
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="inline-block w-full sm:w-auto"
+      className="inline-block w-auto"
     >
       {children}
     </div>
@@ -714,9 +714,9 @@ const Index = () => {
           "-=0.4"
         )
         .fromTo(
-          heroDescRef.current.querySelectorAll(".hero-desc-line > span"),
-          { yPercent: 105, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" },
+          heroDescRef.current,
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
           "-=0.6"
         )
         .fromTo(
@@ -894,23 +894,23 @@ const Index = () => {
         }
         @media (max-width: 1023px) and (max-height: 720px) {
           .hero-left-col {
-            padding-top: 2rem !important;
-            padding-bottom: 0.5rem !important;
-            gap: 0.5rem !important;
+            padding-top: 1rem !important;
+            padding-bottom: 0.25rem !important;
+            gap: 0.4rem !important;
           }
           .hero-left-col h1 {
-            font-size: 1.6rem !important;
+            font-size: 1.45rem !important;
             line-height: 1.12 !important;
           }
           .hero-left-col p {
             font-size: 9.5px !important;
-            line-height: 1.4 !important;
+            line-height: 1.35 !important;
             max-width: 290px !important;
-            margin-bottom: 0.25rem !important;
+            margin-bottom: 0.2rem !important;
           }
           .hero-left-col button {
-            padding: 0.5rem 1rem !important;
-            font-size: 11px !important;
+            padding: 0.45rem 0.9rem !important;
+            font-size: 10.5px !important;
           }
           .hero-right-col {
             min-height: 0 !important;
@@ -918,7 +918,7 @@ const Index = () => {
             margin: 0 !important;
           }
           .hero-right-col > div {
-            max-width: 185px !important;
+            max-width: 310px !important;
             margin: 0 !important;
             padding: 0 !important;
           }
@@ -938,10 +938,10 @@ const Index = () => {
         </div>
 
         {/* 2. Main Content Area */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 items-center min-h-0 overflow-hidden">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-0 items-center justify-center lg:justify-between py-2 lg:py-0 overflow-hidden">
 
           {/* Left Column: Headline, CTAs */}
-          <div className="hero-left-col lg:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left gap-3.5 lg:gap-5 pt-12 pb-4 lg:py-6 z-10 lg:pr-8 h-full justify-center">
+          <div className="hero-left-col lg:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left gap-3.5 lg:gap-5 pt-8 pb-4 lg:py-6 z-10 lg:pr-8 h-full justify-center">
             {/* IT Sector Badge */}
             <div ref={heroBadgeRef} className="inline-flex items-center gap-2 px-3 py-1 bg-[#eaf5ef]/90 dark:bg-emerald-950/40 border border-[#bce4cf] dark:border-emerald-800/30 rounded-full text-[8.5px] lg:text-[9px] font-bold tracking-wider text-[#2f855a] dark:text-[#6ba67e] uppercase">
               <Sparkles size={10} className="fill-[#2f855a]" />
@@ -949,7 +949,7 @@ const Index = () => {
             </div>
 
             {/* Title */}
-            <h1 ref={heroTitleRef} className="text-3xl sm:text-5xl lg:text-[2.8vw] xl:text-[3.3vw] font-[900] leading-[1.08] tracking-tight text-[#1a202c] dark:text-white select-none">
+            <h1 ref={heroTitleRef} className="text-4xl sm:text-5xl lg:text-[2.8vw] xl:text-[3.3vw] font-[900] leading-[1.08] tracking-tight text-[#1a202c] dark:text-white select-none">
               <span className="hero-title-line block overflow-hidden">
                 <span className="inline-block">We Build</span>
               </span>
@@ -981,36 +981,28 @@ const Index = () => {
             </h1>
 
             {/* Description */}
-            <p ref={heroDescRef} className="text-[10px] sm:text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0">
-              <span className="hero-desc-line block overflow-hidden">
-                <span className="inline-block">From modern websites and powerful digital campaigns to SEO and brand growth,</span>
-              </span>
-              <span className="hero-desc-line block overflow-hidden">
-                <span className="inline-block"><span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone</span> is your trusted digital partner. Nine years. 100+ successful launches.</span>
-              </span>
-              <span className="hero-desc-line block overflow-hidden">
-                <span className="inline-block">One expert team.</span>
-              </span>
+            <p ref={heroDescRef} className="text-[13px] sm:text-sm lg:text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0">
+              From modern websites and digital campaigns to SEO and growth, <span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone</span> is your trusted partner. 9 years. 100+ launches. One expert team.
             </p>
 
             {/* CTA Buttons */}
-            <div ref={heroCtasRef} className="flex flex-wrap justify-center lg:justify-start gap-3 w-full sm:w-auto mt-1 lg:mt-2">
+            <div ref={heroCtasRef} className="flex flex-row justify-center lg:justify-start gap-2.5 w-full sm:w-auto mt-1 lg:mt-2">
               <Magnetic>
-                <Link to="/portfolio" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto flex items-center justify-center gap-3 bg-[#2f855a] hover:bg-[#276749] text-white px-5 py-2.5 rounded-full text-xs lg:text-sm font-bold shadow-lg shadow-emerald-500/10 active:scale-95 transition-all duration-300">
+                <Link to="/portfolio" className="w-auto">
+                  <button className="w-auto flex items-center justify-center gap-2 bg-[#2f855a] hover:bg-[#276749] text-white px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-lg shadow-emerald-500/10 active:scale-95 transition-all duration-300">
                     Explore Our Work
-                    <div className="w-5.5 h-5.5 rounded-full bg-white flex items-center justify-center text-[#2f855a]">
-                      <ArrowUpRight size={13} />
+                    <div className="w-4.5 h-4.5 rounded-full bg-white flex items-center justify-center text-[#2f855a]">
+                      <ArrowUpRight size={10} />
                     </div>
                   </button>
                 </Link>
               </Magnetic>
 
               <Magnetic>
-                <Link to="/services" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto flex items-center justify-center gap-3 bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-5 py-2.5 rounded-full text-xs lg:text-sm font-bold shadow-sm hover:shadow-md hover:bg-zinc-50 transition-all duration-300">
+                <Link to="/services" className="w-auto">
+                  <button className="w-auto flex items-center justify-center gap-2 bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-sm hover:shadow-md hover:bg-zinc-50 transition-all duration-300">
                     Our Services
-                    <LayoutGrid size={13} className="text-[#2f855a]" />
+                    <LayoutGrid size={10} className="text-[#2f855a]" />
                   </button>
                 </Link>
               </Magnetic>
@@ -1018,10 +1010,10 @@ const Index = () => {
           </div>
 
           {/* Right Column: Ball Element Mockup with Floating Cards */}
-          <div ref={heroRightRef} className="hero-right-col lg:col-span-6 relative flex justify-center items-center h-full min-h-[180px] lg:min-h-0 z-10 select-none py-0 lg:py-0">
+          <div ref={heroRightRef} className="hero-right-col lg:col-span-6 relative flex justify-center items-center h-full min-h-0 z-10 select-none py-2 lg:py-0 w-full">
 
             {/* The 3D Ball Element Graphic */}
-            <div className="relative w-full max-w-[350px] sm:max-w-[440px] lg:max-w-none">
+            <div className="relative w-[90%] max-w-[370px] sm:max-w-[380px] md:max-w-[440px] lg:max-w-none">
               <img
                 src="/ball-element.png"
                 alt="iZone Core System"
