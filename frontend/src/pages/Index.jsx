@@ -926,7 +926,7 @@ const Index = () => {
       `}</style>
 
       {/* Hero Section */}
-      <section className="relative w-full h-[calc(100vh-5rem)] h-[calc(100dvh-5rem)] md:h-[calc(100vh-5.5rem)] md:h-[calc(100dvh-5.5rem)] xl:h-[calc(100vh-6rem)] xl:h-[calc(100dvh-6rem)] pb-[env(safe-area-inset-bottom)] bg-gradient-to-br from-[#f7faf8] via-[#ffffff] to-[#eff5f1] dark:from-zinc-950 dark:to-zinc-900 overflow-hidden flex flex-col font-sans select-none justify-between border-b border-zinc-200/30 dark:border-zinc-800/20">
+      <section className="relative w-full h-[calc(100vh-5rem)] h-[calc(100svh-5rem)] md:h-[calc(100vh-5.5rem)] md:h-[calc(100svh-5.5rem)] xl:h-[calc(100vh-6rem)] xl:h-[calc(100svh-6rem)] pb-[env(safe-area-inset-bottom)] bg-gradient-to-br from-[#f7faf8] via-[#ffffff] to-[#eff5f1] dark:from-zinc-950 dark:to-zinc-900 overflow-hidden flex flex-col font-sans select-none justify-between border-b border-zinc-200/30 dark:border-zinc-800/20">
 
         {/* Subtle grid pattern background */}
         <div className="absolute inset-0 opacity-[0.15] dark:opacity-[0.02] pointer-events-none bg-[linear-gradient(to_right,#e3ebe6_1px,transparent_1px),linear-gradient(to_bottom,#e3ebe6_1px,transparent_1px)] bg-[size:4rem_4rem] z-0" />
