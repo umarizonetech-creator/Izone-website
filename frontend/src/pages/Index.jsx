@@ -44,13 +44,14 @@ const WebGLBackground = lazy(() => import("@/components/WebGLBackground"));
 import SplitTextReveal from "@/components/SplitTextReveal";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import TiltSpotlightCard from "@/components/ui/TiltSpotlightCard";
 
 gsap.registerPlugin(ScrollTrigger);
 
 // ── Reusable Advanced Animation Components ───────────────────────────
 
 // Magnetic Button Wrapper
-const Magnetic = ({ children }) => {
+const Magnetic = ({ children, style }) => {
   const ref = useRef(null);
 
   const handleMouseMove = (e) => {
@@ -72,88 +73,13 @@ const Magnetic = ({ children }) => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className="inline-block w-auto"
+      style={style}
     >
       {children}
     </div>
   );
 };
 
-// 3D Tilt Card with Cursor-tracking Spotlight Glow
-const TiltSpotlightCard = ({ children, className = "" }) => {
-  const cardRef = useRef(null);
-  const glowRef = useRef(null);
-
-  const xTo = useRef(null);
-  const yTo = useRef(null);
-  const opacityTo = useRef(null);
-  const rotateXTo = useRef(null);
-  const rotateYTo = useRef(null);
-
-  useEffect(() => {
-    if (glowRef.current) {
-      xTo.current = gsap.quickTo(glowRef.current, "left", { duration: 0.2, ease: "power3.out" });
-      yTo.current = gsap.quickTo(glowRef.current, "top", { duration: 0.2, ease: "power3.out" });
-      opacityTo.current = gsap.quickTo(glowRef.current, "opacity", { duration: 0.2, ease: "power3.out" });
-    }
-    if (cardRef.current) {
-      rotateXTo.current = gsap.quickTo(cardRef.current, "rotateX", { duration: 0.3, ease: "power2.out" });
-      rotateYTo.current = gsap.quickTo(cardRef.current, "rotateY", { duration: 0.3, ease: "power2.out" });
-      gsap.set(cardRef.current, { transformPerspective: 1000, force3D: true });
-    }
-  }, []);
-
-  const handleMouseMove = (e) => {
-    const card = cardRef.current;
-    if (!card) return;
-    const rect = card.getBoundingClientRect();
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    if (xTo.current && yTo.current && opacityTo.current) {
-      xTo.current(x);
-      yTo.current(y);
-      opacityTo.current(0.12);
-    }
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = -((e.clientY - rect.top - centerY) / centerY) * 8; // Max 8 degrees tilt
-    const rotateY = ((e.clientX - rect.left - centerX) / centerX) * 8;
-
-    if (rotateXTo.current && rotateYTo.current) {
-      rotateXTo.current(rotateX);
-      rotateYTo.current(rotateY);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (opacityTo.current) {
-      opacityTo.current(0);
-    }
-
-    if (rotateXTo.current && rotateYTo.current) {
-      rotateXTo.current(0);
-      rotateYTo.current(0);
-    }
-  };
-
-  return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className={`relative overflow-hidden transition-all duration-300 transform-gpu ${className}`}
-      style={{ transformStyle: "preserve-3d" }}
-    >
-      <div
-        ref={glowRef}
-        className="absolute pointer-events-none -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-primary blur-3xl opacity-0 transition-opacity duration-300 z-0"
-      />
-      <div className="relative z-10 h-full w-full">{children}</div>
-    </div>
-  );
-};
 
 // Scroll-Driven Parallax Image
 const ParallaxImage = ({ src, alt, className = "", innerClassName = "" }) => {
@@ -710,6 +636,7 @@ const Index = () => {
   const servicesGridRef = useRef(null);
   const whyChooseGridRef = useRef(null);
   const testimonialsGridRef = useRef(null);
+  const hasEnteredTestimonials = useRef(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -788,49 +715,94 @@ const Index = () => {
     const cards = Array.from(grid.children);
 
     const ctx = gsap.context(() => {
-      cards.forEach((card) => {
-        const icon = card.querySelector(".services-icon-wrap");
-        const title = card.querySelector(".services-card-title");
-        const desc = card.querySelector(".services-card-desc");
-        const footer = card.querySelector(".services-card-footer");
+      if (isMobile) {
+        // Mobile view: Animate each card individually as they scroll into view one by one
+        cards.forEach((card) => {
+          const icon = card.querySelector(".services-icon-wrap");
+          const title = card.querySelector(".services-card-title");
+          const desc = card.querySelector(".services-card-desc");
+          const footer = card.querySelector(".services-card-footer");
 
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: card,
+              start: "top 92%",
+              toggleActions: "play none none reverse",
+            }
+          });
+
+          tl.fromTo(card, 
+            { opacity: 0, y: 40 },
+            { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+          )
+          .fromTo(icon, 
+            { scale: 0, rotate: -35, opacity: 0 }, 
+            { scale: 1, rotate: 0, opacity: 1, duration: 0.6, ease: "back.out(1.7)" }, 
+            "-=0.55"
+          )
+          .fromTo(title, 
+            { opacity: 0, y: 10 }, 
+            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 
+            "-=0.45"
+          )
+          .fromTo(desc, 
+            { opacity: 0, y: 8 }, 
+            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 
+            "-=0.35"
+          )
+          .fromTo(footer, 
+            { opacity: 0, y: 10 }, 
+            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 
+            "-=0.35"
+          );
+        });
+      } else {
+        // Desktop view: Coordinated grid level stagger reveal
         const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: card,
-            start: "top 92%",
+            trigger: grid,
+            start: "top 90%",
             toggleActions: "play none none reverse",
           }
         });
 
-        tl.fromTo(card, 
-          { opacity: 0, y: 35 },
-          { opacity: 1, y: 0, duration: 0.75, ease: "power3.out" }
-        )
-        .fromTo(icon, 
-          { scale: 0.3, rotate: -25, opacity: 0 }, 
-          { scale: 1, rotate: 0, opacity: 1, duration: 0.55, ease: "back.out(1.5)" }, 
-          "-=0.5"
-        )
-        .fromTo(title, 
-          { opacity: 0, x: -15 }, 
-          { opacity: 1, x: 0, duration: 0.45, ease: "power2.out" }, 
-          "-=0.35"
-        )
-        .fromTo(desc, 
-          { opacity: 0, y: 8 }, 
-          { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 
-          "-=0.3"
-        )
-        .fromTo(footer, 
-          { opacity: 0, y: 12 }, 
-          { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 
-          "-=0.3"
-        );
-      });
+        cards.forEach((card, index) => {
+          const icon = card.querySelector(".services-icon-wrap");
+          const title = card.querySelector(".services-card-title");
+          const desc = card.querySelector(".services-card-desc");
+          const footer = card.querySelector(".services-card-footer");
+
+          tl.fromTo(card, 
+            { opacity: 0, y: 60, rotationX: 18, rotationY: -10, transformPerspective: 1000 },
+            { opacity: 1, y: 0, rotationX: 0, rotationY: 0, duration: 1.2, ease: "power4.out" },
+            index === 0 ? 0 : "-=0.8"
+          )
+          .fromTo(icon, 
+            { scale: 0, rotate: -35, opacity: 0 }, 
+            { scale: 1, rotate: 0, opacity: 1, duration: 0.7, ease: "back.out(1.7)" }, 
+            "-=0.9"
+          )
+          .fromTo(title, 
+            { opacity: 0, y: 15 }, 
+            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 
+            "-=0.7"
+          )
+          .fromTo(desc, 
+            { opacity: 0, y: 10 }, 
+            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 
+            "-=0.55"
+          )
+          .fromTo(footer, 
+            { opacity: 0, y: 15 }, 
+            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 
+            "-=0.55"
+          );
+        });
+      }
     }, grid);
 
     return () => ctx.revert();
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     const grid = whyChooseGridRef.current;
@@ -882,8 +854,8 @@ const Index = () => {
     if (!container || isMobile) return;
 
     // Cache quickTo operations
-    const rotateXTo = gsap.quickTo(container, "rotateX", { duration: 0.4, ease: "power2.out" });
-    const rotateYTo = gsap.quickTo(container, "rotateY", { duration: 0.4, ease: "power2.out" });
+    const rotateXTo = gsap.quickTo(container, "rotationX", { duration: 0.4, ease: "power2.out" });
+    const rotateYTo = gsap.quickTo(container, "rotationY", { duration: 0.4, ease: "power2.out" });
     gsap.set(container, { transformPerspective: 1000, force3D: true });
 
     const badges = container.querySelectorAll(".absolute");
@@ -998,45 +970,80 @@ const Index = () => {
     const cards = Array.from(grid.children);
 
     const ctx = gsap.context(() => {
-      cards.forEach((card) => {
-        const quoteIcon = card.querySelector(".testimonial-quote");
-        const stars = card.querySelector(".testimonial-stars");
-        const text = card.querySelector(".testimonial-text");
-        const client = card.querySelector(".testimonial-client");
-
+      if (!hasEnteredTestimonials.current) {
+        // Initial viewport scroll reveal (coordinated stagger)
         const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: card,
-            start: "top 92%",
+            trigger: grid,
+            start: "top 90%",
             toggleActions: "play none none reverse",
+            onComplete: () => {
+              hasEnteredTestimonials.current = true;
+            }
           }
         });
 
-        tl.fromTo(card, 
-          { opacity: 0, y: 35 },
-          { opacity: 1, y: 0, duration: 0.75, ease: "power3.out" }
-        )
-        .fromTo(quoteIcon,
-          { scale: 0, opacity: 0 },
-          { scale: 1, opacity: 0.1, duration: 0.5, ease: "back.out(1.5)" },
-          "-=0.5"
-        )
-        .fromTo(stars,
-          { opacity: 0, y: -5 },
-          { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
-          "-=0.4"
-        )
-        .fromTo(text,
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
-          "-=0.3"
-        )
-        .fromTo(client,
-          { opacity: 0, y: 15 },
-          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
-          "-=0.3"
+        cards.forEach((card, index) => {
+          const quoteIcon = card.querySelector(".testimonial-quote");
+          const stars = card.querySelector(".testimonial-stars");
+          const text = card.querySelector(".testimonial-text");
+          const client = card.querySelector(".testimonial-client");
+
+          tl.fromTo(card, 
+            { opacity: 0, y: 50, rotationX: 15, rotationY: -8, transformPerspective: 1000 },
+            { opacity: 1, y: 0, rotationX: 0, rotationY: 0, duration: 1.1, ease: "power4.out" },
+            index === 0 ? 0 : "-=0.75"
+          );
+
+          if (quoteIcon) {
+            tl.fromTo(quoteIcon,
+              { scale: 0, opacity: 0 },
+              { scale: 1, opacity: 0.1, duration: 0.6, ease: "back.out(1.5)" },
+              "-=0.8"
+            );
+          }
+
+          if (stars && stars.children.length > 0) {
+            tl.fromTo(Array.from(stars.children),
+              { scale: 0, rotate: -30, opacity: 0 },
+              { scale: 1, rotate: 0, opacity: 1, duration: 0.45, stagger: 0.08, ease: "back.out(1.7)" },
+              "-=0.7"
+            );
+          }
+
+          if (text) {
+            tl.fromTo(text,
+              { opacity: 0, y: 12 },
+              { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+              "-=0.5"
+            );
+          }
+
+          if (client) {
+            tl.fromTo(client,
+              { opacity: 0, y: 15 },
+              { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+              "-=0.45"
+            );
+          }
+        });
+      } else {
+        // Slide carousel paging: Trigger instant smooth transition
+        gsap.fromTo(cards, 
+          { opacity: 0, y: 20 }, 
+          { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out" }
         );
-      });
+        // Force reset internal elements to fully visible state
+        cards.forEach((card) => {
+          gsap.set(card.querySelectorAll(".testimonial-quote, .testimonial-stars, .testimonial-text, .testimonial-client, .testimonial-stars > *"), { 
+            opacity: 1, 
+            scale: 1, 
+            y: 0, 
+            rotationX: 0, 
+            rotationY: 0 
+          });
+        });
+      }
     }, grid);
 
     return () => ctx.revert();
@@ -1188,9 +1195,9 @@ const Index = () => {
 
             {/* CTA Buttons */}
             <div ref={heroCtasRef} className="flex flex-row justify-center lg:justify-start gap-2.5 w-full sm:w-auto mt-1 lg:mt-2">
-              <Magnetic>
+              <Magnetic style={{ opacity: 0 }}>
                 <Link to="/portfolio" className="w-auto">
-                  <button style={{ opacity: 0 }} className="w-auto flex items-center justify-center gap-2 bg-[#2f855a] hover:bg-[#276749] text-white px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-lg shadow-emerald-500/10 active:scale-95 transition-all duration-300">
+                  <button className="w-auto flex items-center justify-center gap-2 bg-[#2f855a] hover:bg-[#276749] text-white px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-lg shadow-emerald-500/10 active:scale-95 transition-all duration-300">
                     Explore Our Work
                     <div className="w-4.5 h-4.5 rounded-full bg-white flex items-center justify-center text-[#2f855a]">
                       <ArrowUpRight size={10} />
@@ -1199,9 +1206,9 @@ const Index = () => {
                 </Link>
               </Magnetic>
 
-              <Magnetic>
+              <Magnetic style={{ opacity: 0 }}>
                 <Link to="/services" className="w-auto">
-                  <button style={{ opacity: 0 }} className="w-auto flex items-center justify-center gap-2 bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-sm hover:shadow-md hover:bg-zinc-50 transition-all duration-300">
+                  <button className="w-auto flex items-center justify-center gap-2 bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-sm hover:shadow-md hover:bg-zinc-50 transition-all duration-300">
                     Our Services
                     <LayoutGrid size={10} className="text-[#2f855a]" />
                   </button>
@@ -1353,12 +1360,6 @@ const Index = () => {
                         {service.description}
                       </p>
 
-                      {/* Expandable details */}
-                      <div className="h-0 opacity-0 overflow-hidden group-hover:h-auto group-hover:opacity-100 transition-all duration-500 ease-in-out">
-                        <p className="text-zinc-500 dark:text-zinc-400 text-xs leading-relaxed border-t border-slate-200/50 dark:border-slate-800/40 pt-3 mt-3">
-                          {service.details}
-                        </p>
-                      </div>
                     </div>
 
                     {/* Tags */}

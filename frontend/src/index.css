@@ -1896,6 +1896,37 @@ samp {
   animation: scroll-mouse 1.5s ease-in-out infinite;
 }
 
+/* ── Awwwards-Style Scroll Indicator ── */
+@keyframes scroll-orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes scroll-arrow-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+@keyframes scroll-pulse-expand {
+  0% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+.scroll-orbit-ring {
+  animation: scroll-orbit-spin 12s linear infinite;
+}
+.scroll-arrow-bounce {
+  animation: scroll-arrow-float 2s ease-in-out infinite;
+}
+.scroll-pulse-ring {
+  animation: scroll-pulse-expand 2.5s ease-out infinite;
+}
+.scroll-orbit-container:hover .scroll-orbit-ring {
+  animation-duration: 4s;
+}
+.scroll-orbit-container:hover .scroll-center-arrow {
+  background: hsl(var(--primary) / 0.15);
+}
+
 /* Hide Adobe Acrobat Chrome extension in-page widget container */
 #shadow-container,
 [id^="adobe-acrobat"],

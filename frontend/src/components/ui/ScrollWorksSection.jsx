@@ -1,4 +1,9 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function ScrollWorksSection({
   works,
@@ -6,13 +11,75 @@ export function ScrollWorksSection({
   subtitle = "Case Studies",
   className = "",
 }) {
+  const sectionRef = useRef(null);
+  const cardsContainerRef = useRef(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const cards = section.querySelectorAll(".portfolio-card");
+    const mobileCards = section.querySelectorAll(".portfolio-mobile-card");
+
+    const ctx = gsap.context(() => {
+      // Animate desktop cards (3D rotation layout reveal)
+      if (cards.length > 0) {
+        gsap.fromTo(cards, 
+          { opacity: 0, scale: 0.85, y: 70, rotationX: 12, transformPerspective: 1000 },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            rotationX: 0,
+            duration: 1.2,
+            stagger: 0.18,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: cardsContainerRef.current || section,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Animate mobile cards individually as they scroll into view
+      if (mobileCards.length > 0) {
+        mobileCards.forEach((card) => {
+          gsap.fromTo(card,
+            { opacity: 0, y: 45 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 92%",
+                toggleActions: "play none none reverse",
+              }
+            }
+          );
+        });
+      }
+    }, section);
+
+    return () => ctx.revert();
+  }, [works]);
+
   return (
-    <section className={`relative pt-32 sm:pt-36 md:pt-40 pb-12 overflow-hidden flex flex-col items-center ${className}`}>
+    <section ref={sectionRef} className={`relative pt-32 sm:pt-36 md:pt-40 pb-12 overflow-hidden flex flex-col items-center ${className}`}>
       <div className="container-custom w-full relative z-10 px-4 md:px-8">
-        <div className="text-center mb-14 md:mb-24">
-          <span className="text-primary font-medium">{title}</span>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-5xl font-bold mt-2">
-            {subtitle}
+        
+        {/* Unified Premium Header Reveal */}
+        <div className="section-header-reveal text-center mb-14 md:mb-24 flex flex-col items-center gap-2">
+          <span className="reveal-badge font-['Dancing_Script'] text-primary text-3xl md:text-4xl font-bold -rotate-2">
+            {title}
+          </span>
+          <h2 className="font-display font-extrabold text-4xl md:text-5xl uppercase tracking-tighter text-zinc-900 dark:text-white mt-1 overflow-hidden">
+            <span className="reveal-title-line block overflow-hidden">
+              <span className="inline-block" style={{ opacity: 0 }}>{subtitle}</span>
+            </span>
           </h2>
         </div>
 
@@ -20,7 +87,7 @@ export function ScrollWorksSection({
           {works.slice(0, 3).map((work, index) => (
             <div
               key={index}
-              className="relative overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-[0_18px_45px_rgba(0,0,0,0.12)]"
+              className="portfolio-mobile-card relative overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-[0_18px_45px_rgba(0,0,0,0.12)] opacity-0"
             >
               <div
                 className="h-[220px] w-full bg-cover bg-center"
@@ -50,7 +117,7 @@ export function ScrollWorksSection({
           ))}
         </div>
 
-        <div className="portfolio-cards-shell hidden md:flex justify-center items-center h-[380px] w-full">
+        <div ref={cardsContainerRef} className="portfolio-cards-shell hidden md:flex justify-center items-center h-[380px] w-full">
           <div className="portfolio-cards">
             {works.slice(0, 3).map((work, index) => {
               const positions = ["one", "two", "three"];
@@ -63,6 +130,7 @@ export function ScrollWorksSection({
                     backgroundImage: `url(${work.image})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
+                    opacity: 0,
                   }}
                 >
                   <div className="portfolio-cardDetails">

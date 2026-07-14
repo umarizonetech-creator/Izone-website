@@ -79,8 +79,14 @@ export default function StorytellingSection() {
     const ctx = gsap.context(() => {
       const inlineElements = paragraphRef.current.querySelectorAll(".word-highlighted");
       const targetElements = targetsContainerRef.current.querySelectorAll(".target-item");
+      const paragraphLines = paragraphRef.current.querySelectorAll(".story-paragraph-line > span");
 
       if (inlineElements.length === 0 || targetElements.length === 0) return;
+
+      // Reset any active animations/translations on lines and elements to ensure accurate layout bounding box measurements
+      gsap.set(paragraphLines, { clearProps: "all" });
+      gsap.set(inlineElements, { clearProps: "all" });
+      gsap.set(targetElements, { clearProps: "all" });
 
       // Calculate initial and target positions relative to the screen (viewport)
       const calculations = Array.from(inlineElements).map((el, index) => {
@@ -104,10 +110,6 @@ export default function StorytellingSection() {
         return { el, deltaX, deltaY, scaleRatio, targetItem: targetElements[index] };
       });
 
-      // Clear any pre-existing inline styles that might interfere with recalculations
-      gsap.set(inlineElements, { clearProps: "all" });
-      gsap.set(targetElements, { clearProps: "all" });
-
       // Timeline 1: Entry reveals (Heading and Paragraph) when section enters bottom 25% of viewport
       const tlEntry = gsap.timeline({
         scrollTrigger: {
@@ -123,10 +125,17 @@ export default function StorytellingSection() {
       
       if (headingBadge && headingSubtext) {
         tlEntry.fromTo(headingBadge, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" })
-               .fromTo(headingSubtext, { opacity: 0, y: -15 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.35")
-               .fromTo(paragraphRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=0.3");
-      } else {
-        tlEntry.fromTo(paragraphRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" });
+               .fromTo(headingSubtext, { opacity: 0, y: -15 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.35");
+        
+        if (paragraphLines.length > 0) {
+          tlEntry.fromTo(paragraphLines, 
+            { yPercent: 105, opacity: 0 }, 
+            { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" }, 
+            "-=0.35"
+          );
+        }
+      } else if (paragraphLines.length > 0) {
+        tlEntry.fromTo(paragraphLines, { yPercent: 105, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" });
       }
 
       // Timeline 2: Scrubbed timeline for pinned phases (highlights, gather, focus)
@@ -141,11 +150,8 @@ export default function StorytellingSection() {
         },
       });
 
-      // Phase 0: Fade out scroll indicator immediately on scroll start
-      const scrollIndicator = containerRef.current.querySelector("#scroll-indicator");
-      if (scrollIndicator) {
-        tl.to(scrollIndicator, { opacity: 0, y: 15, duration: 1, ease: "power2.out" }, 0);
-      }
+
+
 
       // Phase 2: Highlight Important Words (Color & Font weight change)
       tl.to(
@@ -174,6 +180,12 @@ export default function StorytellingSection() {
         "+=0.3"
       );
 
+      // Phase 3.5: Remove overflow clipping so words can move freely during gather
+      const lineWrappers = paragraphRef.current.querySelectorAll(".story-paragraph-line");
+      if (lineWrappers.length > 0) {
+        tl.set(lineWrappers, { overflow: "visible" });
+      }
+
       // Phase 4: Gather Highlighted Words sequentially WHILE SCROLLING (Move one by one - Slower speed)
       calculations.forEach((calc, index) => {
         tl.to(
@@ -181,7 +193,7 @@ export default function StorytellingSection() {
           {
             x: calc.deltaX,
             y: calc.deltaY,
-            scale: calc.scaleRatio,
+            scale: 1, // Keep scale at 1 while aligning
             fontWeight: "800",
             duration: 2.2,
             force3D: true,
@@ -196,7 +208,7 @@ export default function StorytellingSection() {
         tl.to(
           calc.el,
           {
-            scale: calc.scaleRatio * 1.15,
+            scale: calc.scaleRatio, // Scale up only afterward
             duration: 0.8,
             force3D: true,
             ease: "power2.inOut",
@@ -207,6 +219,32 @@ export default function StorytellingSection() {
     }, containerRef);
 
     contextRef.current = ctx;
+  };
+
+  const renderWord = (word, idx) => {
+    const space = idx < PARAGRAPH_WORDS.length - 1 ? " " : "";
+    if (word.isHighlighted) {
+      return (
+        <React.Fragment key={idx}>
+          <span
+            className="word-highlighted inline-block text-slate-400 dark:text-zinc-600 transition-shadow duration-300 transform-gpu will-change-transform"
+          >
+            {word.text}
+          </span>
+          {space}
+        </React.Fragment>
+      );
+    }
+    return (
+      <React.Fragment key={idx}>
+        <span
+          className="word-normal inline-block text-slate-400 dark:text-zinc-600 transform-gpu will-change-[opacity]"
+        >
+          {word.text}
+        </span>
+        {space}
+      </React.Fragment>
+    );
   };
 
   return (
@@ -238,33 +276,23 @@ export default function StorytellingSection() {
           {/* Phase 1-3: Inline Paragraph */}
           <p
             ref={paragraphRef}
-            className="w-full text-center text-xl sm:text-3xl md:text-4xl font-medium leading-[1.8] sm:leading-[2] tracking-tight text-slate-800 dark:text-slate-100 z-10 select-none max-w-4xl"
+            className="w-full text-center text-xl sm:text-3xl md:text-4xl font-medium leading-[1.8] sm:leading-[2] tracking-tight text-slate-800 dark:text-slate-100 z-10 select-none max-w-4xl flex flex-col items-center gap-1.5"
           >
-            {PARAGRAPH_WORDS.map((word, idx) => {
-              const space = idx < PARAGRAPH_WORDS.length - 1 ? " " : "";
-              if (word.isHighlighted) {
-                return (
-                  <React.Fragment key={idx}>
-                    <span
-                      className="word-highlighted inline-block text-slate-400 dark:text-zinc-600 transition-shadow duration-300 transform-gpu will-change-transform"
-                    >
-                      {word.text}
-                    </span>
-                    {space}
-                  </React.Fragment>
-                );
-              }
-              return (
-                <React.Fragment key={idx}>
-                  <span
-                    className="word-normal inline-block text-slate-400 dark:text-zinc-600 transform-gpu will-change-[opacity]"
-                  >
-                    {word.text}
-                  </span>
-                  {space}
-                </React.Fragment>
-              );
-            })}
+            <span className="story-paragraph-line block overflow-hidden">
+              <span className="inline-block" style={{ opacity: 0 }}>
+                {PARAGRAPH_WORDS.slice(0, 6).map((word, idx) => renderWord(word, idx))}
+              </span>
+            </span>
+            <span className="story-paragraph-line block overflow-hidden">
+              <span className="inline-block" style={{ opacity: 0 }}>
+                {PARAGRAPH_WORDS.slice(6, 12).map((word, idx) => renderWord(word, idx + 6))}
+              </span>
+            </span>
+            <span className="story-paragraph-line block overflow-hidden">
+              <span className="inline-block" style={{ opacity: 0 }}>
+                {PARAGRAPH_WORDS.slice(12).map((word, idx) => renderWord(word, idx + 12))}
+              </span>
+            </span>
           </p>
 
           {/* Phase 4-5: Target Vertical Column (Hidden initially) */}
@@ -287,20 +315,46 @@ export default function StorytellingSection() {
             </div>
           </div>
 
-          {/* Scroll Down Indicator */}
-          <div
-            id="scroll-indicator"
-            className="absolute bottom-8 z-25 flex flex-col items-center gap-1.5 opacity-80"
-          >
-            <span className="text-[10px] uppercase tracking-[0.2em] text-slate-400 dark:text-zinc-500 font-bold">
-              Scroll Down
-            </span>
-            <div className="w-5 h-8 border-2 border-slate-300 dark:border-zinc-700 rounded-full flex justify-center p-1">
-              <div className="w-1 h-2 bg-primary rounded-full animate-scroll-mouse" />
-            </div>
-          </div>
 
         </div>
+
+        {/* Awwwards-Style Scroll Down Indicator — pinned to bottom-right of sticky viewport */}
+        <div
+          id="scroll-indicator"
+          className="absolute bottom-6 right-6 sm:bottom-8 sm:right-10 z-30 flex flex-col items-center gap-0"
+        >
+          {/* Rotating circular text ring */}
+          <div className="scroll-orbit-container relative w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
+            <svg
+              className="scroll-orbit-ring absolute inset-0 w-full h-full"
+              viewBox="0 0 100 100"
+            >
+              <defs>
+                <path
+                  id="scrollCirclePath"
+                  d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
+                />
+              </defs>
+              <text className="fill-slate-400/70 dark:fill-zinc-500/70" style={{ fontSize: '8.5px', letterSpacing: '0.35em', fontWeight: 700, textTransform: 'uppercase' }}>
+                <textPath href="#scrollCirclePath" startOffset="0%">
+                  SCROLL · EXPLORE · DISCOVER · 
+                </textPath>
+              </text>
+            </svg>
+
+            {/* Center animated arrow */}
+            <div className="scroll-center-arrow relative z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-primary/30 bg-primary/5 dark:bg-primary/10 backdrop-blur-sm flex items-center justify-center group cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-300">
+              <div className="scroll-arrow-bounce flex flex-col items-center gap-0.5">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-primary">
+                  <path d="M6 1V11M6 11L1.5 6.5M6 11L10.5 6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              {/* Pulse ring */}
+              <div className="absolute inset-0 rounded-full border border-primary/20 scroll-pulse-ring" />
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );
