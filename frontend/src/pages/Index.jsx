@@ -918,7 +918,7 @@ const Index = () => {
             margin: 0 !important;
           }
           .hero-right-col > div {
-            max-width: 310px !important;
+            max-width: 220px !important;
             margin: 0 !important;
             padding: 0 !important;
           }
@@ -1013,11 +1013,11 @@ const Index = () => {
           <div ref={heroRightRef} className="hero-right-col lg:col-span-6 relative flex justify-center items-center h-full min-h-0 z-10 select-none py-2 lg:py-0 w-full">
 
             {/* The 3D Ball Element Graphic */}
-            <div className="relative w-[90%] max-w-[390px] sm:max-w-[390px] md:max-w-[440px] lg:max-w-none">
+            <div className="relative w-[90%] max-w-[390px] sm:max-w-[390px] md:max-w-[440px] lg:max-w-none max-h-[30vh] sm:max-h-[35vh] lg:max-h-none flex justify-center items-center">
               <img
                 src="/ball-element.png"
                 alt="iZone Core System"
-                className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(47,133,90,0.1)]"
+                className="max-w-full max-h-full object-contain drop-shadow-[0_20px_40px_rgba(47,133,90,0.1)]"
               />
 
               {/* Badge 1: AI Integration (Top Left) */}
