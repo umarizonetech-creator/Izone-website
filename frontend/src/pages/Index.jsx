@@ -926,7 +926,7 @@ const Index = () => {
       `}</style>
 
       {/* Hero Section */}
-      <section className="relative w-full h-[calc(100vh-5rem)] h-[calc(100svh-5rem)] md:h-[calc(100vh-5.5rem)] md:h-[calc(100svh-5.5rem)] xl:h-[calc(100vh-6rem)] xl:h-[calc(100svh-6rem)] pb-[env(safe-area-inset-bottom)] bg-gradient-to-br from-[#f7faf8] via-[#ffffff] to-[#eff5f1] dark:from-zinc-950 dark:to-zinc-900 overflow-hidden flex flex-col font-sans select-none justify-between border-b border-zinc-200/30 dark:border-zinc-800/20">
+      <section className="relative w-full h-[calc(100vh-5rem)] h-[calc(100svh-5rem)] md:h-[calc(100vh-5.5rem)] md:h-[calc(100svh-5.5rem)] xl:h-[calc(100vh-6rem)] xl:h-[calc(100svh-6rem)] bg-gradient-to-br from-[#f7faf8] via-[#ffffff] to-[#eff5f1] dark:from-zinc-950 dark:to-zinc-900 overflow-hidden flex flex-col font-sans select-none justify-between border-b border-zinc-200/30 dark:border-zinc-800/20">
 
         {/* Subtle grid pattern background */}
         <div className="absolute inset-0 opacity-[0.15] dark:opacity-[0.02] pointer-events-none bg-[linear-gradient(to_right,#e3ebe6_1px,transparent_1px),linear-gradient(to_bottom,#e3ebe6_1px,transparent_1px)] bg-[size:4rem_4rem] z-0" />
@@ -938,7 +938,7 @@ const Index = () => {
         </div>
 
         {/* 2. Main Content Area */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col lg:grid lg:grid-cols-12 items-center justify-around lg:justify-between py-4 lg:py-0 overflow-hidden">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col lg:grid lg:grid-cols-12 items-center justify-around pt-4 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:py-0 overflow-hidden">
 
           {/* Left Column: Headline, CTAs */}
           <div className="hero-left-col lg:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left gap-3.5 lg:gap-5 pt-8 pb-4 lg:py-6 z-10 lg:pr-8 h-full justify-center">
@@ -1075,7 +1075,7 @@ const Index = () => {
         </div>
 
         {/* 3. Full-width Infinite Horizontal Scrolling Marquee */}
-        <div ref={marqueeRef} className="relative z-30 w-full border-t border-zinc-200/50 dark:border-zinc-800/30 bg-[#f7faf8]/80 dark:bg-zinc-950/40 py-4 lg:py-5 overflow-hidden select-none backdrop-blur-sm">
+        <div ref={marqueeRef} className="absolute bottom-0 left-0 z-30 w-full border-t border-zinc-200/50 dark:border-zinc-800/30 bg-[#f7faf8]/80 dark:bg-zinc-950/40 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] lg:py-5 overflow-hidden select-none backdrop-blur-sm">
           <div className="flex whitespace-nowrap overflow-hidden">
             {/* Track 1 */}
             <div className="flex shrink-0 items-center justify-around min-w-full animate-marquee gap-8 md:gap-12">
