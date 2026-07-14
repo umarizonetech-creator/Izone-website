@@ -694,7 +694,7 @@ const About = () => {
       </section>
 
       {/* Life at Izone */}
-      <section className="section-padding !pt-10 !pb-12 md:!pt-12 md:!pb-16 bg-card/40">
+      {/* <section className="section-padding !pt-10 !pb-12 md:!pt-12 md:!pb-16 bg-card/40">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -745,6 +745,89 @@ const About = () => {
                     </div>
                   ) : (
                     <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors" />
+                  )}
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section> */}
+
+      {/* Life at Izone */}
+      <section className="section-padding !pt-10 !pb-12 md:!pt-12 md:!pb-16 bg-card/40">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10 md:mb-12"
+          >
+            <span className="text-primary font-medium">Life at Izone</span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold mt-2">
+              Behind the Scenes
+            </h2>
+          </motion.div>
+
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid grid-cols-2 md:grid-cols-3 gap-4"
+          >
+            {visibleLifeImages.map((image, index) => {
+              const isLastTile =
+                index === MAX_VISIBLE_LIFE_IMAGES - 1 &&
+                lifeImages.length > MAX_VISIBLE_LIFE_IMAGES;
+
+              const remaining = lifeImages.length - MAX_VISIBLE_LIFE_IMAGES;
+
+              return (
+                <motion.div
+                  key={image.id}
+                  variants={itemVariants}
+                  className="relative overflow-hidden rounded-xl aspect-video group cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() =>
+                    openLifeImage(
+                      isLastTile
+                        ? lifeImages[MAX_VISIBLE_LIFE_IMAGES - 1]
+                        : image
+                    )
+                  }
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      openLifeImage(
+                        isLastTile
+                          ? lifeImages[MAX_VISIBLE_LIFE_IMAGES - 1]
+                          : image
+                      );
+                    }
+                  }}
+                >
+                  <img
+                    src={image.url}
+                    alt={image.name || `Life at Izone ${index + 1}`}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                    decoding="async"
+                    draggable={false}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+
+                  {isLastTile ? (
+                    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-1">
+                      <span className="text-white text-3xl font-bold">
+                        +{remaining}
+                      </span>
+                      <span className="text-white/80 text-sm font-medium">
+                        See All
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-300" />
                   )}
                 </motion.div>
               );
