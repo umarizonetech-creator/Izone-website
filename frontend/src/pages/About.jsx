@@ -168,7 +168,7 @@ const timelinePath =
   "M 0,50 Q 100,5 200,50 T 400,50 T 600,50 T 800,50 T 1000,50";
 
 const About = () => {
-  const { sitePhotos = [], refreshSitePhotos, teamMembers = [], departments = [] } = useAdmin() || {};
+  const { sitePhotos = [], refreshSitePhotos, teamMembers = [], departments = [], ensureLoaded, } = useAdmin() || {};
   // Mission / Vision cards: track whether each one is currently scrolled
   // into view so the "hover" glow/animation plays while scrolling instead
   // of only on mouse hover.
@@ -181,6 +181,9 @@ const About = () => {
 
   useEffect(() => {
     refreshSitePhotos?.();
+    ensureLoaded?.("team");
+    ensureLoaded?.("departments");
+
   }, []);
   const timelineRef = useRef(null);
   const timelineScrollRef = useRef(null);
