@@ -108,23 +108,44 @@ export default function StorytellingSection() {
       gsap.set(inlineElements, { clearProps: "all" });
       gsap.set(targetElements, { clearProps: "all" });
 
+      // Timeline 1: Entry reveals (Heading and Paragraph) when section enters bottom 25% of viewport
+      const tlEntry = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 75%", // Triggers when top of section is 25% from the bottom of the viewport
+          toggleActions: "play none none reverse",
+          invalidateOnRefresh: true,
+        }
+      });
+
+      const headingBadge = containerRef.current.querySelector(".section-heading-badge");
+      const headingSubtext = containerRef.current.querySelector(".section-heading-subtext");
+      
+      if (headingBadge && headingSubtext) {
+        tlEntry.fromTo(headingBadge, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" })
+               .fromTo(headingSubtext, { opacity: 0, y: -15 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.35")
+               .fromTo(paragraphRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=0.3");
+      } else {
+        tlEntry.fromTo(paragraphRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" });
+      }
+
+      // Timeline 2: Scrubbed timeline for pinned phases (highlights, gather, focus)
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1.2,
+          scrub: 0.6,
           pin: stickyRef.current,
           invalidateOnRefresh: true,
         },
       });
 
-      // Phase 1: Paragraph Reveal (Fade in container)
-      tl.fromTo(
-        paragraphRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 1.5, ease: "power2.out" }
-      );
+      // Phase 0: Fade out scroll indicator immediately on scroll start
+      const scrollIndicator = containerRef.current.querySelector("#scroll-indicator");
+      if (scrollIndicator) {
+        tl.to(scrollIndicator, { opacity: 0, y: 15, duration: 1, ease: "power2.out" }, 0);
+      }
 
       // Phase 2: Highlight Important Words (Color & Font weight change)
       tl.to(
@@ -137,15 +158,15 @@ export default function StorytellingSection() {
           stagger: 0.3,
           ease: "power2.out",
         },
-        "+=0.3"
+        "+=0.1"
       );
 
-      // Phase 3: Fade Away Unimportant Words (Normal words go transparent)
+      // Phase 3: Fade Away Unimportant Words (Normal words go fully transparent)
       const normalElements = paragraphRef.current.querySelectorAll(".word-normal");
       tl.to(
         normalElements,
         {
-          opacity: 0.05,
+          opacity: 0,
           duration: 1.5,
           stagger: 0.08,
           ease: "power2.inOut",
@@ -153,7 +174,7 @@ export default function StorytellingSection() {
         "+=0.3"
       );
 
-      // Phase 4: Gather Highlighted Words (Move from paragraph to vertical center list)
+      // Phase 4: Gather Highlighted Words sequentially WHILE SCROLLING (Move one by one - Slower speed)
       calculations.forEach((calc, index) => {
         tl.to(
           calc.el,
@@ -162,22 +183,25 @@ export default function StorytellingSection() {
             y: calc.deltaY,
             scale: calc.scaleRatio,
             fontWeight: "800",
-            duration: 3,
-            ease: "power3.inOut",
+            duration: 2.2,
+            force3D: true,
+            ease: "power2.inOut",
           },
-          index === 0 ? "+=0.3" : "<" // Animate them simultaneously
+          index === 0 ? "+=0.4" : "+=0.4" // Slower, more gradual scroll staggers
         );
       });
 
-      // Phase 5: Focus Animation (Sequential scaling of gathered items one by one, keeping the scaled state)
+      // Phase 5: Focus Animation sequentially WHILE SCROLLING (Scale up gathered items one by one, keeping the scaled state)
       calculations.forEach((calc) => {
         tl.to(
           calc.el,
           {
             scale: calc.scaleRatio * 1.15,
-            duration: 0.6,
+            duration: 0.8,
+            force3D: true,
             ease: "power2.inOut",
-          }
+          },
+          "+=0.1" // Sequenced highlights
         );
       });
     }, containerRef);
@@ -189,7 +213,7 @@ export default function StorytellingSection() {
     <div
       ref={containerRef}
       className="relative w-full bg-slate-50 dark:bg-[#030712] transition-colors duration-300"
-      style={{ height: "450vh" }} // Provides ample scroll distance
+      style={{ height: "280vh" }} // Provides snappier scroll distance
     >
       {/* Sticky viewport container */}
       <div
@@ -202,10 +226,10 @@ export default function StorytellingSection() {
 
         {/* Section Heading Tag */}
         <div className="absolute top-[7.5rem] sm:top-[8.5rem] lg:top-[9rem] z-20 flex flex-col items-center gap-2">
-          <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+          <span className="section-heading-badge text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
             Our Purpose
           </span>
-          <p className="text-xs text-muted-foreground">Scroll to explore our engineering philosophy</p>
+          <p className="section-heading-subtext text-xs text-muted-foreground">Scroll to explore our engineering philosophy</p>
         </div>
 
         {/* Main Content Area */}
@@ -222,7 +246,7 @@ export default function StorytellingSection() {
                 return (
                   <React.Fragment key={idx}>
                     <span
-                      className="word-highlighted inline-block text-slate-400 dark:text-zinc-600 transition-shadow duration-300 transform-gpu"
+                      className="word-highlighted inline-block text-slate-400 dark:text-zinc-600 transition-shadow duration-300 transform-gpu will-change-transform"
                     >
                       {word.text}
                     </span>
@@ -233,7 +257,7 @@ export default function StorytellingSection() {
               return (
                 <React.Fragment key={idx}>
                   <span
-                    className="word-normal inline-block text-slate-400 dark:text-zinc-600 transform-gpu"
+                    className="word-normal inline-block text-slate-400 dark:text-zinc-600 transform-gpu will-change-[opacity]"
                   >
                     {word.text}
                   </span>
@@ -260,6 +284,19 @@ export default function StorytellingSection() {
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Scroll Down Indicator */}
+          <div
+            id="scroll-indicator"
+            className="absolute bottom-8 z-25 flex flex-col items-center gap-1.5 opacity-80"
+          >
+            <span className="text-[10px] uppercase tracking-[0.2em] text-slate-400 dark:text-zinc-500 font-bold">
+              Scroll Down
+            </span>
+            <div className="w-5 h-8 border-2 border-slate-300 dark:border-zinc-700 rounded-full flex justify-center p-1">
+              <div className="w-1 h-2 bg-primary rounded-full animate-scroll-mouse" />
             </div>
           </div>
 

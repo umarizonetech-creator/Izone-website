@@ -1887,6 +1887,15 @@ samp {
   }
 }
 
+@keyframes scroll-mouse {
+  0% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(6px); opacity: 0.3; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.animate-scroll-mouse {
+  animation: scroll-mouse 1.5s ease-in-out infinite;
+}
+
 /* Hide Adobe Acrobat Chrome extension in-page widget container */
 #shadow-container,
 [id^="adobe-acrobat"],

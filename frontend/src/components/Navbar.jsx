@@ -146,10 +146,7 @@ export function Navbar() {
     : "py-4 bg-background/95 backdrop-blur-md border-b border-border/70";
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.28, ease: "easeOut" }}
+    <nav
       className={`fixed top-0 left-0 z-[100] w-screen max-w-[100vw] overflow-x-clip transition-all duration-200 ${navSurface}`}
     >
       <div className="container-custom flex w-full max-w-full items-center justify-between gap-3 px-4 xl:max-w-none xl:px-10 2xl:px-14">
@@ -366,7 +363,7 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </nav>
   );
 }
 

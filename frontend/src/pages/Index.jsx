@@ -83,21 +83,37 @@ const TiltSpotlightCard = ({ children, className = "" }) => {
   const cardRef = useRef(null);
   const glowRef = useRef(null);
 
+  const xTo = useRef(null);
+  const yTo = useRef(null);
+  const opacityTo = useRef(null);
+  const rotateXTo = useRef(null);
+  const rotateYTo = useRef(null);
+
+  useEffect(() => {
+    if (glowRef.current) {
+      xTo.current = gsap.quickTo(glowRef.current, "left", { duration: 0.2, ease: "power3.out" });
+      yTo.current = gsap.quickTo(glowRef.current, "top", { duration: 0.2, ease: "power3.out" });
+      opacityTo.current = gsap.quickTo(glowRef.current, "opacity", { duration: 0.2, ease: "power3.out" });
+    }
+    if (cardRef.current) {
+      rotateXTo.current = gsap.quickTo(cardRef.current, "rotateX", { duration: 0.3, ease: "power2.out" });
+      rotateYTo.current = gsap.quickTo(cardRef.current, "rotateY", { duration: 0.3, ease: "power2.out" });
+      gsap.set(cardRef.current, { transformPerspective: 1000, force3D: true });
+    }
+  }, []);
+
   const handleMouseMove = (e) => {
     const card = cardRef.current;
-    const glow = glowRef.current;
+    if (!card) return;
     const rect = card.getBoundingClientRect();
 
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (glow) {
-      gsap.to(glow, {
-        left: `${x}px`,
-        top: `${y}px`,
-        opacity: 0.12,
-        duration: 0.2,
-      });
+    if (xTo.current && yTo.current && opacityTo.current) {
+      xTo.current(x);
+      yTo.current(y);
+      opacityTo.current(0.12);
     }
 
     const centerX = rect.width / 2;
@@ -105,32 +121,21 @@ const TiltSpotlightCard = ({ children, className = "" }) => {
     const rotateX = -((e.clientY - rect.top - centerY) / centerY) * 8; // Max 8 degrees tilt
     const rotateY = ((e.clientX - rect.left - centerX) / centerX) * 8;
 
-    gsap.to(card, {
-      rotateX: rotateX,
-      rotateY: rotateY,
-      transformPerspective: 1000,
-      ease: "power2.out",
-      duration: 0.3,
-    });
+    if (rotateXTo.current && rotateYTo.current) {
+      rotateXTo.current(rotateX);
+      rotateYTo.current(rotateY);
+    }
   };
 
   const handleMouseLeave = () => {
-    const card = cardRef.current;
-    const glow = glowRef.current;
-
-    if (glow) {
-      gsap.to(glow, {
-        opacity: 0,
-        duration: 0.5,
-      });
+    if (opacityTo.current) {
+      opacityTo.current(0);
     }
 
-    gsap.to(card, {
-      rotateX: 0,
-      rotateY: 0,
-      ease: "power2.out",
-      duration: 0.5,
-    });
+    if (rotateXTo.current && rotateYTo.current) {
+      rotateXTo.current(0);
+      rotateYTo.current(0);
+    }
   };
 
   return (
@@ -702,6 +707,9 @@ const Index = () => {
   const heroCtasRef = useRef(null);
   const heroRightRef = useRef(null);
   const marqueeRef = useRef(null);
+  const servicesGridRef = useRef(null);
+  const whyChooseGridRef = useRef(null);
+  const testimonialsGridRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -714,9 +722,9 @@ const Index = () => {
           "-=0.4"
         )
         .fromTo(
-          heroDescRef.current,
-          { opacity: 0, y: 15 },
-          { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+          heroDescRef.current.querySelectorAll(".hero-desc-line > span"),
+          { yPercent: 105, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" },
           "-=0.6"
         )
         .fromTo(
@@ -732,39 +740,181 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
+    const headers = document.querySelectorAll(".section-header-reveal");
+    
+    const ctx = gsap.context(() => {
+      headers.forEach((header) => {
+        const badge = header.querySelector(".reveal-badge");
+        const titleLines = header.querySelectorAll(".reveal-title-line > span");
+        const descLines = header.querySelectorAll(".reveal-desc-line > span");
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: header,
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        });
+
+        if (badge) {
+          tl.fromTo(badge, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
+        }
+        
+        if (titleLines.length > 0) {
+          tl.fromTo(titleLines, 
+            { yPercent: 105, opacity: 0 }, 
+            { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" }, 
+            badge ? "-=0.35" : 0
+          );
+        }
+
+        if (descLines.length > 0) {
+          tl.fromTo(descLines, 
+            { yPercent: 105, opacity: 0 }, 
+            { yPercent: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: "power3.out" }, 
+            titleLines.length > 0 ? "-=0.45" : 0
+          );
+        }
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    const grid = servicesGridRef.current;
+    if (!grid) return;
+
+    const cards = Array.from(grid.children);
+
+    const ctx = gsap.context(() => {
+      cards.forEach((card) => {
+        const icon = card.querySelector(".services-icon-wrap");
+        const title = card.querySelector(".services-card-title");
+        const desc = card.querySelector(".services-card-desc");
+        const footer = card.querySelector(".services-card-footer");
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: card,
+            start: "top 92%",
+            toggleActions: "play none none reverse",
+          }
+        });
+
+        tl.fromTo(card, 
+          { opacity: 0, y: 35 },
+          { opacity: 1, y: 0, duration: 0.75, ease: "power3.out" }
+        )
+        .fromTo(icon, 
+          { scale: 0.3, rotate: -25, opacity: 0 }, 
+          { scale: 1, rotate: 0, opacity: 1, duration: 0.55, ease: "back.out(1.5)" }, 
+          "-=0.5"
+        )
+        .fromTo(title, 
+          { opacity: 0, x: -15 }, 
+          { opacity: 1, x: 0, duration: 0.45, ease: "power2.out" }, 
+          "-=0.35"
+        )
+        .fromTo(desc, 
+          { opacity: 0, y: 8 }, 
+          { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 
+          "-=0.3"
+        )
+        .fromTo(footer, 
+          { opacity: 0, y: 12 }, 
+          { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 
+          "-=0.3"
+        );
+      });
+    }, grid);
+
+    return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    const grid = whyChooseGridRef.current;
+    if (!grid) return;
+
+    const cards = Array.from(grid.children);
+
+    const ctx = gsap.context(() => {
+      cards.forEach((card) => {
+        const icon = card.querySelector(".checklist-icon");
+        const titleSpan = card.querySelector(".checklist-title span > span");
+        const descSpan = card.querySelector(".checklist-desc span > span");
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: card,
+            start: "top 93%",
+            toggleActions: "play none none reverse",
+          }
+        });
+
+        tl.fromTo(card, 
+          { opacity: 0, y: 25 },
+          { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }
+        )
+        .fromTo(icon, 
+          { scale: 0, opacity: 0 }, 
+          { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.5)" }, 
+          "-=0.35"
+        )
+        .fromTo(titleSpan, 
+          { yPercent: 105, opacity: 0 }, 
+          { yPercent: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 
+          "-=0.25"
+        )
+        .fromTo(descSpan, 
+          { yPercent: 105, opacity: 0 }, 
+          { yPercent: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 
+          "-=0.25"
+        );
+      });
+    }, grid);
+
+    return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
     const container = heroRightRef.current;
     if (!container || isMobile) return;
+
+    // Cache quickTo operations
+    const rotateXTo = gsap.quickTo(container, "rotateX", { duration: 0.4, ease: "power2.out" });
+    const rotateYTo = gsap.quickTo(container, "rotateY", { duration: 0.4, ease: "power2.out" });
+    gsap.set(container, { transformPerspective: 1000, force3D: true });
+
+    const badges = container.querySelectorAll(".absolute");
+    const badgeXTo = Array.from(badges).map(badge => gsap.quickTo(badge, "x", { duration: 0.4, ease: "power2.out" }));
+    const badgeYTo = Array.from(badges).map(badge => gsap.quickTo(badge, "y", { duration: 0.4, ease: "power2.out" }));
 
     const handleMouseMove = (e) => {
       const rect = container.getBoundingClientRect();
       const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2); // -1 to 1
       const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2); // -1 to 1
 
-      gsap.to(container, {
-        rotateX: -y * 8,
-        rotateY: x * 8,
-        transformPerspective: 1000,
-        duration: 0.4,
-        ease: "power2.out"
-      });
+      rotateXTo(-y * 8);
+      rotateYTo(x * 8);
 
-      const badges = container.querySelectorAll(".absolute");
-      badges.forEach((badge, index) => {
+      badges.forEach((_, index) => {
         const factor = (index + 1) * 8;
-        gsap.to(badge, {
-          x: x * factor,
-          y: y * factor,
-          duration: 0.4,
-          ease: "power2.out"
-        });
+        if (badgeXTo[index] && badgeYTo[index]) {
+          badgeXTo[index](x * factor);
+          badgeYTo[index](y * factor);
+        }
       });
     };
 
     const handleMouseLeave = () => {
-      gsap.to(container, { rotateX: 0, rotateY: 0, duration: 0.8, ease: "power3.out" });
-      const badges = container.querySelectorAll(".absolute");
-      badges.forEach((badge) => {
-        gsap.to(badge, { x: 0, y: 0, duration: 0.8, ease: "power3.out" });
+      rotateXTo(0);
+      rotateYTo(0);
+      badges.forEach((_, index) => {
+        if (badgeXTo[index] && badgeYTo[index]) {
+          badgeXTo[index](0);
+          badgeYTo[index](0);
+        }
       });
     };
 
@@ -830,7 +980,7 @@ const Index = () => {
 
   const getTestimonialRating = (rating) => {
     const value = Number(rating);
-    return Number.isFinite(value) && value > 0 ? value : 5;
+    return Number.isFinite(value) && value > 0 ? Math.min(5, Math.max(1, Math.round(value))) : 5;
   };
 
   const getTestimonialAvatar = (testimonial) => {
@@ -840,6 +990,57 @@ const Index = () => {
   const getTestimonialRole = (testimonial) => {
     return testimonial.role || testimonial.position;
   };
+
+  useEffect(() => {
+    const grid = testimonialsGridRef.current;
+    if (!grid) return;
+
+    const cards = Array.from(grid.children);
+
+    const ctx = gsap.context(() => {
+      cards.forEach((card) => {
+        const quoteIcon = card.querySelector(".testimonial-quote");
+        const stars = card.querySelector(".testimonial-stars");
+        const text = card.querySelector(".testimonial-text");
+        const client = card.querySelector(".testimonial-client");
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: card,
+            start: "top 92%",
+            toggleActions: "play none none reverse",
+          }
+        });
+
+        tl.fromTo(card, 
+          { opacity: 0, y: 35 },
+          { opacity: 1, y: 0, duration: 0.75, ease: "power3.out" }
+        )
+        .fromTo(quoteIcon,
+          { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 0.1, duration: 0.5, ease: "back.out(1.5)" },
+          "-=0.5"
+        )
+        .fromTo(stars,
+          { opacity: 0, y: -5 },
+          { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+          "-=0.4"
+        )
+        .fromTo(text,
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+          "-=0.3"
+        )
+        .fromTo(client,
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+          "-=0.3"
+        );
+      });
+    }, grid);
+
+    return () => ctx.revert();
+  }, [displayedTestimonials]);
 
   const showPreviousTestimonials = () => {
     if (publicTestimonials.length === 0) return;
@@ -934,7 +1135,7 @@ const Index = () => {
           {/* Left Column: Headline, CTAs */}
           <div className="hero-left-col lg:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left gap-3.5 lg:gap-5 pt-8 pb-4 lg:py-6 z-10 lg:pr-8 h-full justify-center">
             {/* IT Sector Badge */}
-            <div ref={heroBadgeRef} className="inline-flex items-center gap-2 px-3 py-1 bg-[#eaf5ef]/90 dark:bg-emerald-950/40 border border-[#bce4cf] dark:border-emerald-800/30 rounded-full text-[8.5px] lg:text-[9px] font-bold tracking-wider text-[#2f855a] dark:text-[#6ba67e] uppercase">
+            <div ref={heroBadgeRef} style={{ opacity: 0 }} className="inline-flex items-center gap-2 px-3 py-1 bg-[#eaf5ef]/90 dark:bg-emerald-950/40 border border-[#bce4cf] dark:border-emerald-800/30 rounded-full text-[8.5px] lg:text-[9px] font-bold tracking-wider text-[#2f855a] dark:text-[#6ba67e] uppercase">
               <Sparkles size={10} className="fill-[#2f855a]" />
               An Information Technology Sector In Tamilnadu
             </div>
@@ -942,16 +1143,16 @@ const Index = () => {
             {/* Title */}
             <h1 ref={heroTitleRef} className="text-4xl sm:text-5xl lg:text-[2.8vw] xl:text-[3.3vw] font-[900] leading-[1.08] tracking-tight text-[#1a202c] dark:text-white select-none">
               <span className="hero-title-line block overflow-hidden">
-                <span className="inline-block">We Build</span>
+                <span className="inline-block" style={{ opacity: 0 }}>We Build</span>
               </span>
               <span className="hero-title-line block overflow-hidden">
-                <span className="inline-block text-[#2f855a] dark:text-[#6ba67e] font-[950] tracking-tight">Digital Excellence</span>
+                <span className="inline-block text-[#2f855a] dark:text-[#6ba67e] font-[950] tracking-tight" style={{ opacity: 0 }}>Digital Excellence</span>
               </span>
               <span className="hero-title-line block overflow-hidden">
-                <span className="inline-block">That Drives</span>
+                <span className="inline-block" style={{ opacity: 0 }}>That Drives</span>
               </span>
               <span className="hero-title-line block overflow-hidden">
-                <span className="inline-block">
+                <span className="inline-block" style={{ opacity: 0 }}>
                   <span className="relative inline-block px-1">
                     <span className="font-['Dancing_Script'] font-semibold text-[1.15em] text-[#2f855a] dark:text-[#6ba67e] tracking-normal lowercase italic pl-1.5">
                       success
@@ -973,16 +1174,23 @@ const Index = () => {
               </span>
             </h1>
 
-            {/* Description */}
-            <p ref={heroDescRef} className="text-[13px] sm:text-sm lg:text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0">
-              From modern websites and digital campaigns to SEO and growth, <span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone</span> is your trusted partner. 9 years. 100+ launches. One expert team.
+            <p ref={heroDescRef} className="text-[13px] sm:text-sm lg:text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0 flex flex-col gap-0.5">
+              <span className="hero-desc-line block overflow-hidden">
+                <span className="inline-block" style={{ opacity: 0 }}>From modern websites and digital campaigns</span>
+              </span>
+              <span className="hero-desc-line block overflow-hidden">
+                <span className="inline-block" style={{ opacity: 0 }}>to SEO and growth, <span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone</span> is your trusted partner.</span>
+              </span>
+              <span className="hero-desc-line block overflow-hidden">
+                <span className="inline-block" style={{ opacity: 0 }}>9 years. 100+ launches. One expert team.</span>
+              </span>
             </p>
 
             {/* CTA Buttons */}
             <div ref={heroCtasRef} className="flex flex-row justify-center lg:justify-start gap-2.5 w-full sm:w-auto mt-1 lg:mt-2">
               <Magnetic>
                 <Link to="/portfolio" className="w-auto">
-                  <button className="w-auto flex items-center justify-center gap-2 bg-[#2f855a] hover:bg-[#276749] text-white px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-lg shadow-emerald-500/10 active:scale-95 transition-all duration-300">
+                  <button style={{ opacity: 0 }} className="w-auto flex items-center justify-center gap-2 bg-[#2f855a] hover:bg-[#276749] text-white px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-lg shadow-emerald-500/10 active:scale-95 transition-all duration-300">
                     Explore Our Work
                     <div className="w-4.5 h-4.5 rounded-full bg-white flex items-center justify-center text-[#2f855a]">
                       <ArrowUpRight size={10} />
@@ -993,7 +1201,7 @@ const Index = () => {
 
               <Magnetic>
                 <Link to="/services" className="w-auto">
-                  <button className="w-auto flex items-center justify-center gap-2 bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-sm hover:shadow-md hover:bg-zinc-50 transition-all duration-300">
+                  <button style={{ opacity: 0 }} className="w-auto flex items-center justify-center gap-2 bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-full text-xs lg:text-sm font-bold shadow-sm hover:shadow-md hover:bg-zinc-50 transition-all duration-300">
                     Our Services
                     <LayoutGrid size={10} className="text-[#2f855a]" />
                   </button>
@@ -1003,7 +1211,7 @@ const Index = () => {
           </div>
 
           {/* Right Column: Ball Element Mockup with Floating Cards */}
-          <div ref={heroRightRef} className="hero-right-col lg:col-span-6 relative flex justify-center items-center h-full min-h-0 z-10 select-none py-2 lg:py-0 w-full">
+          <div ref={heroRightRef} style={{ opacity: 0 }} className="hero-right-col lg:col-span-6 relative flex justify-center items-center h-full min-h-0 z-10 select-none py-2 lg:py-0 w-full">
 
             {/* The 3D Ball Element Graphic */}
             <div className="relative w-[90%] max-w-[390px] sm:max-w-[390px] md:max-w-[440px] lg:max-w-none max-h-[30vh] sm:max-h-[35vh] lg:max-h-none flex justify-center items-center">
@@ -1068,7 +1276,7 @@ const Index = () => {
         </div>
 
         {/* 3. Full-width Infinite Horizontal Scrolling Marquee */}
-        <div ref={marqueeRef} className="relative z-30 w-full border-t border-zinc-200/50 dark:border-zinc-800/30 bg-[#f7faf8]/80 dark:bg-zinc-950/40 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] lg:py-5 overflow-hidden select-none backdrop-blur-sm">
+        <div ref={marqueeRef} style={{ opacity: 0 }} className="relative z-30 w-full border-t border-zinc-200/50 dark:border-zinc-800/30 bg-[#f7faf8]/80 dark:bg-zinc-950/40 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] lg:py-5 overflow-hidden select-none backdrop-blur-sm">
           <div className="flex whitespace-nowrap overflow-hidden">
             {/* Track 1 */}
             <div className="flex shrink-0 items-center justify-around min-w-full animate-marquee gap-8 md:gap-12">
@@ -1099,24 +1307,31 @@ const Index = () => {
         <div className="absolute top-1/2 left-0 w-80 h-80 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
         <div className="container-custom relative z-10">
 
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+          <div className="section-header-reveal text-center mb-16 max-w-2xl mx-auto flex flex-col items-center gap-4">
+            <span className="reveal-badge text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
               Our Services
             </span>
-            <h2 className="font-display text-4xl md:text-5xl font-extrabold mt-4 tracking-tight text-zinc-900 dark:text-white uppercase">
-              <SplitTextReveal>What We Offer</SplitTextReveal>
+            <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white uppercase overflow-hidden">
+              <span className="reveal-title-line block overflow-hidden">
+                <span className="inline-block">What We Offer</span>
+              </span>
             </h2>
-            <p className="mt-4 text-muted-foreground text-sm leading-relaxed">
-              We design and construct digital products engineered for efficiency, speed, and massive business growth.
+            <p className="text-muted-foreground text-sm leading-relaxed flex flex-col gap-0.5 max-w-lg">
+              <span className="reveal-desc-line block overflow-hidden">
+                <span className="inline-block">We design and construct digital products</span>
+              </span>
+              <span className="reveal-desc-line block overflow-hidden">
+                <span className="inline-block">engineered for efficiency, speed, and massive business growth.</span>
+              </span>
             </p>
           </div>
 
           {/* Premium Bento Grid Services with 3D Tilt & cursor spotlights */}
-          <ScrollStaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div ref={servicesGridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {services.map((service, index) => {
               const IconComponent = service.icon;
               return (
-                <div key={index}>
+                <div key={index} className="opacity-0">
                   <TiltSpotlightCard className="group relative flex flex-col justify-between p-8 rounded-3xl border border-slate-200/50 bg-white/40 dark:border-slate-800/40 dark:bg-zinc-950/20 backdrop-blur-md hover:border-primary/40 shadow-sm transition-all duration-500 overflow-hidden h-full">
                     {/* Corner Tech Border Accent */}
                     <div className="absolute top-0 right-0 w-24 h-[1px] bg-primary/30 scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500" />
@@ -1124,17 +1339,17 @@ const Index = () => {
 
                     <div>
                       {/* Icon */}
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-[1.08] group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner">
+                      <div className="services-icon-wrap w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-[1.08] group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner">
                         <IconComponent className="w-5 h-5" />
                       </div>
 
                       {/* Title */}
-                      <h3 className="font-display text-xl font-bold mt-6 mb-3 text-zinc-900 dark:text-white tracking-tight group-hover:text-primary transition-colors duration-300">
+                      <h3 className="services-card-title font-display text-xl font-bold mt-6 mb-3 text-zinc-900 dark:text-white tracking-tight group-hover:text-primary transition-colors duration-300">
                         {service.title}
                       </h3>
 
                       {/* Desc */}
-                      <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                      <p className="services-card-desc text-muted-foreground text-sm leading-relaxed mb-4">
                         {service.description}
                       </p>
 
@@ -1147,7 +1362,7 @@ const Index = () => {
                     </div>
 
                     {/* Tags */}
-                    <div className="mt-8 flex flex-col gap-4">
+                    <div className="services-card-footer mt-8 flex flex-col gap-4">
                       <div className="flex flex-wrap gap-1.5">
                         {service.tags.map((tag, tagIdx) => (
                           <span
@@ -1170,7 +1385,7 @@ const Index = () => {
                 </div>
               );
             })}
-          </ScrollStaggerContainer>
+          </div>
 
         </div>
       </section>
@@ -1198,34 +1413,57 @@ const Index = () => {
 
             {/* Left Column Content */}
             <div className="lg:col-span-6">
-              <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
-                Why Choose Us
-              </span>
-              <h2 className="font-display text-4xl md:text-5xl font-extrabold mt-6 mb-6 tracking-tight leading-tight">
-                <SplitTextReveal>A technology partner you can build the next decade with.</SplitTextReveal>
-              </h2>
-              <p className="text-muted-foreground text-sm leading-relaxed text-justify mb-8 max-w-xl">
-                With over a decade of experience, we've mastered the art of creating digital solutions that drive results. Our team of expert developers, designers, and strategists work together to deliver excellence.
-              </p>
+              <div className="section-header-reveal flex flex-col items-start gap-4 mb-6">
+                <span className="reveal-badge text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+                  Why Choose Us
+                </span>
+                <h2 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-zinc-900 dark:text-white uppercase overflow-hidden">
+                  <span className="reveal-title-line block overflow-hidden">
+                    <span className="inline-block">A technology partner you</span>
+                  </span>
+                  <span className="reveal-title-line block overflow-hidden">
+                    <span className="inline-block">can build the next decade with.</span>
+                  </span>
+                </h2>
+                 <p className="reveal-desc text-muted-foreground text-sm leading-relaxed text-justify flex flex-col gap-0.5 max-w-xl">
+                  <span className="reveal-desc-line block overflow-hidden">
+                    <span className="inline-block">With over a decade of experience, we've mastered the art of</span>
+                  </span>
+                  <span className="reveal-desc-line block overflow-hidden">
+                    <span className="inline-block">creating digital solutions that drive results. Our team of expert developers,</span>
+                  </span>
+                  <span className="reveal-desc-line block overflow-hidden">
+                    <span className="inline-block">designers, and strategists work together to deliver excellence.</span>
+                  </span>
+                </p>
+              </div>
 
               {/* Checklist list with GSAP stagger triggers */}
-              <ScrollStaggerContainer className="space-y-5 text-justify max-w-xl" start="top 90%">
+              <div ref={whyChooseGridRef} className="space-y-5 text-justify max-w-xl">
                 {[
-                  { icon: Users, title: "Discovery Before Code", desc: "Every project starts with a clear scope, a defined success metric, and a written plan you can hold us to." },
-                  { icon: Award, title: "Engineering First Philosophy", desc: "We build for performance, observability, security, and the day someone else has to maintain the codebase." },
-                  { icon: Zap, title: "Built For Massive Scale", desc: "Architectural design choices capable of handling 10x user scaling, supported by dedicated SLAs." },
+                  { icon: Users, title: "Discovery Before Code", desc: "Every project starts with a clear scope, a defined success metric, and a written plan." },
+                  { icon: Award, title: "Engineering First Philosophy", desc: "We build for performance, security, and the day someone else maintains the codebase." },
+                  { icon: Zap, title: "Built For Massive Scale", desc: "Architectural design choices capable of handling 10x user scaling, supported by SLAs." },
                 ].map((item, index) => (
-                  <div key={index} className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 dark:border-zinc-900 hover:border-primary/20 dark:hover:border-primary/20 transition-colors duration-300">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                  <div key={index} className="opacity-0 flex items-start gap-4 p-4 rounded-2xl border border-slate-100 dark:border-zinc-900 hover:border-primary/20 dark:hover:border-primary/20 transition-colors duration-300">
+                    <div className="checklist-icon w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
                       <item.icon className="w-5 h-5" />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-sm text-foreground mb-1">{item.title}</h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                    <div className="flex-1 overflow-hidden">
+                      <h4 className="checklist-title font-bold text-sm text-foreground mb-1 overflow-hidden">
+                        <span className="block overflow-hidden">
+                          <span className="inline-block">{item.title}</span>
+                        </span>
+                      </h4>
+                      <p className="checklist-desc text-xs text-muted-foreground leading-relaxed overflow-hidden">
+                        <span className="block overflow-hidden">
+                          <span className="inline-block">{item.desc}</span>
+                        </span>
+                      </p>
                     </div>
                   </div>
                 ))}
-              </ScrollStaggerContainer>
+              </div>
 
               <div className="mt-10">
                 <Magnetic>
@@ -1286,12 +1524,14 @@ const Index = () => {
         <div className="container-custom">
 
           <div className="relative mb-12 md:mb-16">
-            <div className="flex flex-col items-center text-center">
-              <span className="font-['Dancing_Script'] text-primary text-3xl md:text-4xl font-bold -rotate-2">
+            <div className="section-header-reveal flex flex-col items-center text-center gap-2">
+              <span className="reveal-badge font-['Dancing_Script'] text-primary text-3xl md:text-4xl font-bold -rotate-2">
                 Client
               </span>
-              <h2 className="font-display font-extrabold text-4xl md:text-5xl uppercase tracking-tighter text-zinc-900 dark:text-white mt-1">
-                <SplitTextReveal>Testimonials</SplitTextReveal>
+              <h2 className="font-display font-extrabold text-4xl md:text-5xl uppercase tracking-tighter text-zinc-900 dark:text-white mt-1 overflow-hidden">
+                <span className="reveal-title-line block overflow-hidden">
+                  <span className="inline-block">Testimonials</span>
+                </span>
               </h2>
             </div>
 
@@ -1317,29 +1557,31 @@ const Index = () => {
             )}
           </div>
 
-          <ScrollStaggerContainer className="grid grid-cols-1 justify-items-center gap-8 md:grid-cols-2 xl:grid-cols-3">
+          <div ref={testimonialsGridRef} className="grid grid-cols-1 justify-items-center gap-8 md:grid-cols-2 xl:grid-cols-3">
             {displayedTestimonials.map((testimonial, index) => (
               <div
                 key={`${isMobile ? "mobile" : isTablet ? "tablet" : "desktop"}-${testimonialIndex}-${index}`}
-                className="w-full max-w-[370px] md:max-w-none xl:max-w-[370px]"
+                className="w-full max-w-[370px] md:max-w-none xl:max-w-[370px] opacity-0"
               >
                 {/* 3D Tilt test card */}
                 <TiltSpotlightCard className="relative overflow-hidden min-h-[350px] p-8 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-zinc-900/60 shadow-xl flex flex-col justify-between transition-all duration-300 hover:border-primary/30 h-full">
-                  <Quote className="absolute top-6 left-6 w-12 h-12 text-primary/5 dark:text-primary/10 -scale-x-100" />
+                  <Quote className="testimonial-quote absolute top-6 left-6 w-12 h-12 text-primary/5 dark:text-primary/10 -scale-x-100 opacity-10" />
 
-                  <div className="relative z-10">
-                    <div className="flex gap-1 mb-6">
+                  <div>
+                    {/* Rating stars */}
+                    <div className="testimonial-stars flex items-center gap-1 mb-6">
                       {[...Array(getTestimonialRating(testimonial.rating))].map((_, i) => (
                         <Star key={i} className="w-4 h-4 fill-[#16A34A] text-[#16A34A]" />
                       ))}
                     </div>
 
-                    <p className="text-zinc-600 dark:text-zinc-300 text-sm sm:text-base leading-relaxed italic mb-6">
+                    {/* Testimonial text */}
+                    <p className="testimonial-text text-zinc-600 dark:text-zinc-300 text-sm leading-relaxed italic mb-6">
                       "{testimonial.quote}"
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-4 border-t border-slate-100 dark:border-zinc-800/80 pt-6 mt-auto">
+                  <div className="testimonial-client flex items-center gap-4 border-t border-slate-100 dark:border-zinc-800/80 pt-6 mt-auto">
                     <img
                       src={getTestimonialAvatar(testimonial)}
                       alt={testimonial.author}
@@ -1355,7 +1597,7 @@ const Index = () => {
                 </TiltSpotlightCard>
               </div>
             ))}
-          </ScrollStaggerContainer>
+          </div>
 
         </div>
       </section>
@@ -1385,17 +1627,24 @@ const Index = () => {
 
             <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
 
-              <span className="text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20 mb-6">
-                Let's Collaborate
-              </span>
-
-              <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-6 tracking-tight leading-tight">
-                <SplitTextReveal>Ready to Start Your Project?</SplitTextReveal>
-              </h2>
-
-              <p className="text-muted-foreground text-sm sm:text-base max-w-xl mb-10 leading-relaxed">
-                Let's build something extraordinary together. Get in touch with our team and let's discuss how we can bring your vision to life.
-              </p>
+              <div className="section-header-reveal flex flex-col items-center text-center gap-4 mb-6">
+                <span className="reveal-badge text-xs uppercase tracking-[0.25em] font-semibold text-primary px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+                  Let's Collaborate
+                </span>
+                <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight leading-tight text-zinc-900 dark:text-white uppercase overflow-hidden">
+                  <span className="reveal-title-line block overflow-hidden">
+                    <span className="inline-block">Ready to Start Your Project?</span>
+                  </span>
+                </h2>
+                <p className="text-muted-foreground text-sm sm:text-base max-w-xl leading-relaxed flex flex-col gap-0.5">
+                  <span className="reveal-desc-line block overflow-hidden">
+                    <span className="inline-block">Let's build something extraordinary together. Get in touch with our</span>
+                  </span>
+                  <span className="reveal-desc-line block overflow-hidden">
+                    <span className="inline-block">team and let's discuss how we can bring your vision to life.</span>
+                  </span>
+                </p>
+              </div>
 
               <ScrollStaggerContainer className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto" start="top 92%">
                 <Magnetic>
