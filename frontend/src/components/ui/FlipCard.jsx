@@ -56,7 +56,7 @@ export function FlipCard({
       className="perspective-1000 w-full"
     >
       <motion.div
-        className={`relative w-full min-h-[310px] sm:min-h-[330px] cursor-pointer touch-pan-y ${
+        className={`group relative w-full min-h-[310px] sm:min-h-[330px] cursor-pointer touch-pan-y ${
           desktopComfort ? "md:min-h-[360px] lg:min-h-[380px]" : ""
         } ${
           serviceLayout ? "min-h-[380px] sm:h-[380px]" : ""
@@ -73,7 +73,11 @@ export function FlipCard({
           className="absolute inset-0 glass-card glow-border hover-glow backface-hidden flex flex-col overflow-hidden"
           style={{ backfaceVisibility: "hidden" }}
         >
-          <div className="flex-1 p-5 sm:p-6 pb-2">
+          {/* Decorative hover accents — reused light-green color from "Life at IZONE" */}
+          <div className="pointer-events-none absolute -top-10 -right-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-primary/25 blur-2xl opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 ease-out z-0" />
+          <div className="pointer-events-none absolute -bottom-10 -left-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-primary/25 blur-2xl opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 ease-out delay-75 z-0" />
+
+          <div className="relative z-10 flex-1 p-5 sm:p-6 pb-2">
             <div className="flex items-start gap-3 sm:gap-4 mb-4">
               {icon && (
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -112,7 +116,7 @@ export function FlipCard({
             )}
           </div>
 
-          <div className="px-5 pb-5 sm:px-6 sm:pb-6 text-right text-primary text-xs font-medium">
+          <div className="relative z-10 px-5 pb-5 sm:px-6 sm:pb-6 text-right text-primary text-xs font-medium">
             Click to flip
           </div>
         </div>
