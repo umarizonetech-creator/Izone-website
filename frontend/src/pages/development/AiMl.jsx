@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import Layout from "../../components/Layout";
+import PageHero from "../../components/PageHero";
 import FlipCard from "../../components/ui/FlipCard";
 
 const services = [
@@ -123,28 +124,14 @@ const containerVariants = {
 const AiMl = () => {
   return (
     <Layout>
-      <section className="mt-0 pt-20 sm:pt-36 md:pt-40 pb-0 md:pb-24  md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
-              AI & Machine Learning
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Intelligent Solutions
-              <span className="gradient-text block">Powered by AI</span>
-            </h1>
-            <p className="text-lg text-muted-foreground text-justify p-3 md:text-center lg:text-center">
-              Transform your business with cutting-edge artificial intelligence and machine learning solutions built for real-world impact.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={Brain}
+        badgeText="AI & Machine Learning"
+        titleLine1="Intelligent Solutions"
+        titleLine2="Powered by AI"
+        description="Transform your business with cutting-edge artificial intelligence and machine learning solutions built for real-world impact."
+        floatingIcons={[Brain, Bot, LineChart, Workflow]}
+      />
 
       <section className="section-padding">
         <div className="container-custom">

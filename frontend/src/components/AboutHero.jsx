@@ -255,7 +255,7 @@ const AboutHero = () => {
               <motion.img
                 animate={{ scale: [1.04, 1.1, 1.04] }}
                 transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&h=1600&fit=crop"
+                src="/hero/about-hero.png"
                 alt="About Izone showcase"
                 className="absolute inset-0 h-full w-full object-cover object-center"
               />

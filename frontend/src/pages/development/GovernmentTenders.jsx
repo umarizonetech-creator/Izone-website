@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import Layout from "../../components/Layout";
+import PageHero from "../../components/PageHero";
 import FlipCard from "../../components/ui/FlipCard";
 
 const services = [
@@ -123,28 +124,14 @@ const containerVariants = {
 const GovernmentTenders = () => {
   return (
     <Layout>
-      <section className="mt-5 pt-20 sm:pt-36 md:pt-40 pb-0 md:pb-24  md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
-              Government Tenders
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Government Tender
-              <span className="gradient-text block">Solutions</span>
-            </h1>
-            <p className="text-lg text-muted-foreground text-justify p-3 md:text-center lg:text-center">
-              Digital platforms that simplify Government procurement, connecting vendors, contractors, and deparments seamlessly.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={Landmark}
+        badgeText="Government Tenders"
+        titleLine1="Government Tender"
+        titleLine2="Solutions"
+        description="Digital platforms that simplify Government procurement, connecting vendors, contractors, and deparments seamlessly."
+        floatingIcons={[Briefcase, FileCheck2, SearchCheck, Shield]}
+      />
 
       <section className="section-padding">
         <div className="container-custom">

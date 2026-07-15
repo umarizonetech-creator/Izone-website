@@ -3,6 +3,7 @@ import { Code, Palette, Settings, Headphones, ArrowRight, Check, Globe2 } from '
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
+import PageHero from '@/components/PageHero';
 import ScrollWorksSection from "@/components/ui/ScrollWorksSection";
 
 const services = [
@@ -112,34 +113,15 @@ const WebDevelopment = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="mt-5 pt-20 sm:pt-36 md:pt-40 pb-0 md:pb-24  md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
-              Web Development
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Modern Websites
-              <span className="gradient-text block">Built to Grow</span>
-            </h1>
-            <p className="text-lg text-muted-foreground text-justify p-3 md:text-center lg:text-center ">
-              We build responsive, scalable and SEO-friendly websites that represent your brand perfectly and drive results.
-            </p>
-            <Link to="/get-started" className="mt-9 inline-flex">
-              <Button size="lg" className="rounded-full bg-primary px-7 py-5 text-white">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={Globe2}
+        badgeText="Web Development"
+        titleLine1="Modern Websites"
+        titleLine2="Built to Grow"
+        description="We build responsive, scalable and SEO-friendly websites that represent your brand perfectly and drive results."
+        floatingIcons={[Code, Palette, Settings, Headphones]}
+        actions={[{ label: 'Get Started', icon: ArrowRight, to: '/get-started' }]}
+      />
 
       {/* Services Grid */}
       <section id="services" className="section-padding">

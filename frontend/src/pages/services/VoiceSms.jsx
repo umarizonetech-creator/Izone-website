@@ -3,6 +3,7 @@ import { Phone, Mic, Volume2, Radio, Settings, BarChart, ArrowRight } from 'luci
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
+import PageHero from '../../components/PageHero';
 import FlipCard from '../../components/ui/FlipCard';
 
 const services = [
@@ -67,29 +68,14 @@ const containerVariants = {
 const VoiceSms = () => {
   return (
     <Layout>
-      <section className="mt-5 pt-20 sm:pt-36 md:pt-40 pb-0 md:pb-24  md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
-              Voice SMS Services
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Voice That
-              <span className="gradient-text block">Resonates</span>
-            </h1>
-            <p className="text-lg text-muted-foreground text-justify p-3 md:text-center lg:text-center">
-              Deliver your message through powerful voice broadcasting 
-              and create lasting connections with your audience.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={Phone}
+        badgeText="Voice SMS Services"
+        titleLine1="Voice That"
+        titleLine2="Resonates"
+        description="Deliver your message through powerful voice broadcasting and create lasting connections with your audience."
+        floatingIcons={[Phone, Mic, Volume2, Radio]}
+      />
 
       <section className="section-padding">
         <div className="container-custom">

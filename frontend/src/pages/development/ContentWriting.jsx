@@ -3,6 +3,7 @@ import { PenTool, FileText, BookOpen, Search, Mail, Newspaper, ArrowRight } from
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
+import PageHero from '../../components/PageHero';
 import FlipCard from '../../components/ui/FlipCard';
 
 
@@ -69,29 +70,14 @@ const ContentWriting = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="mt-5 pt-20 sm:pt-36 md:pt-40 pb-0 md:pb-24  md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container-custom relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
-              Content Writing
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Words That
-              <span className="gradient-text block">Convert</span>
-            </h1>
-            <p className="text-lg text-muted-foreground p-3 text-justify md:text-center lg:text-center">
-              Professional content writing that engages your audience, 
-              builds trust, and drives business results.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        badgeIcon={PenTool}
+        badgeText="Content Writing"
+        titleLine1="Words That"
+        titleLine2="Convert"
+        description="Professional content writing that engages your audience, builds trust, and drives business results."
+        floatingIcons={[PenTool, FileText, BookOpen, Mail]}
+      />
 
       {/* Services Grid */}
       <section className="section-padding">
