@@ -39,7 +39,7 @@ import Layout from "@/components/Layout";
 import ScrollWorksSection from "@/components/ui/ScrollWorksSection";
 import { useAdmin } from "@/context/AdminContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import StorytellingSection from "@/components/StorytellingSection";
+import CorePillarsSection from "@/components/CorePillarsSection";
 const WebGLBackground = lazy(() => import("@/components/WebGLBackground"));
 import SplitTextReveal from "@/components/SplitTextReveal";
 import { gsap } from "gsap";
@@ -1306,8 +1306,8 @@ const Index = () => {
 
       </section>
 
-      {/* Storytelling Section */}
-      <StorytellingSection />
+      {/* Core Pillars Section */}
+      <CorePillarsSection />
 
       {/* Services Section */}
       <section className="section-padding bg-background text-zinc-900 dark:bg-[#030303] dark:text-white border-y border-slate-200/50 dark:border-zinc-900/60 relative overflow-hidden">
