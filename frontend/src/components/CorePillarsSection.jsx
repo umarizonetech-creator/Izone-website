@@ -90,7 +90,29 @@ export default function CorePillarsSection() {
       parent.addEventListener("mouseleave", handleMouseLeave);
     }
 
+    let isIntersecting = false;
+    const observer = new IntersectionObserver((entries) => {
+      const [entry] = entries;
+      isIntersecting = entry.isIntersecting;
+      if (isIntersecting) {
+        if (!animationFrameId) {
+          draw();
+        }
+      } else {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+      }
+    }, { threshold: 0.01 });
+
+    const containerEl = containerRef.current;
+    if (containerEl) {
+      observer.observe(containerEl);
+    }
+
     const draw = () => {
+      if (!isIntersecting) return;
       ctx.clearRect(0, 0, cssWidth, cssHeight);
       
       const isDark = document.documentElement.classList.contains("dark");
@@ -139,11 +161,12 @@ export default function CorePillarsSection() {
       animationFrameId = requestAnimationFrame(draw);
     };
 
-    draw();
-
     return () => {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrameId);
+      if (containerEl) {
+        observer.unobserve(containerEl);
+      }
       if (parent) {
         parent.removeEventListener("mousemove", handleMouse);
         parent.removeEventListener("mouseleave", handleMouseLeave);
@@ -170,6 +193,7 @@ export default function CorePillarsSection() {
     const ctx = gsap.context(() => {
       // Timeline for Chapter 1 (Vision & Portal Expand)
       const tl = gsap.timeline({
+        defaults: { force3D: true },
         scrollTrigger: {
           trigger: container,
           start: "top top",
