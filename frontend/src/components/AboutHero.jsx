@@ -931,7 +931,7 @@ const AboutHero = () => {
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     className="h-2 w-2 rounded-full bg-[#4ade80]"
                   />
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-white">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">
                     Est. 2016
                   </span>
                 </div>
@@ -944,7 +944,12 @@ const AboutHero = () => {
                     </p>
                     <p className="text-white/70 text-xs">Trichy, India</p>
                   </div>
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#16a34a] to-[#8b5cf6]" />
+                  {/* <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#16a34a] to-[#8b5cf6]" /> */}
+                  <img
+                    src="/izone logo editing 1.png"
+                    alt="IZONE Technologies"
+                    className="h-10 w-10 rounded-full object-cover border border-white/20"
+                  />
                 </div>
               </div>
 

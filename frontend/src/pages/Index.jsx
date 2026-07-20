@@ -1312,7 +1312,8 @@ const Index = () => {
                 <div key={index} className="opacity-0">
 
                  
-                  <TiltSpotlightCard className={`group relative flex flex-col p-7 sm:p-8 rounded-[28px] border border-white/70 bg-gradient-to-b from-white to-slate-50/60 dark:border-zinc-800/60 dark:from-zinc-900/80 dark:to-zinc-950/60 backdrop-blur-md ${c.hoverBorder} shadow-[0_10px_34px_-14px_rgba(15,23,42,0.16)] group-hover:shadow-[0_24px_50px_-16px_rgba(15,23,42,0.24)] transition-all duration-300 ease-out overflow-hidden`}>
+                  {/* <TiltSpotlightCard className={`group relative flex flex-col p-7 sm:p-8 rounded-[28px] border border-white/70 bg-gradient-to-b from-white to-slate-50/60 dark:border-zinc-800/60 dark:from-zinc-900/80 dark:to-zinc-950/60 backdrop-blur-md ${c.hoverBorder} shadow-[0_10px_34px_-14px_rgba(15,23,42,0.16)] group-hover:shadow-[0_24px_50px_-16px_rgba(15,23,42,0.24)] transition-all duration-300 ease-out overflow-hidden`}> */}
+                  <TiltSpotlightCard className={`group relative flex flex-col p-7 sm:p-8 rounded-[28px] border border-white/70 bg-primary/5 dark:bg-primary/10 dark:border-zinc-800/60 backdrop-blur-md ${c.hoverBorder} shadow-[0_10px_34px_-14px_rgba(15,23,42,0.16)] group-hover:shadow-[0_24px_50px_-16px_rgba(15,23,42,0.24)] transition-all duration-300 ease-out overflow-hidden`}>
                     {/* Decorative corner elements */}
                     <DotGrid className={`top-6 right-6 ${c.icon}`} />
                     <AbstractCorner accentKey={service.accent} title={service.title} className={`bottom-0 right-0 translate-x-8 translate-y-8 ${c.icon}`} />
