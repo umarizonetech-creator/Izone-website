@@ -534,14 +534,24 @@ const AnimatedStat = ({ stat, variants }) => {
   }, [inView, stat.isStatic, stat.value]);
 
   return (
-    <div ref={ref}>
-      <TiltSpotlightCard className="relative p-6 rounded-2xl border border-slate-200/50 bg-white/40 dark:border-slate-800/50 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm flex flex-col items-center justify-center overflow-hidden group hover:border-primary/40 transition-all duration-300">
+    // <div ref={ref}>
+    //   <TiltSpotlightCard className="relative p-6 rounded-2xl border border-slate-200/50 bg-white/40 dark:border-slate-800/50 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm flex flex-col items-center justify-center overflow-hidden group hover:border-primary/40 transition-all duration-300">
+      
+    //     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+    //     <div className="font-display text-4xl md:text-5xl font-extrabold text-primary mb-2 tracking-tight">
+    //       {stat.isStatic ? stat.value : `${count}${stat.suffix || ""}`}
+    //     </div>
+    //     <div className="text-muted-foreground text-xs sm:text-sm font-semibold tracking-wide uppercase">{stat.label}</div>
+    //   </TiltSpotlightCard>
+    // </div>
+    <div ref={ref} className="h-full">
+      <TiltSpotlightCard className="relative h-full p-6 rounded-2xl border border-slate-200/50 bg-white/40 dark:border-slate-800/50 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm flex flex-col items-center justify-center overflow-hidden group hover:border-primary/40 transition-all duration-300">
       
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
         <div className="font-display text-4xl md:text-5xl font-extrabold text-primary mb-2 tracking-tight">
           {stat.isStatic ? stat.value : `${count}${stat.suffix || ""}`}
         </div>
-        <div className="text-muted-foreground text-xs sm:text-sm font-semibold tracking-wide uppercase">{stat.label}</div>
+        <div className="text-muted-foreground text-xs sm:text-sm font-semibold tracking-wide uppercase text-center">{stat.label}</div>
       </TiltSpotlightCard>
     </div>
   );
