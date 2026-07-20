@@ -39,6 +39,7 @@ export default function CorePillarsSection() {
 
   // Live Canvas Particle Constellation System
   useEffect(() => {
+    if (window.innerWidth < 768) return; // Skip entirely on mobile for optimal performance
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -298,11 +299,20 @@ export default function CorePillarsSection() {
 
       // Chapter 1 Animations
       // 2. Expand Masked Image Portal
-      tl.fromTo(portalRef.current,
-        { clipPath: "circle(12% at 50% 50%)" },
-        { clipPath: "circle(75% at 50% 50%)", duration: 6, ease: "power2.inOut" },
-        "-=0.5"
-      );
+      if (window.innerWidth >= 768) {
+        tl.fromTo(portalRef.current,
+          { clipPath: "circle(12% at 50% 50%)" },
+          { clipPath: "circle(75% at 50% 50%)", duration: 6, ease: "power2.inOut" },
+          "-=0.5"
+        );
+      } else {
+        // GPU-accelerated simple opacity fade on mobile instead of CPU-heavy clipPath masking
+        tl.fromTo(portalRef.current,
+          { opacity: 0.1 },
+          { opacity: 0.75, duration: 6, ease: "power2.inOut" },
+          "-=0.5"
+        );
+      }
 
       if (portalImgRef.current) {
         tl.fromTo(portalImgRef.current,
@@ -386,7 +396,7 @@ export default function CorePillarsSection() {
       if (ch3Float2.current) tl.fromTo(ch3Float2.current, { y: 190, opacity: 0 }, { y: 20, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
 
       // SVG path self-drawing (stroke-dashoffset link)
-      if (svgPathRef.current) {
+      if (svgPathRef.current && window.innerWidth >= 768) {
         const pathLength = svgPathRef.current.getTotalLength();
         gsap.set(svgPathRef.current, { strokeDasharray: pathLength, strokeDashoffset: pathLength });
         tl.to(svgPathRef.current, {
@@ -514,6 +524,11 @@ export default function CorePillarsSection() {
           will-change: transform, opacity;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
+        }
+        @media (max-width: 767px) {
+          .perspective-container canvas {
+            display: none !important;
+          }
         }
       `}</style>
 
