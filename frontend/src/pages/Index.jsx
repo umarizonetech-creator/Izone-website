@@ -667,47 +667,7 @@ const Index = () => {
     return () => ctx.revert();
   }, []);
 
-  useEffect(() => {
-    const headers = document.querySelectorAll(".section-header-reveal");
 
-    const ctx = gsap.context(() => {
-      headers.forEach((header) => {
-        const badge = header.querySelector(".reveal-badge");
-        const titleLines = header.querySelectorAll(".reveal-title-line > span");
-        const descLines = header.querySelectorAll(".reveal-desc-line > span");
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: header,
-            start: "top 85%",
-            toggleActions: "play none none reverse"
-          }
-        });
-
-        if (badge) {
-          tl.fromTo(badge, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
-        }
-
-        if (titleLines.length > 0) {
-          tl.fromTo(titleLines,
-            { yPercent: 105, opacity: 0 },
-            { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" },
-            badge ? "-=0.35" : 0
-          );
-        }
-
-        if (descLines.length > 0) {
-          tl.fromTo(descLines,
-            { yPercent: 105, opacity: 0 },
-            { yPercent: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: "power3.out" },
-            titleLines.length > 0 ? "-=0.45" : 0
-          );
-        }
-      });
-    });
-
-    return () => ctx.revert();
-  }, []);
 
   useEffect(() => {
     const grid = servicesGridRef.current;
@@ -1219,7 +1179,7 @@ const Index = () => {
           </div>
 
           {/* Right Column: Ball Element Mockup with Floating Cards */}
-          <div ref={heroRightRef} style={{ opacity: 0 }} className="hero-right-col lg:col-span-6 relative flex justify-center items-center h-full min-h-0 z-10 select-none py-2 lg:py-0 w-full">
+          <div ref={heroRightRef} style={{ opacity: 0 }} className="hero-right-col lg:col-span-6 relative flex justify-center items-center h-full min-h-0 z-10 select-none py-2 lg:py-0 w-full gpu-accelerated">
 
             {/* The 3D Ball Element Graphic */}
             <div className="relative w-[90%] max-w-[390px] sm:max-w-[390px] md:max-w-[440px] lg:max-w-none max-h-[30vh] sm:max-h-[35vh] lg:max-h-none flex justify-center items-center">
@@ -1563,7 +1523,7 @@ const Index = () => {
             {displayedTestimonials.map((testimonial, index) => (
               <div
                 key={`${isMobile ? "mobile" : isTablet ? "tablet" : "desktop"}-${testimonialIndex}-${index}`}
-                className="w-full max-w-[370px] md:max-w-none xl:max-w-[370px] opacity-0"
+                className="w-full max-w-[370px] md:max-w-none xl:max-w-[370px] opacity-0 gpu-accelerated"
               >
                 {/* 3D Tilt test card */}
                 <TiltSpotlightCard className="relative overflow-hidden min-h-[350px] p-8 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-zinc-900/60 shadow-xl flex flex-col justify-between transition-all duration-300 hover:border-primary/30 h-full">

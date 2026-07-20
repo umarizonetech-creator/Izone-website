@@ -11,7 +11,7 @@ export default function CorePillarsSection() {
   const containerRef = useRef(null);
   const stickyRef = useRef(null);
   const canvasRef = useRef(null);
-  
+
   // Element refs for Chapter 1
   const title1Ref = useRef(null);
   const desc1Ref = useRef(null);
@@ -44,7 +44,7 @@ export default function CorePillarsSection() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     let animationFrameId;
-    
+
     const dpr = window.devicePixelRatio || 1;
     let cssWidth = canvas.offsetWidth;
     let cssHeight = canvas.offsetHeight;
@@ -65,7 +65,7 @@ export default function CorePillarsSection() {
 
     const particles = [];
     const maxParticles = 55;
-    
+
     for (let i = 0; i < maxParticles; i++) {
       particles.push({
         x: Math.random() * cssWidth,
@@ -117,7 +117,7 @@ export default function CorePillarsSection() {
     const draw = () => {
       if (!isIntersecting) return;
       ctx.clearRect(0, 0, cssWidth, cssHeight);
-      
+
       const isDark = document.documentElement.classList.contains("dark");
       const pColor = isDark ? "rgba(16, 185, 129, 0.4)" : "rgba(16, 185, 129, 0.2)";
       const lColor = isDark ? "rgba(16, 185, 129, 0.08)" : "rgba(16, 185, 129, 0.05)";
@@ -273,9 +273,32 @@ export default function CorePillarsSection() {
             stagger: 0.06,
             ease: "power3.out",
           },
-          "-=0.4" // Starts during heading completion to create a seamless flow
         );
       }
+      if (magneticButtonRef.current) {
+        textTl3.fromTo(magneticButtonRef.current,
+          { scale: 0.8, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.6,
+            ease: "back.out(1.7)",
+          },
+          "-=0.55" // Starts immediately as the last line is fading in, eliminating delay
+        );
+      }
+
+      // Early reveal ScrollTrigger for Chapter 1 Text (avoids blank screen on scroll-in)
+      ScrollTrigger.create({
+        trigger: container,
+        start: "top 80%",
+        onEnter: () => {
+          textTl1.play();
+        },
+        onLeaveBack: () => {
+          textTl1.reverse();
+        }
+      });
 
       // Main Scroll-Scrubbed timeline for Environment & Chapter transitions
       const tl = gsap.timeline({
@@ -299,20 +322,11 @@ export default function CorePillarsSection() {
 
       // Chapter 1 Animations
       // 2. Expand Masked Image Portal
-      if (window.innerWidth >= 768) {
-        tl.fromTo(portalRef.current,
-          { clipPath: "circle(12% at 50% 50%)" },
-          { clipPath: "circle(75% at 50% 50%)", duration: 6, ease: "power2.inOut" },
-          "-=0.5"
-        );
-      } else {
-        // GPU-accelerated simple opacity fade on mobile instead of CPU-heavy clipPath masking
-        tl.fromTo(portalRef.current,
-          { opacity: 0.1 },
-          { opacity: 0.75, duration: 6, ease: "power2.inOut" },
-          "-=0.5"
-        );
-      }
+      tl.fromTo(portalRef.current,
+        { clipPath: "circle(12% at 50% 50%)" },
+        { clipPath: "circle(75% at 50% 50%)", duration: 6, ease: "power2.inOut" },
+        "-=0.5"
+      );
 
       if (portalImgRef.current) {
         tl.fromTo(portalImgRef.current,
@@ -346,8 +360,8 @@ export default function CorePillarsSection() {
       if (chapter2Ref.current) {
         tl.fromTo(chapter2Ref.current,
           { opacity: 0 },
-          { 
-            opacity: 1, 
+          {
+            opacity: 1,
             duration: 2,
             onStart: () => {
               textTl2.play();
@@ -378,8 +392,8 @@ export default function CorePillarsSection() {
       if (chapter3Ref.current) {
         tl.fromTo(chapter3Ref.current,
           { opacity: 0 },
-          { 
-            opacity: 1, 
+          {
+            opacity: 1,
             duration: 2,
             onStart: () => {
               textTl3.play();
@@ -406,12 +420,7 @@ export default function CorePillarsSection() {
         }, "-=1.5");
       }
 
-      // Magnetic/Glow button reveal
-      tl.fromTo(magneticButtonRef.current,
-        { scale: 0.8, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 1.5, ease: "back.out(1.7)" },
-        "-=1"
-      );
+      // Removed scroll-bound magnetic button reveal from tl to play it automatically with textTl3
 
     }, container);
 
@@ -422,7 +431,7 @@ export default function CorePillarsSection() {
       const rect = btn.getBoundingClientRect();
       const x = e.clientX - (rect.left + rect.width / 2);
       const y = e.clientY - (rect.top + rect.height / 2);
-      
+
       // Pull toward cursor slightly
       gsap.to(btn, {
         x: x * 0.45,
@@ -539,13 +548,13 @@ export default function CorePillarsSection() {
       >
         {/* Dynamic ambient grid background */}
         <div className="absolute inset-0 opacity-[0.05] dark:opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#3b82f6_1px,transparent_1px),linear-gradient(to_bottom,#3b82f6_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-        
+
         {/* Live Interactive Canvas Particles Constellation */}
-        <canvas 
+        <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-80"
         />
-        
+
         {/* Continuous Fluid Waveform Matrix Background */}
         <svg className="absolute inset-x-0 w-full h-[60vh] opacity-[0.07] dark:opacity-[0.04] pointer-events-none z-0" viewBox="0 0 1440 600" preserveAspectRatio="none">
           <path d="M 0 300 Q 360 100 720 300 T 1440 300" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-emerald-500 animate-wave-1" />
@@ -558,7 +567,7 @@ export default function CorePillarsSection() {
           <div className="animate-node-drift absolute bottom-[35%] right-[22%] text-[10px] font-mono text-blue-500/20 font-bold">+ 78.70°</div>
           <div className="animate-node-drift absolute top-[40%] right-[30%] text-[8px] font-mono text-indigo-500/20 font-bold">[SYS_ACTIVE]</div>
         </div>
-        
+
         {/* Extra Parallax Floating Decorative Shapes */}
         <div className="parallax-shape-1 absolute top-[15%] left-[10%] w-12 h-12 border-2 border-emerald-500/20 rounded-xl pointer-events-none z-0" />
         <div className="parallax-shape-2 absolute bottom-[25%] left-[20%] w-8 h-8 border border-blue-500/20 rounded-full pointer-events-none z-0" />
@@ -579,7 +588,7 @@ export default function CorePillarsSection() {
             <span className="text-xs uppercase tracking-[0.3em] font-bold text-emerald-600 dark:text-emerald-400 mb-2 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">
               WHO WE ARE
             </span>
-            
+
             <h2 className="text-4xl sm:text-7xl font-black tracking-tight leading-[1.08] uppercase font-display overflow-hidden flex flex-wrap justify-center gap-x-4 text-slate-900 dark:text-white">
               <span className="inline-block overflow-hidden h-[1.2em]">
                 <span className="word-reveal inline-block">WE</span>
@@ -611,7 +620,7 @@ export default function CorePillarsSection() {
           {/* Chapter 1 Floating Cards (Parallel up-sliding) */}
           <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
             {/* Float 1 */}
-            <div 
+            <div
               ref={ch1Float1}
               className="absolute top-[18%] left-[2%] sm:top-[26%] sm:left-[10%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
@@ -623,7 +632,7 @@ export default function CorePillarsSection() {
             </div>
 
             {/* Float 2 */}
-            <div 
+            <div
               ref={ch1Float2}
               className="absolute bottom-[18%] right-[2%] sm:bottom-[28%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-56 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
@@ -639,14 +648,14 @@ export default function CorePillarsSection() {
         </div>
 
         {/* Masked Portal Graphic */}
-        <div 
+        <div
           ref={portalRef}
-          className="absolute inset-0 w-full h-full z-0 overflow-hidden"
+          className="absolute inset-0 w-full h-full z-0 overflow-hidden gpu-accelerated"
           style={{ clipPath: "circle(12% at 50% 50%)" }}
         >
           {/* Cybernetic Grid Image / Vector inside portal */}
           <div className="absolute inset-0 bg-slate-100 dark:bg-[#060c18] flex items-center justify-center">
-            <div 
+            <div
               ref={portalImgRef}
               className="w-[120%] h-[120%] opacity-40 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.15),transparent_60%)] flex items-center justify-center"
             >
@@ -663,7 +672,7 @@ export default function CorePillarsSection() {
         </div>
 
         {/* ── CHAPTER 2: The Craft (3D Floating Layers) ── */}
-        <div 
+        <div
           ref={chapter2Ref}
           className="absolute inset-0 w-full h-full flex flex-col justify-center items-center z-10 px-6 sm:px-12 pointer-events-none opacity-0"
         >
@@ -683,7 +692,7 @@ export default function CorePillarsSection() {
               </span>
             </h2>
           </div>
- 
+
           <p ref={desc2Ref} className="text-center text-xs sm:text-sm text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed flex flex-col gap-1 items-center">
             <span className="block overflow-hidden h-[1.3em]">
               <span className="desc-line-reveal inline-block">We combine robust architectures with modern tech</span>
@@ -698,9 +707,9 @@ export default function CorePillarsSection() {
 
           {/* 3D Parallax floating widgets */}
           <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-            
+
             {/* Widget 1 */}
-            <div 
+            <div
               ref={floatLayer1}
               className="absolute top-[18%] left-[2%] sm:top-[25%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex flex-col gap-1.5 sm:gap-2.5 w-36 sm:w-52 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
@@ -715,7 +724,7 @@ export default function CorePillarsSection() {
             </div>
 
             {/* Widget 2 */}
-            <div 
+            <div
               ref={floatLayer2}
               className="absolute bottom-[18%] right-[2%] sm:bottom-[25%] sm:right-[10%] p-4 sm:p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex items-center gap-3 sm:gap-4 w-40 sm:w-60 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
@@ -729,7 +738,7 @@ export default function CorePillarsSection() {
             </div>
 
             {/* Widget 3 */}
-            <div 
+            <div
               ref={floatLayer3}
               className="absolute top-[26%] right-[2%] sm:top-[34%] sm:right-[12%] p-3 rounded-xl border border-slate-200/30 dark:border-white/5 bg-white/90 dark:bg-[#091124]/80 sm:bg-white/60 sm:dark:bg-[#091124]/40 sm:backdrop-blur-sm flex items-center gap-1.5 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
@@ -741,21 +750,21 @@ export default function CorePillarsSection() {
         </div>
 
         {/* ── CHAPTER 3: The Impact (SVG line drawing & magnetic CTA) ── */}
-        <div 
+        <div
           ref={chapter3Ref}
           className="absolute inset-0 w-full h-full flex flex-col justify-center items-center z-10 px-6 sm:px-12 pointer-events-none opacity-0"
         >
           <div className="max-w-4xl text-center flex flex-col items-center gap-5 relative">
-            
+
             {/* Animated drawing SVG background line behind text */}
             <div className="absolute inset-0 w-full h-full flex items-center justify-center opacity-35 z-0">
               <svg className="w-64 h-64 sm:w-80 sm:h-80 text-emerald-600/25 dark:text-emerald-500/25" viewBox="0 0 100 100">
-                <path 
+                <path
                   ref={svgPathRef}
-                  d="M 10 50 Q 30 20, 50 50 T 90 50" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="1.5" 
+                  d="M 10 50 Q 30 20, 50 50 T 90 50"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
                   strokeLinecap="round"
                 />
               </svg>
@@ -765,7 +774,7 @@ export default function CorePillarsSection() {
               <span className="text-xs uppercase tracking-[0.3em] font-bold text-emerald-600 dark:text-emerald-400 mb-2 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">
                 OUR IMPACT
               </span>
-              
+
               <h2 ref={title3Ref} className="text-4xl sm:text-7xl font-black tracking-tight leading-[1.08] uppercase font-display overflow-hidden flex flex-wrap justify-center gap-x-4 text-slate-900 dark:text-white">
                 <span className="inline-block overflow-hidden h-[1.2em]">
                   <span className="word-reveal inline-block text-emerald-600 dark:text-emerald-400">SCALE</span>
@@ -794,7 +803,7 @@ export default function CorePillarsSection() {
             {/* Magnetic Hover CTA button */}
             <div className="mt-6 relative z-10 pointer-events-auto">
               <Link to="/contact">
-                <button 
+                <button
                   ref={magneticButtonRef}
                   className="flex items-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3.5 rounded-full text-xs font-bold shadow-lg shadow-black/5 active:scale-95 transition-all duration-300 hover:bg-emerald-600 dark:hover:bg-emerald-400 hover:text-white dark:hover:text-slate-950 group"
                 >
@@ -811,7 +820,7 @@ export default function CorePillarsSection() {
           {/* Chapter 3 Floating Cards (Parallel up-sliding) */}
           <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
             {/* Float 1 */}
-            <div 
+            <div
               ref={ch3Float1}
               className="absolute top-[18%] left-[2%] sm:top-[28%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
@@ -823,7 +832,7 @@ export default function CorePillarsSection() {
             </div>
 
             {/* Float 2 */}
-            <div 
+            <div
               ref={ch3Float2}
               className="absolute bottom-[20%] right-[2%] sm:bottom-[30%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-52 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >

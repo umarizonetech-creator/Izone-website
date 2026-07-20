@@ -156,8 +156,18 @@ const WebGLBackground = ({ isDark }) => {
     // Pre-allocated matrix buffer to prevent GC thrashing
     const viewMatrix = new Float32Array(16);
 
+    let isVisible = true;
+    let accumulatedTime = 0;
+    let lastPauseTime = Date.now();
+
     const render = () => {
-      const time = (Date.now() - startTime) * 0.001;
+      if (!isVisible) {
+        requestRef.current = null;
+        return;
+      }
+
+      const elapsedSinceStart = (Date.now() - startTime) * 0.001;
+      const time = elapsedSinceStart + accumulatedTime;
 
       const mouse = mouseRef.current;
       mouse.x += (mouse.targetX - mouse.x) * 0.08;
@@ -200,9 +210,36 @@ const WebGLBackground = ({ isDark }) => {
 
       requestRef.current = requestAnimationFrame(render);
     };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const wasVisible = isVisible;
+          isVisible = entry.isIntersecting;
+          
+          if (isVisible && !wasVisible) {
+            // Resuming: Reset start time to maintain animation continuity
+            startTime = Date.now();
+            render();
+          } else if (!isVisible && wasVisible) {
+            // Pausing: Accumulate elapsed time
+            accumulatedTime += (Date.now() - startTime) * 0.001;
+            if (requestRef.current) {
+              cancelAnimationFrame(requestRef.current);
+              requestRef.current = null;
+            }
+          }
+        });
+      },
+      { threshold: 0.01 }
+    );
+    observer.observe(canvas);
+
+    // Initial render trigger
     render();
 
     return () => {
+      observer.disconnect();
       window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("mousemove", handleMouseMove);
       if (scrollTrigger) scrollTrigger.kill();

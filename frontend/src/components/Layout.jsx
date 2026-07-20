@@ -44,11 +44,12 @@ const Layout = ({ children }) => {
 
   // Global Scroll Trigger handler for all section header reveals
   useEffect(() => {
+    let ctx;
     const timer = setTimeout(() => {
       const headers = document.querySelectorAll(".section-header-reveal");
       if (headers.length === 0) return;
 
-      const ctx = gsap.context(() => {
+      ctx = gsap.context(() => {
         headers.forEach((header) => {
           const badge = header.querySelector(".reveal-badge");
           const titleLines = header.querySelectorAll(".reveal-title-line > span");
@@ -83,11 +84,12 @@ const Layout = ({ children }) => {
           }
         });
       });
-
-      return () => ctx.revert();
     }, 150); // Small delay to let page mount settle
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (ctx) ctx.revert();
+    };
   }, [location.pathname]);
 
   return (
