@@ -30,6 +30,8 @@ const services = [
       "Contact Management",
     ],
     shape3D: "cube",
+    accent: "blue",
+    category: "Messaging",
   },
   {
     title: "Voice SMS",
@@ -46,6 +48,8 @@ const services = [
       "High Capacity Platform",
     ],
     shape3D: "sphere",
+    accent: "orange",
+    category: "Messaging",
   },
   {
     title: "WhatsApp Panel",
@@ -62,6 +66,8 @@ const services = [
       "Easy Contact Upload",
     ],
     shape3D: "torus",
+    accent: "emerald",
+    category: "Messaging",
   },
   {
     title: "WhatsApp Marketing",
@@ -78,6 +84,8 @@ const services = [
       "Automated Chatbots",
     ],
     shape3D: "octahedron",
+    accent: "pink",
+    category: "Marketing",
   },
   {
     title: "Digital Election Campaign",
@@ -94,6 +102,8 @@ const services = [
       "End-to-End Strategy",
     ],
     shape3D: "cube",
+    accent: "indigo",
+    category: "Campaigns",
   },
 ];
 
@@ -138,6 +148,8 @@ const Services = () => {
                 features={service.features}
                 serviceLayout={true}
                 delay={index * 0.1}
+                accent={service.accent}
+                category={service.category}
               />
             ))}
           </motion.div>
