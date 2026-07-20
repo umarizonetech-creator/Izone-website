@@ -5,6 +5,7 @@ import { ArrowUpRight, Cpu, Layers, ShieldCheck, Sparkles, Activity } from "luci
 import { Link } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 export default function CorePillarsSection() {
   const containerRef = useRef(null);
@@ -30,6 +31,7 @@ export default function CorePillarsSection() {
   // Element refs for Chapter 3
   const chapter3Ref = useRef(null);
   const title3Ref = useRef(null);
+  const desc3Ref = useRef(null);
   const svgPathRef = useRef(null);
   const magneticButtonRef = useRef(null);
   const ch3Float1 = useRef(null);
@@ -192,33 +194,109 @@ export default function CorePillarsSection() {
 
     const ctx = gsap.context(() => {
       // Timeline for Chapter 1 (Vision & Portal Expand)
+      // Separate, Scroll-Triggered Autoplay Text Animations (Sequenced)
+      // Chapter 1 Text Timeline
+      const textTl1 = gsap.timeline({ paused: true });
+      textTl1.fromTo(title1Words,
+        { yPercent: 100, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.06,
+          ease: "power3.out",
+        }
+      );
+      const desc1Lines = desc1Ref.current ? desc1Ref.current.querySelectorAll(".desc-line-reveal") : [];
+      if (desc1Lines.length > 0) {
+        textTl1.fromTo(desc1Lines,
+          { yPercent: 100, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.6,
+            stagger: 0.06,
+            ease: "power3.out",
+          },
+          "-=0.4" // Starts during heading completion to create a seamless flow
+        );
+      }
+
+      // Chapter 2 Text Timeline
+      const textTl2 = gsap.timeline({ paused: true });
+      textTl2.fromTo(title2Words,
+        { yPercent: 100, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.06,
+          ease: "power3.out",
+        }
+      );
+      const desc2Lines = desc2Ref.current ? desc2Ref.current.querySelectorAll(".desc-line-reveal") : [];
+      if (desc2Lines.length > 0) {
+        textTl2.fromTo(desc2Lines,
+          { yPercent: 100, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.6,
+            stagger: 0.06,
+            ease: "power3.out",
+          },
+          "-=0.4" // Starts during heading completion to create a seamless flow
+        );
+      }
+
+      // Chapter 3 Text Timeline
+      const textTl3 = gsap.timeline({ paused: true });
+      textTl3.fromTo(title3Words,
+        { yPercent: 100, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.06,
+          ease: "power3.out",
+        }
+      );
+      const desc3Lines = desc3Ref.current ? desc3Ref.current.querySelectorAll(".desc-line-reveal") : [];
+      if (desc3Lines.length > 0) {
+        textTl3.fromTo(desc3Lines,
+          { yPercent: 100, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.6,
+            stagger: 0.06,
+            ease: "power3.out",
+          },
+          "-=0.4" // Starts during heading completion to create a seamless flow
+        );
+      }
+
+      // Main Scroll-Scrubbed timeline for Environment & Chapter transitions
       const tl = gsap.timeline({
         defaults: { force3D: true },
         scrollTrigger: {
           trigger: container,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1,
+          scrub: 1.2,
           pin: sticky,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
         }
       });
+      tl.timeScale(2.5);
+
+      // Trigger Chapter 1 text when timeline starts
+      tl.call(() => {
+        textTl1.play();
+      }, null, 0.1);
 
       // Chapter 1 Animations
-      // 1. Text reveals
-      tl.fromTo(title1Words,
-        { yPercent: 100, opacity: 0 },
-        { yPercent: 0, opacity: 1, duration: 2, stagger: 0.2, ease: "power3.out" }
-      );
-      
-      if (desc1Ref.current) {
-        tl.fromTo(desc1Ref.current,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 1.5 },
-          "-=1.5"
-        );
-      }
-
       // 2. Expand Masked Image Portal
       tl.fromTo(portalRef.current,
         { clipPath: "circle(12% at 50% 50%)" },
@@ -258,21 +336,16 @@ export default function CorePillarsSection() {
       if (chapter2Ref.current) {
         tl.fromTo(chapter2Ref.current,
           { opacity: 0 },
-          { opacity: 1, duration: 2 }
-        );
-      }
-
-      tl.fromTo(title2Words,
-        { yPercent: 100, opacity: 0 },
-        { yPercent: 0, opacity: 1, duration: 2, stagger: 0.2, ease: "power3.out" },
-        "-=1.5"
-      );
- 
-      if (desc2Ref.current) {
-        tl.fromTo(desc2Ref.current,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 1.5 },
-          "-=1.5"
+          { 
+            opacity: 1, 
+            duration: 2,
+            onStart: () => {
+              textTl2.play();
+            },
+            onReverseComplete: () => {
+              textTl2.reverse();
+            }
+          }
         );
       }
 
@@ -295,15 +368,18 @@ export default function CorePillarsSection() {
       if (chapter3Ref.current) {
         tl.fromTo(chapter3Ref.current,
           { opacity: 0 },
-          { opacity: 1, duration: 2 }
+          { 
+            opacity: 1, 
+            duration: 2,
+            onStart: () => {
+              textTl3.play();
+            },
+            onReverseComplete: () => {
+              textTl3.reverse();
+            }
+          }
         );
       }
-
-      tl.fromTo(title3Words,
-        { yPercent: 100, opacity: 0 },
-        { yPercent: 0, opacity: 1, duration: 2, stagger: 0.2, ease: "power3.out" },
-        "-=1.5"
-      );
 
       // Floating 3D Depth Drift for Chapter 3
       if (ch3Float1.current) tl.fromTo(ch3Float1.current, { y: 110, opacity: 0 }, { y: -10, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=3.5");
@@ -505,8 +581,16 @@ export default function CorePillarsSection() {
             </h2>
           </div>
 
-          <p ref={desc1Ref} className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed">
-            iZone Technologies is an elite software powerhouse. We bridge the gap between abstract concept and technical mastery to engineer digital breakthroughs.
+          <p ref={desc1Ref} className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed flex flex-col gap-1 items-center">
+            <span className="block overflow-hidden h-[1.3em]">
+              <span className="desc-line-reveal inline-block">iZone Technologies is an elite software powerhouse.</span>
+            </span>
+            <span className="block overflow-hidden h-[1.3em]">
+              <span className="desc-line-reveal inline-block">We bridge the gap between abstract concept and</span>
+            </span>
+            <span className="block overflow-hidden h-[1.3em]">
+              <span className="desc-line-reveal inline-block">technical mastery to engineer digital breakthroughs.</span>
+            </span>
           </p>
 
           {/* Chapter 1 Floating Cards (Parallel up-sliding) */}
@@ -585,8 +669,16 @@ export default function CorePillarsSection() {
             </h2>
           </div>
  
-          <p ref={desc2Ref} className="text-center text-xs sm:text-sm text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed">
-            We combine robust architectures with modern tech stacks to deliver custom software solutions built for optimal speed, reliability, and security.
+          <p ref={desc2Ref} className="text-center text-xs sm:text-sm text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed flex flex-col gap-1 items-center">
+            <span className="block overflow-hidden h-[1.3em]">
+              <span className="desc-line-reveal inline-block">We combine robust architectures with modern tech</span>
+            </span>
+            <span className="block overflow-hidden h-[1.3em]">
+              <span className="desc-line-reveal inline-block">stacks to deliver custom software solutions built</span>
+            </span>
+            <span className="block overflow-hidden h-[1.3em]">
+              <span className="desc-line-reveal inline-block">for optimal speed, reliability, and security.</span>
+            </span>
           </p>
 
           {/* 3D Parallax floating widgets */}
@@ -672,8 +764,16 @@ export default function CorePillarsSection() {
               </h2>
             </div>
 
-            <p className="relative z-10 text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-semibold max-w-sm mt-2 leading-relaxed">
-              We construct performance-driven frameworks engineered to support massive scale, high traffic, and continuous growth.
+            <p ref={desc3Ref} className="relative z-10 text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-semibold max-w-sm mt-2 leading-relaxed flex flex-col gap-1 items-center">
+              <span className="block overflow-hidden h-[1.3em]">
+                <span className="desc-line-reveal inline-block">We construct performance-driven frameworks</span>
+              </span>
+              <span className="block overflow-hidden h-[1.3em]">
+                <span className="desc-line-reveal inline-block">engineered to support massive scale, high</span>
+              </span>
+              <span className="block overflow-hidden h-[1.3em]">
+                <span className="desc-line-reveal inline-block">traffic, and continuous growth.</span>
+              </span>
             </p>
 
             {/* Magnetic Hover CTA button */}

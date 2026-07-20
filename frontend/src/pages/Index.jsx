@@ -47,6 +47,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import TiltSpotlightCard from "@/components/ui/TiltSpotlightCard";
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 // ── Reusable Advanced Animation Components ───────────────────────────
 
