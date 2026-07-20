@@ -22,6 +22,7 @@ export default function CorePillarsSection() {
   // Element refs for Chapter 2
   const chapter2Ref = useRef(null);
   const title2Ref = useRef(null);
+  const desc2Ref = useRef(null);
   const floatLayer1 = useRef(null);
   const floatLayer2 = useRef(null);
   const floatLayer3 = useRef(null);
@@ -41,13 +42,21 @@ export default function CorePillarsSection() {
     const ctx = canvas.getContext("2d");
     let animationFrameId;
     
-    let width = canvas.width = canvas.offsetWidth;
-    let height = canvas.height = canvas.offsetHeight;
+    const dpr = window.devicePixelRatio || 1;
+    let cssWidth = canvas.offsetWidth;
+    let cssHeight = canvas.offsetHeight;
+    canvas.width = cssWidth * dpr;
+    canvas.height = cssHeight * dpr;
+    ctx.scale(dpr, dpr);
 
     const handleResize = () => {
       if (!canvas) return;
-      width = canvas.width = canvas.offsetWidth;
-      height = canvas.height = canvas.offsetHeight;
+      const dpr = window.devicePixelRatio || 1;
+      cssWidth = canvas.offsetWidth;
+      cssHeight = canvas.offsetHeight;
+      canvas.width = cssWidth * dpr;
+      canvas.height = cssHeight * dpr;
+      ctx.scale(dpr, dpr);
     };
     window.addEventListener("resize", handleResize);
 
@@ -56,8 +65,8 @@ export default function CorePillarsSection() {
     
     for (let i = 0; i < maxParticles; i++) {
       particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
+        x: Math.random() * cssWidth,
+        y: Math.random() * cssHeight,
         vx: (Math.random() - 0.5) * 0.45,
         vy: (Math.random() - 0.5) * 0.45,
         radius: Math.random() * 2 + 0.8
@@ -82,7 +91,7 @@ export default function CorePillarsSection() {
     }
 
     const draw = () => {
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, cssWidth, cssHeight);
       
       const isDark = document.documentElement.classList.contains("dark");
       const pColor = isDark ? "rgba(16, 185, 129, 0.4)" : "rgba(16, 185, 129, 0.2)";
@@ -92,8 +101,8 @@ export default function CorePillarsSection() {
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
+        if (p.x < 0 || p.x > cssWidth) p.vx *= -1;
+        if (p.y < 0 || p.y > cssHeight) p.vy *= -1;
 
         if (mouse.x !== null && mouse.y !== null) {
           const dx = mouse.x - p.x;
@@ -207,8 +216,8 @@ export default function CorePillarsSection() {
       tl.fromTo(".parallax-shape-3", { y: 50, scale: 0.8 }, { y: -100, scale: 1.2, ease: "none", duration: 6 }, "<");
 
       // Floating 3D Depth Drift for Chapter 1
-      if (ch1Float1.current) tl.fromTo(ch1Float1.current, { y: 120, rotateX: 15, opacity: 0 }, { y: -10, rotateX: -5, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=4.5");
-      if (ch1Float2.current) tl.fromTo(ch1Float2.current, { y: 160, rotateY: -10, opacity: 0 }, { y: 15, rotateY: 5, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
+      if (ch1Float1.current) tl.fromTo(ch1Float1.current, { y: 120, opacity: 0 }, { y: -10, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=4.5");
+      if (ch1Float2.current) tl.fromTo(ch1Float2.current, { y: 160, opacity: 0 }, { y: 15, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
 
       // Fade out Chapter 1 text to make space for Chapter 2
       const exitTargets = [title1Ref.current, desc1Ref.current, ch1Float1.current, ch1Float2.current].filter(Boolean);
@@ -234,11 +243,19 @@ export default function CorePillarsSection() {
         { yPercent: 0, opacity: 1, duration: 2, stagger: 0.2, ease: "power3.out" },
         "-=1.5"
       );
+ 
+      if (desc2Ref.current) {
+        tl.fromTo(desc2Ref.current,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 1.5 },
+          "-=1.5"
+        );
+      }
 
       // Floating 3D Depth Drift for Chapter 2
-      if (floatLayer1.current) tl.fromTo(floatLayer1.current, { y: 100, rotateX: 25, opacity: 0 }, { y: -15, rotateX: -15, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=1.5");
-      if (floatLayer2.current) tl.fromTo(floatLayer2.current, { y: 170, rotateY: -20, opacity: 0 }, { y: 20, rotateY: 10, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
-      if (floatLayer3.current) tl.fromTo(floatLayer3.current, { y: 70, rotateZ: 15, opacity: 0 }, { y: -10, rotateZ: -10, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
+      if (floatLayer1.current) tl.fromTo(floatLayer1.current, { y: 100, opacity: 0 }, { y: -15, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=1.5");
+      if (floatLayer2.current) tl.fromTo(floatLayer2.current, { y: 170, opacity: 0 }, { y: 20, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
+      if (floatLayer3.current) tl.fromTo(floatLayer3.current, { y: 70, opacity: 0 }, { y: -10, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
 
       // Fade out Chapter 2 to reveal Chapter 3
       if (chapter2Ref.current) {
@@ -265,8 +282,8 @@ export default function CorePillarsSection() {
       );
 
       // Floating 3D Depth Drift for Chapter 3
-      if (ch3Float1.current) tl.fromTo(ch3Float1.current, { y: 110, rotateX: 20, opacity: 0 }, { y: -10, rotateX: -10, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=3.5");
-      if (ch3Float2.current) tl.fromTo(ch3Float2.current, { y: 190, rotateY: -15, opacity: 0 }, { y: 20, rotateY: 5, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
+      if (ch3Float1.current) tl.fromTo(ch3Float1.current, { y: 110, opacity: 0 }, { y: -10, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=3.5");
+      if (ch3Float2.current) tl.fromTo(ch3Float2.current, { y: 190, opacity: 0 }, { y: 20, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
 
       // SVG path self-drawing (stroke-dashoffset link)
       if (svgPathRef.current) {
@@ -386,12 +403,24 @@ export default function CorePillarsSection() {
         .animate-node-drift {
           animation: node-blink 6s ease-in-out infinite;
         }
+        .perspective-container {
+          perspective: 1200px;
+          transform-style: preserve-3d;
+        }
+        .transform-3d-gpu {
+          transform-style: preserve-3d;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          will-change: transform, opacity;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
       `}</style>
 
       {/* Pinned Sticky Viewport */}
       <div
         ref={stickyRef}
-        className="w-full h-screen overflow-hidden flex flex-col justify-center items-center relative"
+        className="w-full h-screen overflow-hidden flex flex-col justify-center items-center relative perspective-container"
       >
         {/* Dynamic ambient grid background */}
         <div className="absolute inset-0 opacity-[0.05] dark:opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#3b82f6_1px,transparent_1px),linear-gradient(to_bottom,#3b82f6_1px,transparent_1px)] bg-[size:4rem_4rem]" />
@@ -461,7 +490,7 @@ export default function CorePillarsSection() {
             {/* Float 1 */}
             <div 
               ref={ch1Float1}
-              className="absolute top-[18%] left-[2%] sm:top-[26%] sm:left-[10%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0"
+              className="absolute top-[18%] left-[2%] sm:top-[26%] sm:left-[10%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
               <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600 dark:text-emerald-400">
                 <Sparkles size={12} className="fill-emerald-500/30" />
@@ -473,7 +502,7 @@ export default function CorePillarsSection() {
             {/* Float 2 */}
             <div 
               ref={ch1Float2}
-              className="absolute bottom-[18%] right-[2%] sm:bottom-[28%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-56 scale-75 sm:scale-100 opacity-0"
+              className="absolute bottom-[18%] right-[2%] sm:bottom-[28%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-56 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-500">
                 <Cpu size={14} />
@@ -531,6 +560,10 @@ export default function CorePillarsSection() {
               </span>
             </h2>
           </div>
+ 
+          <p ref={desc2Ref} className="text-center text-xs sm:text-sm text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed">
+            We combine robust architectures with modern tech stacks to deliver custom software solutions built for optimal speed, reliability, and security.
+          </p>
 
           {/* 3D Parallax floating widgets */}
           <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
@@ -538,7 +571,7 @@ export default function CorePillarsSection() {
             {/* Widget 1 */}
             <div 
               ref={floatLayer1}
-              className="absolute top-[18%] left-[2%] sm:top-[25%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex flex-col gap-1.5 sm:gap-2.5 w-36 sm:w-52 scale-75 sm:scale-100 opacity-0"
+              className="absolute top-[18%] left-[2%] sm:top-[25%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex flex-col gap-1.5 sm:gap-2.5 w-36 sm:w-52 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
               <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600 dark:text-emerald-400">
                 <Cpu size={14} />
@@ -553,7 +586,7 @@ export default function CorePillarsSection() {
             {/* Widget 2 */}
             <div 
               ref={floatLayer2}
-              className="absolute bottom-[18%] right-[2%] sm:bottom-[25%] sm:right-[10%] p-4 sm:p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex items-center gap-3 sm:gap-4 w-40 sm:w-60 scale-75 sm:scale-100 opacity-0"
+              className="absolute bottom-[18%] right-[2%] sm:bottom-[25%] sm:right-[10%] p-4 sm:p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex items-center gap-3 sm:gap-4 w-40 sm:w-60 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-500">
                 <Layers size={18} />
@@ -567,7 +600,7 @@ export default function CorePillarsSection() {
             {/* Widget 3 */}
             <div 
               ref={floatLayer3}
-              className="absolute top-[26%] right-[2%] sm:top-[34%] sm:right-[12%] p-3 rounded-xl border border-slate-200/30 dark:border-white/5 bg-white/60 dark:bg-[#091124]/40 backdrop-blur-sm flex items-center gap-1.5 scale-75 sm:scale-100 opacity-0"
+              className="absolute top-[26%] right-[2%] sm:top-[34%] sm:right-[12%] p-3 rounded-xl border border-slate-200/30 dark:border-white/5 bg-white/90 dark:bg-[#091124]/80 sm:bg-white/60 sm:dark:bg-[#091124]/40 sm:backdrop-blur-sm flex items-center gap-1.5 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
               <ShieldCheck size={12} className="text-emerald-600 dark:text-emerald-500" />
               <span className="text-[8px] sm:text-[9px] font-mono text-slate-500 dark:text-zinc-400 font-bold uppercase tracking-widest">ZERO TRUST NETWORK</span>
@@ -641,7 +674,7 @@ export default function CorePillarsSection() {
             {/* Float 1 */}
             <div 
               ref={ch3Float1}
-              className="absolute top-[18%] left-[2%] sm:top-[28%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0"
+              className="absolute top-[18%] left-[2%] sm:top-[28%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
               <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600 dark:text-emerald-400">
                 <Activity size={12} className="text-emerald-500 animate-pulse" />
@@ -653,7 +686,7 @@ export default function CorePillarsSection() {
             {/* Float 2 */}
             <div 
               ref={ch3Float2}
-              className="absolute bottom-[20%] right-[2%] sm:bottom-[30%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-52 scale-75 sm:scale-100 opacity-0"
+              className="absolute bottom-[20%] right-[2%] sm:bottom-[30%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-52 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
             >
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-500">
                 <ShieldCheck size={14} />

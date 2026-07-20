@@ -70,13 +70,17 @@ export function FlipCard({
         onClick={handleCardClick}
       >
         <div
-          className="absolute inset-0 glass-card glow-border hover-glow backface-hidden flex flex-col overflow-hidden"
-          style={{ backfaceVisibility: "hidden" }}
+          className="absolute inset-0 bg-card border border-border/50 rounded-[var(--radius)] glow-border hover-glow backface-hidden flex flex-col overflow-hidden transform-3d-gpu"
+          style={{ 
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "translate3d(0, 0, 0)"
+          }}
         >
           {/* Decorative hover accents — reused light-green color from "Life at IZONE" */}
           <div className="pointer-events-none absolute -top-10 -right-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-primary/25 blur-2xl opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 ease-out z-0" />
           <div className="pointer-events-none absolute -bottom-10 -left-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-primary/25 blur-2xl opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 ease-out delay-75 z-0" />
-
+ 
           <div className="relative z-10 flex-1 p-5 sm:p-6 pb-2">
             <div className="flex items-start gap-3 sm:gap-4 mb-4">
               {icon && (
@@ -90,7 +94,7 @@ export function FlipCard({
                 </h3>
               </div>
             </div>
-
+ 
             <p className={`text-muted-foreground text-[0.92rem] sm:text-sm leading-relaxed ${
               serviceLayout
                 ? "min-h-[60px] line-clamp-3"
@@ -100,7 +104,7 @@ export function FlipCard({
             }`}>
               {summary}
             </p>
-
+ 
             {features.length > 0 && (
               <ul className="space-y-2 mt-4">
                 {features.slice(0, 3).map((f, i) => (
@@ -115,16 +119,20 @@ export function FlipCard({
               </ul>
             )}
           </div>
-
+ 
           <div className="relative z-10 px-5 pb-5 sm:px-6 sm:pb-6 text-right text-primary text-xs font-medium">
             Click to flip
           </div>
         </div>
-
+ 
         {/* Back */}
         <div
-          className="absolute inset-0 glass-card glow-border backface-hidden flex flex-col"
-          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+          className="absolute inset-0 bg-card border border-border/50 rounded-[var(--radius)] glow-border backface-hidden flex flex-col transform-3d-gpu"
+          style={{ 
+            backfaceVisibility: "hidden", 
+            WebkitBackfaceVisibility: "hidden", 
+            transform: "rotateY(180deg) translate3d(0, 0, 0)" 
+          }}
         >
           <div
             className="flex-1 overflow-y-auto hide-scrollbar touch-pan-y p-6 pb-2"

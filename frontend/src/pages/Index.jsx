@@ -668,7 +668,7 @@ const Index = () => {
 
   useEffect(() => {
     const headers = document.querySelectorAll(".section-header-reveal");
-    
+
     const ctx = gsap.context(() => {
       headers.forEach((header) => {
         const badge = header.querySelector(".reveal-badge");
@@ -686,19 +686,19 @@ const Index = () => {
         if (badge) {
           tl.fromTo(badge, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
         }
-        
+
         if (titleLines.length > 0) {
-          tl.fromTo(titleLines, 
-            { yPercent: 105, opacity: 0 }, 
-            { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" }, 
+          tl.fromTo(titleLines,
+            { yPercent: 105, opacity: 0 },
+            { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" },
             badge ? "-=0.35" : 0
           );
         }
 
         if (descLines.length > 0) {
-          tl.fromTo(descLines, 
-            { yPercent: 105, opacity: 0 }, 
-            { yPercent: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: "power3.out" }, 
+          tl.fromTo(descLines,
+            { yPercent: 105, opacity: 0 },
+            { yPercent: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: "power3.out" },
             titleLines.length > 0 ? "-=0.45" : 0
           );
         }
@@ -731,30 +731,30 @@ const Index = () => {
             }
           });
 
-          tl.fromTo(card, 
+          tl.fromTo(card,
             { opacity: 0, y: 40 },
-            { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+            { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", clearProps: "transform" }
           )
-          .fromTo(icon, 
-            { scale: 0, rotate: -35, opacity: 0 }, 
-            { scale: 1, rotate: 0, opacity: 1, duration: 0.6, ease: "back.out(1.7)" }, 
-            "-=0.55"
-          )
-          .fromTo(title, 
-            { opacity: 0, y: 10 }, 
-            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 
-            "-=0.45"
-          )
-          .fromTo(desc, 
-            { opacity: 0, y: 8 }, 
-            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 
-            "-=0.35"
-          )
-          .fromTo(footer, 
-            { opacity: 0, y: 10 }, 
-            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 
-            "-=0.35"
-          );
+            .fromTo(icon,
+              { scale: 0, rotate: -35, opacity: 0 },
+              { scale: 1, rotate: 0, opacity: 1, duration: 0.6, ease: "back.out(1.7)" },
+              "-=0.55"
+            )
+            .fromTo(title,
+              { opacity: 0, y: 10 },
+              { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+              "-=0.45"
+            )
+            .fromTo(desc,
+              { opacity: 0, y: 8 },
+              { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+              "-=0.35"
+            )
+            .fromTo(footer,
+              { opacity: 0, y: 10 },
+              { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+              "-=0.35"
+            );
         });
       } else {
         // Desktop view: Coordinated grid level stagger reveal
@@ -772,31 +772,31 @@ const Index = () => {
           const desc = card.querySelector(".services-card-desc");
           const footer = card.querySelector(".services-card-footer");
 
-          tl.fromTo(card, 
+          tl.fromTo(card,
             { opacity: 0, y: 60, rotationX: 18, rotationY: -10, transformPerspective: 1000 },
-            { opacity: 1, y: 0, rotationX: 0, rotationY: 0, duration: 1.2, ease: "power4.out" },
+            { opacity: 1, y: 0, rotationX: 0, rotationY: 0, duration: 1.2, ease: "power4.out", clearProps: "transform" },
             index === 0 ? 0 : "-=0.8"
           )
-          .fromTo(icon, 
-            { scale: 0, rotate: -35, opacity: 0 }, 
-            { scale: 1, rotate: 0, opacity: 1, duration: 0.7, ease: "back.out(1.7)" }, 
-            "-=0.9"
-          )
-          .fromTo(title, 
-            { opacity: 0, y: 15 }, 
-            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 
-            "-=0.7"
-          )
-          .fromTo(desc, 
-            { opacity: 0, y: 10 }, 
-            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 
-            "-=0.55"
-          )
-          .fromTo(footer, 
-            { opacity: 0, y: 15 }, 
-            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 
-            "-=0.55"
-          );
+            .fromTo(icon,
+              { scale: 0, rotate: -35, opacity: 0 },
+              { scale: 1, rotate: 0, opacity: 1, duration: 0.7, ease: "back.out(1.7)" },
+              "-=0.9"
+            )
+            .fromTo(title,
+              { opacity: 0, y: 15 },
+              { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+              "-=0.7"
+            )
+            .fromTo(desc,
+              { opacity: 0, y: 10 },
+              { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+              "-=0.55"
+            )
+            .fromTo(footer,
+              { opacity: 0, y: 15 },
+              { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+              "-=0.55"
+            );
         });
       }
     }, grid);
@@ -824,25 +824,25 @@ const Index = () => {
           }
         });
 
-        tl.fromTo(card, 
+        tl.fromTo(card,
           { opacity: 0, y: 25 },
           { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }
         )
-        .fromTo(icon, 
-          { scale: 0, opacity: 0 }, 
-          { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.5)" }, 
-          "-=0.35"
-        )
-        .fromTo(titleSpan, 
-          { yPercent: 105, opacity: 0 }, 
-          { yPercent: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 
-          "-=0.25"
-        )
-        .fromTo(descSpan, 
-          { yPercent: 105, opacity: 0 }, 
-          { yPercent: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 
-          "-=0.25"
-        );
+          .fromTo(icon,
+            { scale: 0, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.5)" },
+            "-=0.35"
+          )
+          .fromTo(titleSpan,
+            { yPercent: 105, opacity: 0 },
+            { yPercent: 0, opacity: 1, duration: 0.45, ease: "power2.out" },
+            "-=0.25"
+          )
+          .fromTo(descSpan,
+            { yPercent: 105, opacity: 0 },
+            { yPercent: 0, opacity: 1, duration: 0.45, ease: "power2.out" },
+            "-=0.25"
+          );
       });
     }, grid);
 
@@ -989,7 +989,7 @@ const Index = () => {
           const text = card.querySelector(".testimonial-text");
           const client = card.querySelector(".testimonial-client");
 
-          tl.fromTo(card, 
+          tl.fromTo(card,
             { opacity: 0, y: 50, rotationX: 15, rotationY: -8, transformPerspective: 1000 },
             { opacity: 1, y: 0, rotationX: 0, rotationY: 0, duration: 1.1, ease: "power4.out" },
             index === 0 ? 0 : "-=0.75"
@@ -1029,18 +1029,18 @@ const Index = () => {
         });
       } else {
         // Slide carousel paging: Trigger instant smooth transition
-        gsap.fromTo(cards, 
-          { opacity: 0, y: 20 }, 
+        gsap.fromTo(cards,
+          { opacity: 0, y: 20 },
           { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out" }
         );
         // Force reset internal elements to fully visible state
         cards.forEach((card) => {
-          gsap.set(card.querySelectorAll(".testimonial-quote, .testimonial-stars, .testimonial-text, .testimonial-client, .testimonial-stars > *"), { 
-            opacity: 1, 
-            scale: 1, 
-            y: 0, 
-            rotationX: 0, 
-            rotationY: 0 
+          gsap.set(card.querySelectorAll(".testimonial-quote, .testimonial-stars, .testimonial-text, .testimonial-client, .testimonial-stars > *"), {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            rotationX: 0,
+            rotationY: 0
           });
         });
       }
@@ -1102,10 +1102,10 @@ const Index = () => {
         }
         @media (max-width: 1023px) and (max-height: 850px) {
           .hero-left-col h1 {
-            font-size: 2rem !important;
+            font-size: 2.2rem !important;
           }
           .hero-left-col p {
-            font-size: 12px !important;
+            font-size: 12.5px !important;
           }
           .hero-right-col > div {
             max-width: 270px !important;
@@ -1113,10 +1113,10 @@ const Index = () => {
         }
         @media (max-width: 1023px) and (max-height: 750px) {
           .hero-left-col h1 {
-            font-size: 1.65rem !important;
+            font-size: 1.95rem !important;
           }
           .hero-left-col p {
-            font-size: 11px !important;
+            font-size: 11.5px !important;
           }
           .hero-right-col > div {
             max-width: 220px !important;
@@ -1140,7 +1140,7 @@ const Index = () => {
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col lg:grid lg:grid-cols-12 items-center justify-around py-4 lg:py-0 min-h-0 overflow-hidden">
 
           {/* Left Column: Headline, CTAs */}
-          <div className="hero-left-col lg:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left gap-3.5 lg:gap-5 pt-8 pb-4 lg:py-6 z-10 lg:pr-8 h-full justify-center">
+          <div className="hero-left-col lg:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left gap-4 lg:gap-6 pt-8 pb-4 lg:py-6 z-10 lg:pr-8 h-full justify-center">
             {/* IT Sector Badge */}
             <div ref={heroBadgeRef} style={{ opacity: 0 }} className="inline-flex items-center gap-2 px-3 py-1 bg-[#eaf5ef]/90 dark:bg-emerald-950/40 border border-[#bce4cf] dark:border-emerald-800/30 rounded-full text-[8.5px] lg:text-[9px] font-bold tracking-wider text-[#2f855a] dark:text-[#6ba67e] uppercase">
               <Sparkles size={10} className="fill-[#2f855a]" />
@@ -1148,7 +1148,7 @@ const Index = () => {
             </div>
 
             {/* Title */}
-            <h1 ref={heroTitleRef} className="text-4xl sm:text-5xl lg:text-[2.8vw] xl:text-[3.3vw] font-[900] leading-[1.08] tracking-tight text-[#1a202c] dark:text-white select-none">
+            <h1 ref={heroTitleRef} className="text-5xl sm:text-6xl lg:text-[3.2vw] xl:text-[3.7vw] font-[900] leading-[1.05] tracking-tight text-[#1a202c] dark:text-white select-none">
               <span className="hero-title-line block overflow-hidden">
                 <span className="inline-block" style={{ opacity: 0 }}>We Build</span>
               </span>
@@ -1181,7 +1181,7 @@ const Index = () => {
               </span>
             </h1>
 
-            <p ref={heroDescRef} className="text-[13px] sm:text-sm lg:text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0 flex flex-col gap-0.5">
+            <p ref={heroDescRef} className="text-sm sm:text-base lg:text-[1.05rem] text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0 flex flex-col gap-0.5">
               <span className="hero-desc-line block overflow-hidden">
                 <span className="inline-block" style={{ opacity: 0 }}>From modern websites and digital campaigns</span>
               </span>
@@ -1339,7 +1339,7 @@ const Index = () => {
               const IconComponent = service.icon;
               return (
                 <div key={index} className="opacity-0">
-                  <TiltSpotlightCard className="group relative flex flex-col justify-between p-8 rounded-3xl border border-slate-200/50 bg-white/40 dark:border-slate-800/40 dark:bg-zinc-950/20 backdrop-blur-md hover:border-primary/40 shadow-sm transition-all duration-500 overflow-hidden h-full">
+                  <TiltSpotlightCard className="group relative flex flex-col justify-between p-8 rounded-3xl border border-slate-200/50 bg-white dark:border-slate-800/40 dark:bg-zinc-950 hover:border-primary/40 shadow-sm transition-all duration-500 overflow-hidden h-full">
                     {/* Corner Tech Border Accent */}
                     <div className="absolute top-0 right-0 w-24 h-[1px] bg-primary/30 scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500" />
                     <div className="absolute top-0 right-0 w-[1px] h-24 bg-primary/30 scale-y-0 group-hover:scale-y-100 origin-top transition-transform duration-500" />
@@ -1426,7 +1426,7 @@ const Index = () => {
                     <span className="inline-block">can build the next decade with.</span>
                   </span>
                 </h2>
-                 <p className="reveal-desc text-muted-foreground text-sm leading-relaxed text-justify flex flex-col gap-0.5 max-w-xl">
+                <p className="reveal-desc text-muted-foreground text-sm leading-relaxed text-justify flex flex-col gap-0.5 max-w-xl">
                   <span className="reveal-desc-line block overflow-hidden">
                     <span className="inline-block">With over a decade of experience, we've mastered the art of</span>
                   </span>
