@@ -45,6 +45,8 @@ import SplitTextReveal from "@/components/SplitTextReveal";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import TiltSpotlightCard from "@/components/ui/TiltSpotlightCard";
+import { getAccent } from "@/lib/accentColors";
+import { HexBadge, DotGrid, AbstractCorner, TagPill } from "@/components/ui/ServiceCardDecor";
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
@@ -297,6 +299,7 @@ const services = [
     details: "React, Next.js, Node, Python, .NET. Architected for performance, observability, and a clean handoff.",
     tags: ["React", "Next.js", "Node.js", "APIs", "SaaS"],
     path: "/development?service=web-development",
+    accent: "blue",
   },
   {
     icon: Smartphone,
@@ -305,6 +308,7 @@ const services = [
     details: "iOS, Android, Flutter, React Native. From MVPs to App Store launches and post-launch growth.",
     tags: ["iOS", "Android", "Flutter", "React Native"],
     path: "/development/app-development",
+    accent: "purple",
   },
   {
     icon: Brain,
@@ -313,6 +317,7 @@ const services = [
     details: "Chatbots, computer vision, predictive analytics, GenAI integrations, and custom ML models trained on your data.",
     tags: ["LLMs", "Computer Vision", "Predictive ML", "RAG"],
     path: "/development/ai-ml",
+    accent: "violet",
   },
   {
     icon: Cloud,
@@ -321,6 +326,7 @@ const services = [
     details: "AWS, Azure, GCP. Containerization, IaC, monitoring, and 99.9% uptime SLAs for production workloads.",
     tags: ["AWS", "Azure", "Docker", "Kubernetes", "CI/CD"],
     path: "/development/cloud-devops",
+    accent: "cyan",
   },
   {
     icon: Megaphone,
@@ -329,6 +335,7 @@ const services = [
     details: "Bulk SMS, WhatsApp marketing, social media management, content writing, and election campaigns.",
     tags: ["SMS", "WhatsApp", "Social", "Content"],
     path: "/services",
+    accent: "pink",
   },
   {
     icon: Palette,
@@ -337,6 +344,7 @@ const services = [
     details: "Design systems, prototypes, polished UI, and full brand identities for digital and print.",
     tags: ["Design Systems", "Prototypes", "Identity"],
     path: "/development?service=ui-ux-design",
+    accent: "indigo",
   },
 ];
 
@@ -528,6 +536,7 @@ const AnimatedStat = ({ stat, variants }) => {
   return (
     <div ref={ref}>
       <TiltSpotlightCard className="relative p-6 rounded-2xl border border-slate-200/50 bg-white/40 dark:border-slate-800/50 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm flex flex-col items-center justify-center overflow-hidden group hover:border-primary/40 transition-all duration-300">
+      
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
         <div className="font-display text-4xl md:text-5xl font-extrabold text-primary mb-2 tracking-tight">
           {stat.isStatic ? stat.value : `${count}${stat.suffix || ""}`}
@@ -1338,23 +1347,30 @@ const Index = () => {
           <div ref={servicesGridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {services.map((service, index) => {
               const IconComponent = service.icon;
+              const c = getAccent(service.accent);
               return (
                 <div key={index} className="opacity-0">
-                  <TiltSpotlightCard className="group relative flex flex-col justify-between p-8 rounded-3xl border border-slate-200/50 bg-white dark:border-slate-800/40 dark:bg-zinc-950 hover:border-primary/40 shadow-sm transition-all duration-500 overflow-hidden h-full">
-                    {/* Corner Tech Border Accent */}
-                    <div className="absolute top-0 right-0 w-24 h-[1px] bg-primary/30 scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500" />
-                    <div className="absolute top-0 right-0 w-[1px] h-24 bg-primary/30 scale-y-0 group-hover:scale-y-100 origin-top transition-transform duration-500" />
 
-                    <div>
-                      {/* Icon */}
-                      <div className="services-icon-wrap w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-[1.08] group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner">
-                        <IconComponent className="w-5 h-5" />
-                      </div>
+                 
+                  <TiltSpotlightCard className={`group relative flex flex-col p-7 sm:p-8 rounded-[28px] border border-white/70 bg-gradient-to-b from-white to-slate-50/60 dark:border-zinc-800/60 dark:from-zinc-900/80 dark:to-zinc-950/60 backdrop-blur-md ${c.hoverBorder} shadow-[0_10px_34px_-14px_rgba(15,23,42,0.16)] group-hover:shadow-[0_24px_50px_-16px_rgba(15,23,42,0.24)] transition-all duration-300 ease-out overflow-hidden`}>
+                    {/* Decorative corner elements */}
+                    <DotGrid className={`top-6 right-6 ${c.icon}`} />
+                    <AbstractCorner accentKey={service.accent} title={service.title} className={`bottom-0 right-0 translate-x-8 translate-y-8 ${c.icon}`} />
+
+
+                    <div className="relative z-10">
+                      {/* Icon badge */}
+                      <HexBadge
+                        icon={<IconComponent className="w-6 h-6" />}
+                        accent={c}
+                        className="services-icon-wrap mb-5"
+                      />
 
                       {/* Title */}
-                      <h3 className="services-card-title font-display text-xl font-bold mt-6 mb-3 text-zinc-900 dark:text-white tracking-tight group-hover:text-primary transition-colors duration-300">
+                      <h3 className="services-card-title font-display text-xl font-bold mb-2.5 text-zinc-900 dark:text-white tracking-tight transition-colors duration-300">
                         {service.title}
                       </h3>
+                      <span className={`block h-[3px] w-9 rounded-full ${c.underline} mb-3.5 group-hover:w-16 transition-all duration-300 ease-out`} />
 
                       {/* Desc */}
                       <p className="services-card-desc text-muted-foreground text-sm leading-relaxed mb-4">
@@ -1364,23 +1380,20 @@ const Index = () => {
                     </div>
 
                     {/* Tags */}
-                    <div className="services-card-footer mt-8 flex flex-col gap-4">
-                      <div className="flex flex-wrap gap-1.5">
+                    <div className="services-card-footer relative z-10 mt-6 flex flex-col gap-4">
+                      <div className="flex flex-wrap gap-2">
                         {service.tags.map((tag, tagIdx) => (
-                          <span
-                            key={tagIdx}
-                            className="text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 text-slate-500 dark:text-zinc-400"
-                          >
-                            {tag}
-                          </span>
+                          <TagPill key={tagIdx} text={tag} accent={c} />
                         ))}
                       </div>
                       <Link
                         to={service.path}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:gap-2 transition-all mt-2"
+                        className="inline-flex items-center gap-2 text-sm font-bold mt-2 w-fit"
                       >
-                        Learn More
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <span className={c.link}>Learn More</span>
+                        <span className={`w-7 h-7 rounded-full ${c.arrow} flex items-center justify-center transition-all duration-300 group-hover:translate-x-0.5`}>
+                          <ArrowRight className="w-3.5 h-3.5 text-white transition-transform duration-300 group-hover:translate-x-0.5" />
+                        </span>
                       </Link>
                     </div>
                   </TiltSpotlightCard>

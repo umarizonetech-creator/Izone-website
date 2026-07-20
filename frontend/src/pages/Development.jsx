@@ -23,6 +23,8 @@ const services = [
       "QA & Launch",
     ],
     shape3D: "cube",
+    accent: "blue",
+    category: "Development",
   },
   {
     title: "Software Development",
@@ -39,6 +41,8 @@ const services = [
       "python & Django",
     ],
     shape3D: "sphere",
+    accent: "green",
+    category: "Development",
   },
   {
     title: "App Development",
@@ -55,6 +59,8 @@ const services = [
       "Inventory System",
     ],
     shape3D: "torus",
+    accent: "purple",
+    category: "Development",
   },
   {
     title: "AI & ML",
@@ -70,6 +76,8 @@ const services = [
       "TensorFlow & PyTorch",
     ],
     shape3D: "octahedron",
+    accent: "violet",
+    category: "AI Solutions",
   },
   {
     title: "Government Tenders",
@@ -86,6 +94,8 @@ const services = [
       "Submission Support",
     ],
     shape3D: "cube",
+    accent: "orange",
+    category: "Solutions",
   },
   {
     title: "Social Media Marketing",
@@ -102,6 +112,8 @@ const services = [
       "SEO Best Practices",
     ],
     shape3D: "sphere",
+    accent: "pink",
+    category: "Marketing",
   },
   {
     title: "Content Writing",
@@ -117,6 +129,8 @@ const services = [
       "Email Campaigns",
     ],
     shape3D: "cube",
+    accent: "cyan",
+    category: "Content",
   },
   {
     title: "Graphics Designer",
@@ -132,6 +146,8 @@ const services = [
       "Website Assets",
     ],
     shape3D: "cube",
+    accent: "emerald",
+    category: "Design",
   },
 ];
 
@@ -177,6 +193,8 @@ const Development = () => {
                 delay={index * 0.1}
                 desktopComfort={true}
                 serviceLayout={true}
+                accent={service.accent}
+                category={service.category}
               />
             ))}
           </motion.div>
