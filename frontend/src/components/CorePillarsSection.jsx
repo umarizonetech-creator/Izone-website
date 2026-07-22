@@ -181,6 +181,8 @@ export default function CorePillarsSection() {
     const container = containerRef.current;
     const sticky = stickyRef.current;
 
+    let handleWheel, handleTouchStart, handleTouchMove, handleKeyDown;
+
     if (!container || !sticky || !title1Ref.current || !title2Ref.current || !title3Ref.current || !portalRef.current) {
       return;
     }
@@ -196,32 +198,14 @@ export default function CorePillarsSection() {
     const ctx = gsap.context(() => {
       // Timeline for Chapter 1 (Vision & Portal Expand)
       // Separate, Scroll-Triggered Autoplay Text Animations (Sequenced)
-      // Chapter 1 Text Timeline
-      const textTl1 = gsap.timeline({ paused: true });
-      textTl1.fromTo(title1Words,
-        { yPercent: 100, opacity: 0 },
-        {
-          yPercent: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.06,
-          ease: "power3.out",
-        }
-      );
+      // Chapter 1 Text (Already 100% visible immediately without fade in)
+      gsap.set(title1Words, { yPercent: 0, opacity: 1 });
       const desc1Lines = desc1Ref.current ? desc1Ref.current.querySelectorAll(".desc-line-reveal") : [];
       if (desc1Lines.length > 0) {
-        textTl1.fromTo(desc1Lines,
-          { yPercent: 100, opacity: 0 },
-          {
-            yPercent: 0,
-            opacity: 1,
-            duration: 0.6,
-            stagger: 0.06,
-            ease: "power3.out",
-          },
-          "-=0.4" // Starts during heading completion to create a seamless flow
-        );
+        gsap.set(desc1Lines, { yPercent: 0, opacity: 1 });
       }
+      if (ch1Float1.current) gsap.set(ch1Float1.current, { y: -10, opacity: 0.95 });
+      if (ch1Float2.current) gsap.set(ch1Float2.current, { y: 15, opacity: 0.95 });
 
       // Chapter 2 Text Timeline
       const textTl2 = gsap.timeline({ paused: true });
@@ -250,8 +234,28 @@ export default function CorePillarsSection() {
         );
       }
 
+      let mainSt = null;
+      let currentStep = 0;
+      let isAnimating = false;
+      let view3Completed = false;
+      let isButtonFinished = false;
+
       // Chapter 3 Text Timeline
-      const textTl3 = gsap.timeline({ paused: true });
+      const textTl3 = gsap.timeline({
+        paused: true,
+        onComplete: () => {
+          isButtonFinished = true;
+          view3Completed = true; // Only unblock Section 3 when View 3 animation fully finishes
+          // Release Lenis scroll lock after View 3 animation completes
+          if (window.lenis) window.lenis.start();
+        },
+        onReverseComplete: () => {
+          isButtonFinished = false;
+          view3Completed = false;
+          // Ensure Lenis is running when reversing out of step 2
+          if (window.lenis) window.lenis.start();
+        }
+      });
       textTl3.fromTo(title3Words,
         { yPercent: 100, opacity: 0 },
         {
@@ -284,21 +288,9 @@ export default function CorePillarsSection() {
             duration: 0.6,
             ease: "back.out(1.7)",
           },
-          "-=0.55" // Starts immediately as the last line is fading in, eliminating delay
+          "-=0.55" // Final animation of View 3
         );
       }
-
-      // Early reveal ScrollTrigger for Chapter 1 Text (avoids blank screen on scroll-in)
-      ScrollTrigger.create({
-        trigger: container,
-        start: "top 80%",
-        onEnter: () => {
-          textTl1.play();
-        },
-        onLeaveBack: () => {
-          textTl1.reverse();
-        }
-      });
 
       // Main Scroll-Scrubbed timeline for Environment & Chapter transitions
       const tl = gsap.timeline({
@@ -311,22 +303,229 @@ export default function CorePillarsSection() {
           pin: sticky,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onToggle: (self) => {
+            if (self.isActive) {
+              const progress = self.progress;
+              if (progress < 0.25) {
+                currentStep = 0;
+                view3Completed = false;
+              } else if (progress < 0.6) {
+                currentStep = 1;
+                view3Completed = false;
+              } else {
+                currentStep = 2;
+              }
+            }
+          },
         }
       });
+      mainSt = tl.scrollTrigger;
+
+      const goToStep = (targetStep) => {
+        if (!mainSt) return;
+        if (targetStep < 0 || targetStep > 2) return;
+
+        isAnimating = true;
+        currentStep = targetStep;
+
+        let targetY = mainSt.start;
+        if (targetStep === 1) {
+          targetY = mainSt.start + (mainSt.end - mainSt.start) * 0.4;
+        } else if (targetStep === 2) {
+          targetY = mainSt.start + (mainSt.end - mainSt.start) * 0.75;
+        }
+
+        if (targetStep < 2) {
+          isButtonFinished = false;
+        }
+
+        const scrollObj = { y: window.scrollY };
+        gsap.killTweensOf(scrollObj);
+        gsap.to(scrollObj, {
+          y: targetY,
+          duration: 0.95,
+          ease: "power2.inOut",
+          onUpdate: () => {
+            window.scrollTo(0, scrollObj.y);
+            ScrollTrigger.update();
+          },
+          onComplete: () => {
+            if (targetStep === 2) {
+              // Arrived at View 3 — lock Lenis until animation completes
+              if (window.lenis) window.lenis.stop();
+            } else {
+              // Leaving View 3 — reset guards and ensure scroll is live
+              view3Completed = false;
+              isButtonFinished = false;
+              if (window.lenis) window.lenis.start();
+            }
+            // For step 2: view3Completed stays false until textTl3 onComplete fires
+            setTimeout(() => {
+              isAnimating = false;
+            }, 250);
+          }
+        });
+      };
+
+      handleWheel = (e) => {
+        if (!mainSt || !mainSt.isActive) return;
+
+        const delta = e.deltaY;
+        if (Math.abs(delta) < 5) return;
+
+        if (delta > 0) {
+          // Scroll DOWN
+          if (isAnimating) {
+            if (e.cancelable) e.preventDefault();
+            return;
+          }
+
+          if (currentStep === 0) {
+            if (e.cancelable) e.preventDefault();
+            goToStep(1);
+          } else if (currentStep === 1) {
+            if (e.cancelable) e.preventDefault();
+            goToStep(2);
+          } else if (currentStep === 2) {
+            if (!view3Completed || !isButtonFinished) {
+              if (e.cancelable) e.preventDefault();
+              // Also hard-clamp scroll position to prevent any drift
+              if (mainSt) {
+                const clampY = mainSt.start + (mainSt.end - mainSt.start) * 0.75;
+                window.scrollTo(0, clampY);
+              }
+            }
+          }
+        } else if (delta < 0) {
+          // Scroll UP
+          if (isAnimating) {
+            if (e.cancelable) e.preventDefault();
+            return;
+          }
+
+          if (currentStep === 2) {
+            if (e.cancelable) e.preventDefault();
+            goToStep(1);
+          } else if (currentStep === 1) {
+            if (e.cancelable) e.preventDefault();
+            goToStep(0);
+          } else if (currentStep === 0) {
+            if (window.scrollY > mainSt.start + 20) {
+              if (e.cancelable) e.preventDefault();
+              goToStep(0);
+            }
+          }
+        }
+      };
+
+      let touchStartY = 0;
+      handleTouchStart = (e) => {
+        if (e.touches && e.touches.length > 0) {
+          touchStartY = e.touches[0].clientY;
+        }
+      };
+
+      handleTouchMove = (e) => {
+        if (!mainSt || !mainSt.isActive) return;
+        if (!e.touches || e.touches.length === 0) return;
+
+        const currentY = e.touches[0].clientY;
+        const diffY = touchStartY - currentY;
+
+        if (Math.abs(diffY) < 15) return;
+
+        if (diffY > 0) {
+          if (isAnimating) {
+            if (e.cancelable) e.preventDefault();
+            return;
+          }
+          if (currentStep === 0) {
+            if (e.cancelable) e.preventDefault();
+            goToStep(1);
+          } else if (currentStep === 1) {
+            if (e.cancelable) e.preventDefault();
+            goToStep(2);
+          } else if (currentStep === 2) {
+            if (!view3Completed || isAnimating || !isButtonFinished) {
+              if (e.cancelable) e.preventDefault();
+            }
+          }
+        } else if (diffY < 0) {
+          if (isAnimating) {
+            if (e.cancelable) e.preventDefault();
+            return;
+          }
+          if (currentStep === 2) {
+            if (e.cancelable) e.preventDefault();
+            goToStep(1);
+          } else if (currentStep === 1) {
+            if (e.cancelable) e.preventDefault();
+            goToStep(0);
+          } else if (currentStep === 0) {
+            if (window.scrollY > mainSt.start + 20) {
+              if (e.cancelable) e.preventDefault();
+              goToStep(0);
+            }
+          }
+        }
+      };
+
+      handleKeyDown = (e) => {
+        if (!mainSt || !mainSt.isActive) return;
+
+        const isDown = e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey);
+        const isUp = e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey);
+
+        if (isDown) {
+          if (isAnimating) {
+            e.preventDefault();
+            return;
+          }
+          if (currentStep === 0) {
+            e.preventDefault();
+            goToStep(1);
+          } else if (currentStep === 1) {
+            e.preventDefault();
+            goToStep(2);
+          } else if (currentStep === 2) {
+            if (!view3Completed || isAnimating || !isButtonFinished) {
+              e.preventDefault();
+            }
+          }
+        } else if (isUp) {
+          if (isAnimating) {
+            e.preventDefault();
+            return;
+          }
+          if (currentStep === 2) {
+            e.preventDefault();
+            goToStep(1);
+          } else if (currentStep === 1) {
+            e.preventDefault();
+            goToStep(0);
+          } else if (currentStep === 0) {
+            if (window.scrollY > mainSt.start + 20) {
+              e.preventDefault();
+              goToStep(0);
+            }
+          }
+        }
+      };
+
+      window.addEventListener("wheel", handleWheel, { passive: false });
+      window.addEventListener("touchstart", handleTouchStart, { passive: true });
+      window.addEventListener("touchmove", handleTouchMove, { passive: false });
+      window.addEventListener("keydown", handleKeyDown);
+
       tl.timeScale(2.5);
 
-      // Trigger Chapter 1 text when timeline starts
-      tl.call(() => {
-        textTl1.play();
-      }, null, 0.1);
-
-      // Chapter 1 Animations
-      // 2. Expand Masked Image Portal
-      tl.fromTo(portalRef.current,
-        { clipPath: "circle(12% at 50% 50%)" },
-        { clipPath: "circle(75% at 50% 50%)", duration: 6, ease: "power2.inOut" },
-        "-=0.5"
-      );
+      // Expand Masked Image Portal Ball while scrolling
+      if (portalRef.current) {
+        tl.fromTo(portalRef.current,
+          { clipPath: "circle(14% at 50% 50%)" },
+          { clipPath: "circle(75% at 50% 50%)", duration: 6, ease: "power2.inOut" }
+        );
+      }
 
       if (portalImgRef.current) {
         tl.fromTo(portalImgRef.current,
@@ -341,9 +540,9 @@ export default function CorePillarsSection() {
       tl.fromTo(".parallax-shape-2", { y: 150, rotate: 0 }, { y: -180, rotate: -120, ease: "none", duration: 6 }, "<");
       tl.fromTo(".parallax-shape-3", { y: 50, scale: 0.8 }, { y: -100, scale: 1.2, ease: "none", duration: 6 }, "<");
 
-      // Floating 3D Depth Drift for Chapter 1
-      if (ch1Float1.current) tl.fromTo(ch1Float1.current, { y: 120, opacity: 0 }, { y: -10, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=4.5");
-      if (ch1Float2.current) tl.fromTo(ch1Float2.current, { y: 160, opacity: 0 }, { y: 15, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
+      // Floating 3D Depth Drift for Chapter 1 (Already visible)
+      if (ch1Float1.current) tl.to(ch1Float1.current, { y: -30, opacity: 0.95, duration: 4, ease: "none" }, "-=4.5");
+      if (ch1Float2.current) tl.to(ch1Float2.current, { y: 0, opacity: 0.95, duration: 4, ease: "none" }, "<");
 
       // Fade out Chapter 1 text to make space for Chapter 2
       const exitTargets = [title1Ref.current, desc1Ref.current, ch1Float1.current, ch1Float2.current].filter(Boolean);
@@ -420,7 +619,8 @@ export default function CorePillarsSection() {
         }, "-=1.5");
       }
 
-      // Removed scroll-bound magnetic button reveal from tl to play it automatically with textTl3
+      // Dedicated Resting Hold: Keeps View 3 (100% complete) fully pinned & displayed before section unpins
+      tl.to({}, { duration: 6 });
 
     }, container);
 
@@ -459,6 +659,12 @@ export default function CorePillarsSection() {
     }
 
     return () => {
+      if (handleWheel) window.removeEventListener("wheel", handleWheel);
+      if (handleTouchStart) window.removeEventListener("touchstart", handleTouchStart);
+      if (handleTouchMove) window.removeEventListener("touchmove", handleTouchMove);
+      if (handleKeyDown) window.removeEventListener("keydown", handleKeyDown);
+      // Always release Lenis on cleanup so it's never left frozen
+      if (window.lenis) window.lenis.start();
       ctx.revert();
       if (btnEl) {
         btnEl.removeEventListener("mousemove", handleMouseMove);
@@ -471,7 +677,7 @@ export default function CorePillarsSection() {
     <div
       ref={containerRef}
       className="relative w-full bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-white overflow-visible font-sans select-none"
-      style={{ height: "320vh" }}
+      style={{ height: "360vh" }}
     >
       {/* Top transition blend */}
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#f7faf8] dark:from-zinc-950 to-transparent pointer-events-none z-20" />

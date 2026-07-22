@@ -147,9 +147,9 @@ export function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 z-[100] w-screen max-w-[100vw] overflow-x-clip transition-all duration-200 ${navSurface}`}
+      className={`fixed top-0 left-0 z-[100] w-full overflow-visible transition-all duration-200 ${navSurface}`}
     >
-      <div className="container-custom flex w-full max-w-full items-center justify-between gap-3 px-4 xl:max-w-none xl:px-10 2xl:px-14">
+      <div className="container-custom flex w-full max-w-full items-center justify-between gap-3 px-4 xl:max-w-none xl:px-10 2xl:px-14 overflow-visible">
         {/* Logo */}
         <Link to="/" className="flex min-w-0 items-center gap-3 group xl:mr-8">
           <img
@@ -164,18 +164,19 @@ export function Navbar() {
 
         {/* Desktop Menu */}
         <div
-          className="navbar-desktop-only hidden xl:flex xl:gap-8 items-center"
+          className="navbar-desktop-only hidden xl:flex xl:gap-8 items-center overflow-visible"
           style={isMobileNav ? { display: "none" } : undefined}
         >
           {navLinks.map((link) => (
-            <div key={link.path} className="relative">
+            <div key={link.path} className="relative overflow-visible">
               {link.hasDropdown ? (
                 <div
+                  className="relative overflow-visible py-2"
                   onMouseEnter={() => setActiveDropdown(link.dropdownType)}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
                   <button
-                    className={`flex items-center gap-1 font-medium ${
+                    className={`flex items-center gap-1 font-medium transition-colors ${
                       isActiveDropdownPath(link.dropdownType)
                         ? "text-primary"
                         : "text-muted-foreground hover:text-foreground"
@@ -184,7 +185,7 @@ export function Navbar() {
                     {link.name}
                     <ChevronDown
                       size={16}
-                      className={`${
+                      className={`transition-transform duration-200 ${
                         activeDropdown === link.dropdownType ? "rotate-180" : ""
                       }`}
                     />
@@ -193,32 +194,35 @@ export function Navbar() {
                   <AnimatePresence>
                     {activeDropdown === link.dropdownType && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute top-full left-0 mt-2 w-64 rounded-xl border border-border bg-card p-2 shadow-xl"
+                        exit={{ opacity: 0, y: 8 }}
+                        transition={{ duration: 0.18, ease: "easeOut" }}
+                        className="absolute top-full left-0 pt-2 w-64 z-[150] overflow-visible"
                       >
-                        <Link
-                          to={`/${link.dropdownType}`}
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
-                        >
-                          <span>All {link.name}</span>
-                        </Link>
-                        <div className="h-px bg-border my-1" />
-                        {getDropdownItems(link.dropdownType).map((item) => (
+                        <div className="rounded-xl border border-border/80 bg-background/95 backdrop-blur-xl p-2 shadow-2xl dark:bg-card/95 border-slate-200/80 dark:border-zinc-800">
                           <Link
-                            key={item.path}
-                            to={item.path}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                              location.pathname === item.path
-                                ? "bg-primary/10 text-primary"
-                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                            }`}
+                            to={`/${link.dropdownType}`}
+                            className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors font-medium text-sm"
                           >
-                            <item.icon size={18} className="text-primary" />
-                            <span>{item.name}</span>
+                            <span>All {link.name}</span>
                           </Link>
-                        ))}
+                          <div className="h-px bg-border/60 my-1" />
+                          {getDropdownItems(link.dropdownType).map((item) => (
+                            <Link
+                              key={item.path}
+                              to={item.path}
+                              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium ${
+                                location.pathname === item.path
+                                  ? "bg-primary/10 text-primary font-semibold"
+                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
+                              }`}
+                            >
+                              <item.icon size={18} className="text-primary flex-shrink-0" />
+                              <span>{item.name}</span>
+                            </Link>
+                          ))}
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
