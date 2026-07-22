@@ -20,6 +20,9 @@ import {
   Cloud,
   Megaphone,
   Palette,
+  GraduationCap,
+  Search,
+  Vote,
   Sparkles,
   CheckCircle2,
   TrendingUp,
@@ -346,6 +349,33 @@ const services = [
     path: "/development?service=ui-ux-design",
     accent: "indigo",
   },
+  {
+  icon: GraduationCap,
+  title: "Courses",
+  description: "Industry-focused training to build real-world skills.",
+  details: "Professional courses in web development, digital marketing, UI/UX, AI, and other in-demand technologies with hands-on projects.",
+  tags: ["Web Development", "Full-Stack", "Marketing"],
+  path: "/courses",
+  accent: "emerald",
+},
+{
+  icon: Search,
+  title: "SEO / SMO Optimization",
+  description: "Improve visibility, rankings, and social engagement.",
+  details: "Comprehensive SEO and SMO strategies including keyword research, on-page optimization, technical SEO, link building, and social media optimization.",
+  tags: ["SEO", "SMO", "Analytics", "Ranking"],
+  path: "/development/content-writing",
+  accent: "green",
+},
+{
+  icon: Vote,
+  title: "Digital Election Campaign",
+  description: "Data-driven campaigns that maximize voter engagement.",
+  details: "End-to-end digital election campaign management including social media strategy, targeted advertising, voter outreach, creative content, and analytics.",
+  tags: ["Campaign", "Social Media", "Ads", "Strategy"],
+  path: "/services/digital-election-campaign",
+  accent: "orange",
+},
 ];
 
 const stats = [
@@ -1166,7 +1196,7 @@ const Index = () => {
                 <span className="inline-block" style={{ opacity: 0 }}>From modern websites and digital campaigns</span>
               </span>
               <span className="hero-desc-line block overflow-hidden">
-                <span className="inline-block" style={{ opacity: 0 }}>to SEO and growth, <span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone</span> is your trusted partner.</span>
+                <span className="inline-block" style={{ opacity: 0 }}>to SEO and growth, <span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone Technologies</span> is your trusted partner.</span>
               </span>
               <span className="hero-desc-line block overflow-hidden">
                 <span className="inline-block" style={{ opacity: 0 }}>9 years. 100+ launches. One expert team.</span>
