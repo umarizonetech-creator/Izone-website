@@ -1308,7 +1308,7 @@ const AboutHero = () => {
               variants={itemVariants}
               className="mt-6 max-w-2xl text-lg md:text-xl font-light leading-relaxed text-zinc-700 text-justify"
             >
-              Izone Technology was established in 2016 at Trichy with diverse
+              Izone Technologies was established in 2016 at Trichy with diverse
               knowledge. We deliver web designing and development, software and
               mobile app development, bulk messaging solutions, and career
               development programs with clarity, quality, and long-term growth.
