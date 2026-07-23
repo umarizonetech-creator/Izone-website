@@ -564,24 +564,78 @@ const AnimatedStat = ({ stat, variants }) => {
   }, [inView, stat.isStatic, stat.value]);
 
   return (
-    // <div ref={ref}>
-    //   <TiltSpotlightCard className="relative p-6 rounded-2xl border border-slate-200/50 bg-white/40 dark:border-slate-800/50 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm flex flex-col items-center justify-center overflow-hidden group hover:border-primary/40 transition-all duration-300">
+    // <div ref={ref} className="h-full">
+    //   <TiltSpotlightCard className="relative h-full p-6 rounded-2xl border border-slate-200/50 bg-white/40 dark:border-slate-800/50 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm flex flex-col items-center justify-center overflow-hidden group hover:border-primary/40 transition-all duration-300">
       
     //     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
     //     <div className="font-display text-4xl md:text-5xl font-extrabold text-primary mb-2 tracking-tight">
     //       {stat.isStatic ? stat.value : `${count}${stat.suffix || ""}`}
     //     </div>
-    //     <div className="text-muted-foreground text-xs sm:text-sm font-semibold tracking-wide uppercase">{stat.label}</div>
+    //     <div className="text-muted-foreground text-xs sm:text-sm font-semibold tracking-wide uppercase text-center">{stat.label}</div>
     //   </TiltSpotlightCard>
     // </div>
     <div ref={ref} className="h-full">
-      <TiltSpotlightCard className="relative h-full p-6 rounded-2xl border border-slate-200/50 bg-white/40 dark:border-slate-800/50 dark:bg-zinc-950/20 backdrop-blur-md shadow-sm flex flex-col items-center justify-center overflow-hidden group hover:border-primary/40 transition-all duration-300">
-      
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-        <div className="font-display text-4xl md:text-5xl font-extrabold text-primary mb-2 tracking-tight">
+      <TiltSpotlightCard
+        className="
+          relative
+          h-full
+          overflow-hidden
+          rounded-[28px]
+          border border-emerald-600/20
+          bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-700
+          p-7
+          transition-all
+          duration-500
+          hover:-translate-y-2
+          hover:border-white
+          hover:shadow-[0_25px_60px_rgba(16,185,129,0.35)]
+          group
+        "
+      >
+        {/* Decorative Circle */}
+        <div className="absolute -top-12 -right-12 h-36 w-36 rounded-full bg-white/10 transition-all duration-500 group-hover:scale-125" />
+
+        {/* Small Accent Circle */}
+        <div className="absolute bottom-5 right-5 h-3 w-3 rounded-full bg-white/40 animate-pulse" />
+
+        {/* Top Icon */}
+        {/* <div className="mb-6 flex items-center justify-between">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+            <TrendingUp className="h-7 w-7 text-white" />
+          </div>
+
+          <ArrowUpRight className="h-6 w-6 text-white/70 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" />
+        </div> */}
+
+        {/* Number */}
+        <h3 className="text-5xl font-black tracking-tight text-white">
           {stat.isStatic ? stat.value : `${count}${stat.suffix || ""}`}
-        </div>
-        <div className="text-muted-foreground text-xs sm:text-sm font-semibold tracking-wide uppercase text-center">{stat.label}</div>
+        </h3>
+
+        {/* Divider */}
+        <div className="my-5 h-px w-full bg-white/20" />
+
+        {/* Label */}
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/90">
+          {stat.label}
+        </p>
+
+      
+        {/* Hover Shine */}
+        <div
+          className="
+            absolute
+            inset-0
+            -translate-x-full
+            bg-gradient-to-r
+            from-transparent
+            via-white/20
+            to-transparent
+            transition-transform
+            duration-700
+            group-hover:translate-x-full
+          "
+        />
       </TiltSpotlightCard>
     </div>
   );
