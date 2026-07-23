@@ -14,23 +14,27 @@ const scrollPositions = new Map();
 
 // Helper to retrieve saved scroll position from Map or sessionStorage
 const getSavedScroll = (loc) => {
-  if (!loc) return 0;
+  if (!loc) return null;
 
   const keyPos = loc.key ? scrollPositions.get(loc.key) : null;
-  if (keyPos !== null && keyPos !== undefined && keyPos > 0) return keyPos;
+  if (keyPos !== null && keyPos !== undefined) return keyPos;
 
   const pathPos = scrollPositions.get(loc.pathname);
-  if (pathPos !== null && pathPos !== undefined && pathPos > 0) return pathPos;
+  if (pathPos !== null && pathPos !== undefined) return pathPos;
 
   try {
     const sessionKeyPos = loc.key ? sessionStorage.getItem("scroll_" + loc.key) : null;
-    if (sessionKeyPos) return parseFloat(sessionKeyPos);
+    if (sessionKeyPos !== null && sessionKeyPos !== undefined && sessionKeyPos !== "") {
+      return parseFloat(sessionKeyPos);
+    }
 
     const sessionPathPos = sessionStorage.getItem("scroll_" + loc.pathname);
-    if (sessionPathPos) return parseFloat(sessionPathPos);
+    if (sessionPathPos !== null && sessionPathPos !== undefined && sessionPathPos !== "") {
+      return parseFloat(sessionPathPos);
+    }
   } catch (e) {}
 
-  return 0;
+  return null;
 };
 
 const Layout = ({ children }) => {
@@ -38,10 +42,14 @@ const Layout = ({ children }) => {
   const navType = useNavigationType();
   const lenisRef = useRef(null);
 
+  // Flag to prevent unmount/layout-revert scroll events from overwriting saved position
+  const isNavigatingRef = useRef(false);
+
   // Always hold latest location reference in a ref for accurate scroll recording
   const locationRef = useRef(location);
   useEffect(() => {
     locationRef.current = location;
+    isNavigatingRef.current = false;
   }, [location]);
 
   const isServiceArea =
@@ -56,41 +64,48 @@ const Layout = ({ children }) => {
   }, []);
 
   // Helper to save current scroll position immediately
-  const saveCurrentScroll = () => {
+  const saveCurrentScroll = (isExplicitNav = false) => {
     const activeLoc = locationRef.current;
     if (!activeLoc) return;
+
+    // Prevent unmount/layout-revert scroll events from corrupting the saved position
+    if (isNavigatingRef.current && !isExplicitNav) return;
+
     const currentPos = window.scrollY || (window.lenis ? window.lenis.scroll : 0);
-    if (currentPos > 0) {
-      if (activeLoc.key) scrollPositions.set(activeLoc.key, currentPos);
-      scrollPositions.set(activeLoc.pathname, currentPos);
-      try {
-        if (activeLoc.key) sessionStorage.setItem("scroll_" + activeLoc.key, currentPos.toString());
-        sessionStorage.setItem("scroll_" + activeLoc.pathname, currentPos.toString());
-      } catch (e) {}
+
+    if (activeLoc.key) scrollPositions.set(activeLoc.key, currentPos);
+    scrollPositions.set(activeLoc.pathname, currentPos);
+    try {
+      if (activeLoc.key) sessionStorage.setItem("scroll_" + activeLoc.key, currentPos.toString());
+      sessionStorage.setItem("scroll_" + activeLoc.pathname, currentPos.toString());
+    } catch (e) {}
+
+    if (isExplicitNav) {
+      isNavigatingRef.current = true;
     }
   };
 
   // Capture scroll events & clicks on ANY link/button to save position before navigation
   useEffect(() => {
     const handleScrollSave = () => {
-      saveCurrentScroll();
+      saveCurrentScroll(false);
     };
 
     const handleClickSave = (e) => {
       const linkOrBtn = e.target.closest("a, button, [role='button']");
       if (linkOrBtn) {
-        saveCurrentScroll();
+        saveCurrentScroll(true);
       }
     };
 
     window.addEventListener("scroll", handleScrollSave, { passive: true });
     document.addEventListener("click", handleClickSave, true);
-    window.addEventListener("beforeunload", handleScrollSave);
+    window.addEventListener("beforeunload", () => saveCurrentScroll(true));
 
     return () => {
       window.removeEventListener("scroll", handleScrollSave);
       document.removeEventListener("click", handleClickSave, true);
-      window.removeEventListener("beforeunload", handleScrollSave);
+      window.removeEventListener("beforeunload", () => saveCurrentScroll(true));
     };
   }, []);
 
@@ -126,7 +141,7 @@ const Layout = ({ children }) => {
   useLayoutEffect(() => {
     if (navType === "POP") {
       const savedScroll = getSavedScroll(location);
-      if (savedScroll > 0) {
+      if (savedScroll !== null) {
         window.scrollTo(0, savedScroll);
         if (lenisRef.current) {
           lenisRef.current.scrollTo(savedScroll, { immediate: true });
@@ -144,14 +159,23 @@ const Layout = ({ children }) => {
     if (navType === "POP") {
       const savedScroll = getSavedScroll(location);
 
+      // Refresh ScrollTrigger first so pinned triggers & dimensions are accurate
+      ScrollTrigger.refresh();
+
+      if (savedScroll !== null) {
+        if (lenis) {
+          lenis.scrollTo(savedScroll, { immediate: true });
+        }
+        window.scrollTo(0, savedScroll);
+      }
+
       const restoreTimer = setTimeout(() => {
-        if (savedScroll > 0) {
+        if (savedScroll !== null) {
           if (lenis) {
             lenis.scrollTo(savedScroll, { immediate: true });
           }
           window.scrollTo(0, savedScroll);
         }
-        ScrollTrigger.refresh();
       }, 50);
 
       return () => clearTimeout(restoreTimer);

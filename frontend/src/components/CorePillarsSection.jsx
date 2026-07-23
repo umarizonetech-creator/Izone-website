@@ -181,22 +181,21 @@ export default function CorePillarsSection() {
     const container = containerRef.current;
     const sticky = stickyRef.current;
 
-    let handleWheel, handleTouchStart, handleTouchMove, handleKeyDown;
+    let handleWheel = null;
+    let handleTouchStart = null;
+    let handleTouchMove = null;
+    let transitionTimer = null;
 
     if (!container || !sticky || !title1Ref.current || !title2Ref.current || !title3Ref.current || !portalRef.current) {
       return;
     }
 
-    const title1Words = title1Ref.current.querySelectorAll(".word-reveal");
-    const title2Words = title2Ref.current.querySelectorAll(".word-reveal");
-    const title3Words = title3Ref.current.querySelectorAll(".word-reveal");
-
-    if (!title1Words.length || !title2Words.length || !title3Words.length) {
-      return;
-    }
-
     const ctx = gsap.context(() => {
-      // Timeline for Chapter 1 (Vision & Portal Expand)
+      // Animation Targets
+      const title1Words = title1Ref.current ? title1Ref.current.querySelectorAll(".word-reveal") : [];
+      const title2Words = title2Ref.current ? title2Ref.current.querySelectorAll(".word-reveal") : [];
+      const title3Words = title3Ref.current ? title3Ref.current.querySelectorAll(".word-reveal") : [];
+
       // Separate, Scroll-Triggered Autoplay Text Animations (Sequenced)
       // Chapter 1 Text (Already 100% visible immediately without fade in)
       gsap.set(title1Words, { yPercent: 0, opacity: 1 });
@@ -207,91 +206,6 @@ export default function CorePillarsSection() {
       if (ch1Float1.current) gsap.set(ch1Float1.current, { y: -10, opacity: 0.95 });
       if (ch1Float2.current) gsap.set(ch1Float2.current, { y: 15, opacity: 0.95 });
 
-      // Chapter 2 Text Timeline
-      const textTl2 = gsap.timeline({ paused: true });
-      textTl2.fromTo(title2Words,
-        { yPercent: 100, opacity: 0 },
-        {
-          yPercent: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.06,
-          ease: "power3.out",
-        }
-      );
-      const desc2Lines = desc2Ref.current ? desc2Ref.current.querySelectorAll(".desc-line-reveal") : [];
-      if (desc2Lines.length > 0) {
-        textTl2.fromTo(desc2Lines,
-          { yPercent: 100, opacity: 0 },
-          {
-            yPercent: 0,
-            opacity: 1,
-            duration: 0.6,
-            stagger: 0.06,
-            ease: "power3.out",
-          },
-          "-=0.4" // Starts during heading completion to create a seamless flow
-        );
-      }
-
-      let mainSt = null;
-      let currentStep = 0;
-      let isAnimating = false;
-      let view3Completed = false;
-      let isButtonFinished = false;
-
-      // Chapter 3 Text Timeline
-      const textTl3 = gsap.timeline({
-        paused: true,
-        onComplete: () => {
-          isButtonFinished = true;
-          view3Completed = true; // Only unblock Section 3 when View 3 animation fully finishes
-          // Release Lenis scroll lock after View 3 animation completes
-          if (window.lenis) window.lenis.start();
-        },
-        onReverseComplete: () => {
-          isButtonFinished = false;
-          view3Completed = false;
-          // Ensure Lenis is running when reversing out of step 2
-          if (window.lenis) window.lenis.start();
-        }
-      });
-      textTl3.fromTo(title3Words,
-        { yPercent: 100, opacity: 0 },
-        {
-          yPercent: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.06,
-          ease: "power3.out",
-        }
-      );
-      const desc3Lines = desc3Ref.current ? desc3Ref.current.querySelectorAll(".desc-line-reveal") : [];
-      if (desc3Lines.length > 0) {
-        textTl3.fromTo(desc3Lines,
-          { yPercent: 100, opacity: 0 },
-          {
-            yPercent: 0,
-            opacity: 1,
-            duration: 0.6,
-            stagger: 0.06,
-            ease: "power3.out",
-          },
-        );
-      }
-      if (magneticButtonRef.current) {
-        textTl3.fromTo(magneticButtonRef.current,
-          { scale: 0.8, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.6,
-            ease: "back.out(1.7)",
-          },
-          "-=0.55" // Final animation of View 3
-        );
-      }
-
       // Main Scroll-Scrubbed timeline for Environment & Chapter transitions
       const tl = gsap.timeline({
         defaults: { force3D: true },
@@ -299,223 +213,12 @@ export default function CorePillarsSection() {
           trigger: container,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1.2,
+          scrub: 0.5,
           pin: sticky,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          onToggle: (self) => {
-            if (self.isActive) {
-              const progress = self.progress;
-              if (progress < 0.25) {
-                currentStep = 0;
-                view3Completed = false;
-              } else if (progress < 0.6) {
-                currentStep = 1;
-                view3Completed = false;
-              } else {
-                currentStep = 2;
-              }
-            }
-          },
         }
       });
-      mainSt = tl.scrollTrigger;
-
-      const goToStep = (targetStep) => {
-        if (!mainSt) return;
-        if (targetStep < 0 || targetStep > 2) return;
-
-        isAnimating = true;
-        currentStep = targetStep;
-
-        let targetY = mainSt.start;
-        if (targetStep === 1) {
-          targetY = mainSt.start + (mainSt.end - mainSt.start) * 0.4;
-        } else if (targetStep === 2) {
-          targetY = mainSt.start + (mainSt.end - mainSt.start) * 0.75;
-        }
-
-        if (targetStep < 2) {
-          isButtonFinished = false;
-        }
-
-        const scrollObj = { y: window.scrollY };
-        gsap.killTweensOf(scrollObj);
-        gsap.to(scrollObj, {
-          y: targetY,
-          duration: 0.95,
-          ease: "power2.inOut",
-          onUpdate: () => {
-            window.scrollTo(0, scrollObj.y);
-            ScrollTrigger.update();
-          },
-          onComplete: () => {
-            if (targetStep === 2) {
-              // Arrived at View 3 — lock Lenis until animation completes
-              if (window.lenis) window.lenis.stop();
-            } else {
-              // Leaving View 3 — reset guards and ensure scroll is live
-              view3Completed = false;
-              isButtonFinished = false;
-              if (window.lenis) window.lenis.start();
-            }
-            // For step 2: view3Completed stays false until textTl3 onComplete fires
-            setTimeout(() => {
-              isAnimating = false;
-            }, 250);
-          }
-        });
-      };
-
-      handleWheel = (e) => {
-        if (!mainSt || !mainSt.isActive) return;
-
-        const delta = e.deltaY;
-        if (Math.abs(delta) < 5) return;
-
-        if (delta > 0) {
-          // Scroll DOWN
-          if (isAnimating) {
-            if (e.cancelable) e.preventDefault();
-            return;
-          }
-
-          if (currentStep === 0) {
-            if (e.cancelable) e.preventDefault();
-            goToStep(1);
-          } else if (currentStep === 1) {
-            if (e.cancelable) e.preventDefault();
-            goToStep(2);
-          } else if (currentStep === 2) {
-            if (!view3Completed || !isButtonFinished) {
-              if (e.cancelable) e.preventDefault();
-              // Also hard-clamp scroll position to prevent any drift
-              if (mainSt) {
-                const clampY = mainSt.start + (mainSt.end - mainSt.start) * 0.75;
-                window.scrollTo(0, clampY);
-              }
-            }
-          }
-        } else if (delta < 0) {
-          // Scroll UP
-          if (isAnimating) {
-            if (e.cancelable) e.preventDefault();
-            return;
-          }
-
-          if (currentStep === 2) {
-            if (e.cancelable) e.preventDefault();
-            goToStep(1);
-          } else if (currentStep === 1) {
-            if (e.cancelable) e.preventDefault();
-            goToStep(0);
-          } else if (currentStep === 0) {
-            if (window.scrollY > mainSt.start + 20) {
-              if (e.cancelable) e.preventDefault();
-              goToStep(0);
-            }
-          }
-        }
-      };
-
-      let touchStartY = 0;
-      handleTouchStart = (e) => {
-        if (e.touches && e.touches.length > 0) {
-          touchStartY = e.touches[0].clientY;
-        }
-      };
-
-      handleTouchMove = (e) => {
-        if (!mainSt || !mainSt.isActive) return;
-        if (!e.touches || e.touches.length === 0) return;
-
-        const currentY = e.touches[0].clientY;
-        const diffY = touchStartY - currentY;
-
-        if (Math.abs(diffY) < 15) return;
-
-        if (diffY > 0) {
-          if (isAnimating) {
-            if (e.cancelable) e.preventDefault();
-            return;
-          }
-          if (currentStep === 0) {
-            if (e.cancelable) e.preventDefault();
-            goToStep(1);
-          } else if (currentStep === 1) {
-            if (e.cancelable) e.preventDefault();
-            goToStep(2);
-          } else if (currentStep === 2) {
-            if (!view3Completed || isAnimating || !isButtonFinished) {
-              if (e.cancelable) e.preventDefault();
-            }
-          }
-        } else if (diffY < 0) {
-          if (isAnimating) {
-            if (e.cancelable) e.preventDefault();
-            return;
-          }
-          if (currentStep === 2) {
-            if (e.cancelable) e.preventDefault();
-            goToStep(1);
-          } else if (currentStep === 1) {
-            if (e.cancelable) e.preventDefault();
-            goToStep(0);
-          } else if (currentStep === 0) {
-            if (window.scrollY > mainSt.start + 20) {
-              if (e.cancelable) e.preventDefault();
-              goToStep(0);
-            }
-          }
-        }
-      };
-
-      handleKeyDown = (e) => {
-        if (!mainSt || !mainSt.isActive) return;
-
-        const isDown = e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey);
-        const isUp = e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey);
-
-        if (isDown) {
-          if (isAnimating) {
-            e.preventDefault();
-            return;
-          }
-          if (currentStep === 0) {
-            e.preventDefault();
-            goToStep(1);
-          } else if (currentStep === 1) {
-            e.preventDefault();
-            goToStep(2);
-          } else if (currentStep === 2) {
-            if (!view3Completed || isAnimating || !isButtonFinished) {
-              e.preventDefault();
-            }
-          }
-        } else if (isUp) {
-          if (isAnimating) {
-            e.preventDefault();
-            return;
-          }
-          if (currentStep === 2) {
-            e.preventDefault();
-            goToStep(1);
-          } else if (currentStep === 1) {
-            e.preventDefault();
-            goToStep(0);
-          } else if (currentStep === 0) {
-            if (window.scrollY > mainSt.start + 20) {
-              e.preventDefault();
-              goToStep(0);
-            }
-          }
-        }
-      };
-
-      window.addEventListener("wheel", handleWheel, { passive: false });
-      window.addEventListener("touchstart", handleTouchStart, { passive: true });
-      window.addEventListener("touchmove", handleTouchMove, { passive: false });
-      window.addEventListener("keydown", handleKeyDown);
 
       tl.timeScale(2.5);
 
@@ -559,16 +262,24 @@ export default function CorePillarsSection() {
       if (chapter2Ref.current) {
         tl.fromTo(chapter2Ref.current,
           { opacity: 0 },
-          {
-            opacity: 1,
-            duration: 2,
-            onStart: () => {
-              textTl2.play();
-            },
-            onReverseComplete: () => {
-              textTl2.reverse();
-            }
-          }
+          { opacity: 1, duration: 2, ease: "power2.out" }
+        );
+      }
+
+      // Chapter 2 Text Reveal embedded in main scrubbed timeline
+      if (title2Words.length > 0) {
+        tl.fromTo(title2Words,
+          { yPercent: 100, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 2, stagger: 0.1, ease: "power3.out" },
+          "-=1.5"
+        );
+      }
+      const desc2Lines = desc2Ref.current ? desc2Ref.current.querySelectorAll(".desc-line-reveal") : [];
+      if (desc2Lines.length > 0) {
+        tl.fromTo(desc2Lines,
+          { yPercent: 100, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 2, stagger: 0.1, ease: "power3.out" },
+          "-=1.5"
         );
       }
 
@@ -591,16 +302,31 @@ export default function CorePillarsSection() {
       if (chapter3Ref.current) {
         tl.fromTo(chapter3Ref.current,
           { opacity: 0 },
-          {
-            opacity: 1,
-            duration: 2,
-            onStart: () => {
-              textTl3.play();
-            },
-            onReverseComplete: () => {
-              textTl3.reverse();
-            }
-          }
+          { opacity: 1, duration: 2, ease: "power2.out" }
+        );
+      }
+
+      // Chapter 3 Text & Button Reveal embedded in main scrubbed timeline
+      if (title3Words.length > 0) {
+        tl.fromTo(title3Words,
+          { yPercent: 100, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 2, stagger: 0.1, ease: "power3.out" },
+          "-=1.5"
+        );
+      }
+      const desc3Lines = desc3Ref.current ? desc3Ref.current.querySelectorAll(".desc-line-reveal") : [];
+      if (desc3Lines.length > 0) {
+        tl.fromTo(desc3Lines,
+          { yPercent: 100, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 2, stagger: 0.1, ease: "power3.out" },
+          "-=1.5"
+        );
+      }
+      if (magneticButtonRef.current) {
+        tl.fromTo(magneticButtonRef.current,
+          { scale: 0.8, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 2, ease: "back.out(1.7)" },
+          "-=1"
         );
       }
 
@@ -619,8 +345,212 @@ export default function CorePillarsSection() {
         }, "-=1.5");
       }
 
-      // Dedicated Resting Hold: Keeps View 3 (100% complete) fully pinned & displayed before section unpins
-      tl.to({}, { duration: 6 });
+      let mainSt = tl.scrollTrigger;
+      let activeStep = 0;
+      let lastStepTime = 0;
+      let isTransitioning = false;
+      let hasSettledAtView3 = false;
+      const STEP_COOLDOWN_MS = 1000;
+
+      const isSectionActive = () => {
+        if (!mainSt) return false;
+        if (activeStep === 3) return false; // Unpinned state: allow normal page scrolling
+        const currentY = window.scrollY;
+        const upperLimit = (activeStep === 2 && !hasSettledAtView3) ? mainSt.end + 1200 : mainSt.end + 30;
+        return currentY >= mainSt.start - 50 && currentY <= upperLimit;
+      };
+
+      const goToStepIndex = (targetIndex) => {
+        if (!mainSt) return;
+        activeStep = targetIndex;
+        lastStepTime = Date.now();
+        isTransitioning = true;
+        if (targetIndex !== 2) {
+          hasSettledAtView3 = false;
+        }
+
+        let targetY = mainSt.start;
+        if (targetIndex === 1) {
+          targetY = mainSt.start + (mainSt.end - mainSt.start) * 0.48;
+        } else if (targetIndex === 2) {
+          targetY = mainSt.start + (mainSt.end - mainSt.start) * 0.92;
+        }
+
+        const lenis = window.lenis;
+        if (lenis) {
+          lenis.scrollTo(targetY, {
+            duration: 0.85,
+            ease: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            onComplete: () => {
+              setTimeout(() => {
+                isTransitioning = false;
+                if (targetIndex === 2) {
+                  hasSettledAtView3 = true;
+                }
+              }, 150);
+            }
+          });
+        } else {
+          window.scrollTo({ top: targetY, behavior: "smooth" });
+          setTimeout(() => {
+            isTransitioning = false;
+            if (targetIndex === 2) {
+              hasSettledAtView3 = true;
+            }
+          }, 900);
+        }
+      };
+
+      handleWheel = (e) => {
+        if (!mainSt || !isSectionActive()) return;
+
+        const delta = e.deltaY;
+        if (Math.abs(delta) < 5) return;
+
+        // Block all wheel inputs while transition animation is running or during cooldown
+        if (e.cancelable) e.preventDefault();
+        e.stopImmediatePropagation();
+
+        const now = Date.now();
+        const elapsed = now - lastStepTime;
+
+        if (isTransitioning || elapsed < STEP_COOLDOWN_MS) {
+          return;
+        }
+
+        if (delta > 0) {
+          // Scroll DOWN: View 0 -> View 1 -> View 2 -> Next Section
+          if (activeStep === 0) {
+            goToStepIndex(1);
+          } else if (activeStep === 1) {
+            goToStepIndex(2);
+          } else if (activeStep === 2) {
+            // Unpin to next section ONLY if View 3 has 100% settled and this is a NEW separate gesture
+            if (!hasSettledAtView3) {
+              return;
+            }
+            activeStep = 3;
+            lastStepTime = Date.now();
+            isTransitioning = true;
+            hasSettledAtView3 = false;
+            const nextY = mainSt.end + 120;
+            const lenis = window.lenis;
+            if (lenis) {
+              lenis.scrollTo(nextY, {
+                duration: 0.85,
+                onComplete: () => {
+                  setTimeout(() => { isTransitioning = false; }, 150);
+                }
+              });
+            } else {
+              window.scrollTo({ top: nextY, behavior: "smooth" });
+              setTimeout(() => { isTransitioning = false; }, 900);
+            }
+          }
+        } else if (delta < 0) {
+          // Scroll UP: View 2 -> View 1 -> View 0 -> Previous Section
+          if (activeStep === 2) {
+            goToStepIndex(1);
+          } else if (activeStep === 1) {
+            goToStepIndex(0);
+          } else if (activeStep === 0) {
+            lastStepTime = Date.now();
+            isTransitioning = true;
+            const prevY = Math.max(0, mainSt.start - 50);
+            const lenis = window.lenis;
+            if (lenis) {
+              lenis.scrollTo(prevY, {
+                duration: 0.85,
+                onComplete: () => {
+                  setTimeout(() => { isTransitioning = false; }, 150);
+                }
+              });
+            } else {
+              window.scrollTo({ top: prevY, behavior: "smooth" });
+              setTimeout(() => { isTransitioning = false; }, 900);
+            }
+          }
+        }
+      };
+
+      let touchStartY = 0;
+      handleTouchStart = (e) => {
+        if (e.touches && e.touches.length > 0) {
+          touchStartY = e.touches[0].clientY;
+        }
+      };
+
+      handleTouchMove = (e) => {
+        if (!mainSt || !isSectionActive()) return;
+        if (!e.touches || e.touches.length === 0) return;
+
+        const currentY = e.touches[0].clientY;
+        const diffY = touchStartY - currentY;
+        if (Math.abs(diffY) < 15) return;
+
+        if (e.cancelable) e.preventDefault();
+        e.stopImmediatePropagation();
+
+        const now = Date.now();
+        const elapsed = now - lastStepTime;
+        if (isTransitioning || elapsed < STEP_COOLDOWN_MS) {
+          return;
+        }
+
+        if (diffY > 0) {
+          if (activeStep === 0) {
+            goToStepIndex(1);
+          } else if (activeStep === 1) {
+            goToStepIndex(2);
+          } else if (activeStep === 2) {
+            if (!hasSettledAtView3) {
+              return;
+            }
+            lastStepTime = Date.now();
+            isTransitioning = true;
+            hasSettledAtView3 = false;
+            const nextY = mainSt.end + 50;
+            const lenis = window.lenis;
+            if (lenis) {
+              lenis.scrollTo(nextY, {
+                duration: 0.85,
+                onComplete: () => {
+                  setTimeout(() => { isTransitioning = false; }, 150);
+                }
+              });
+            } else {
+              window.scrollTo({ top: nextY, behavior: "smooth" });
+              setTimeout(() => { isTransitioning = false; }, 900);
+            }
+          }
+        } else if (diffY < 0) {
+          if (activeStep === 2) {
+            goToStepIndex(1);
+          } else if (activeStep === 1) {
+            goToStepIndex(0);
+          } else if (activeStep === 0) {
+            lastStepTime = Date.now();
+            isTransitioning = true;
+            const prevY = Math.max(0, mainSt.start - 50);
+            const lenis = window.lenis;
+            if (lenis) {
+              lenis.scrollTo(prevY, {
+                duration: 0.85,
+                onComplete: () => {
+                  setTimeout(() => { isTransitioning = false; }, 150);
+                }
+              });
+            } else {
+              window.scrollTo({ top: prevY, behavior: "smooth" });
+              setTimeout(() => { isTransitioning = false; }, 900);
+            }
+          }
+        }
+      };
+
+      window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
+      window.addEventListener("touchstart", handleTouchStart, { passive: true, capture: true });
+      window.addEventListener("touchmove", handleTouchMove, { passive: false, capture: true });
 
     }, container);
 
@@ -662,8 +592,7 @@ export default function CorePillarsSection() {
       if (handleWheel) window.removeEventListener("wheel", handleWheel);
       if (handleTouchStart) window.removeEventListener("touchstart", handleTouchStart);
       if (handleTouchMove) window.removeEventListener("touchmove", handleTouchMove);
-      if (handleKeyDown) window.removeEventListener("keydown", handleKeyDown);
-      // Always release Lenis on cleanup so it's never left frozen
+      if (transitionTimer) clearTimeout(transitionTimer);
       if (window.lenis) window.lenis.start();
       ctx.revert();
       if (btnEl) {
@@ -677,7 +606,7 @@ export default function CorePillarsSection() {
     <div
       ref={containerRef}
       className="relative w-full bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-white overflow-visible font-sans select-none"
-      style={{ height: "360vh" }}
+      style={{ height: "220vh" }}
     >
       {/* Top transition blend */}
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#f7faf8] dark:from-zinc-950 to-transparent pointer-events-none z-20" />
