@@ -5,7 +5,6 @@ import { ArrowUpRight, Cpu, Layers, ShieldCheck, Sparkles, Activity } from "luci
 import { Link } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
-ScrollTrigger.config({ ignoreMobileResize: true });
 
 export default function CorePillarsSection() {
   const containerRef = useRef(null);
@@ -39,27 +38,18 @@ export default function CorePillarsSection() {
 
   // Live Canvas Particle Constellation System
   useEffect(() => {
-    if (window.innerWidth < 768) return; // Skip entirely on mobile for optimal performance
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     let animationFrameId;
 
-    const dpr = window.devicePixelRatio || 1;
-    let cssWidth = canvas.offsetWidth;
-    let cssHeight = canvas.offsetHeight;
-    canvas.width = cssWidth * dpr;
-    canvas.height = cssHeight * dpr;
-    ctx.scale(dpr, dpr);
+    let width = canvas.width = canvas.offsetWidth;
+    let height = canvas.height = canvas.offsetHeight;
 
     const handleResize = () => {
       if (!canvas) return;
-      const dpr = window.devicePixelRatio || 1;
-      cssWidth = canvas.offsetWidth;
-      cssHeight = canvas.offsetHeight;
-      canvas.width = cssWidth * dpr;
-      canvas.height = cssHeight * dpr;
-      ctx.scale(dpr, dpr);
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
     };
     window.addEventListener("resize", handleResize);
 
@@ -68,8 +58,8 @@ export default function CorePillarsSection() {
 
     for (let i = 0; i < maxParticles; i++) {
       particles.push({
-        x: Math.random() * cssWidth,
-        y: Math.random() * cssHeight,
+        x: Math.random() * width,
+        y: Math.random() * height,
         vx: (Math.random() - 0.5) * 0.45,
         vy: (Math.random() - 0.5) * 0.45,
         radius: Math.random() * 2 + 0.8
@@ -93,30 +83,8 @@ export default function CorePillarsSection() {
       parent.addEventListener("mouseleave", handleMouseLeave);
     }
 
-    let isIntersecting = false;
-    const observer = new IntersectionObserver((entries) => {
-      const [entry] = entries;
-      isIntersecting = entry.isIntersecting;
-      if (isIntersecting) {
-        if (!animationFrameId) {
-          draw();
-        }
-      } else {
-        if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId);
-          animationFrameId = null;
-        }
-      }
-    }, { threshold: 0.01 });
-
-    const containerEl = containerRef.current;
-    if (containerEl) {
-      observer.observe(containerEl);
-    }
-
     const draw = () => {
-      if (!isIntersecting) return;
-      ctx.clearRect(0, 0, cssWidth, cssHeight);
+      ctx.clearRect(0, 0, width, height);
 
       const isDark = document.documentElement.classList.contains("dark");
       const pColor = isDark ? "rgba(16, 185, 129, 0.4)" : "rgba(16, 185, 129, 0.2)";
@@ -126,8 +94,8 @@ export default function CorePillarsSection() {
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0 || p.x > cssWidth) p.vx *= -1;
-        if (p.y < 0 || p.y > cssHeight) p.vy *= -1;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
 
         if (mouse.x !== null && mouse.y !== null) {
           const dx = mouse.x - p.x;
@@ -164,12 +132,11 @@ export default function CorePillarsSection() {
       animationFrameId = requestAnimationFrame(draw);
     };
 
+    draw();
+
     return () => {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrameId);
-      if (containerEl) {
-        observer.unobserve(containerEl);
-      }
       if (parent) {
         parent.removeEventListener("mousemove", handleMouse);
         parent.removeEventListener("mouseleave", handleMouseLeave);
@@ -181,376 +148,158 @@ export default function CorePillarsSection() {
     const container = containerRef.current;
     const sticky = stickyRef.current;
 
-    let handleWheel = null;
-    let handleTouchStart = null;
-    let handleTouchMove = null;
-    let transitionTimer = null;
-
-    if (!container || !sticky || !title1Ref.current || !title2Ref.current || !title3Ref.current || !portalRef.current) {
+    if (!container || !sticky || !title1Ref.current || !portalRef.current) {
       return;
     }
 
     const ctx = gsap.context(() => {
-      // Animation Targets
       const title1Words = title1Ref.current ? title1Ref.current.querySelectorAll(".word-reveal") : [];
       const title2Words = title2Ref.current ? title2Ref.current.querySelectorAll(".word-reveal") : [];
       const title3Words = title3Ref.current ? title3Ref.current.querySelectorAll(".word-reveal") : [];
+      const desc2Lines = desc2Ref.current ? desc2Ref.current.querySelectorAll(".desc-line-reveal") : [];
+      const desc3Lines = desc3Ref.current ? desc3Ref.current.querySelectorAll(".desc-line-reveal") : [];
 
-      // Separate, Scroll-Triggered Autoplay Text Animations (Sequenced)
-      // Chapter 1 Text (Already 100% visible immediately without fade in)
-      gsap.set(title1Words, { yPercent: 0, opacity: 1 });
-      const desc1Lines = desc1Ref.current ? desc1Ref.current.querySelectorAll(".desc-line-reveal") : [];
-      if (desc1Lines.length > 0) {
-        gsap.set(desc1Lines, { yPercent: 0, opacity: 1 });
-      }
+      // ─── Chapter 1: Visible immediately (no fade-in) ───
+      if (title1Words.length) gsap.set(title1Words, { yPercent: 0, opacity: 1 });
+      if (desc1Ref.current) gsap.set(desc1Ref.current, { opacity: 1, y: 0 });
       if (ch1Float1.current) gsap.set(ch1Float1.current, { y: -10, opacity: 0.95 });
       if (ch1Float2.current) gsap.set(ch1Float2.current, { y: 15, opacity: 0.95 });
 
-      // Main Scroll-Scrubbed timeline for Environment & Chapter transitions
+      // ─── Chapter 2: Auto-playing text + float timelines ───
+      const textTl2 = gsap.timeline({ paused: true });
+      if (title2Words.length) {
+        textTl2.fromTo(title2Words,
+          { yPercent: 110, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 0.65, stagger: 0.08, ease: "power3.out" }
+        );
+      }
+      if (desc2Lines.length) {
+        textTl2.fromTo(desc2Lines,
+          { yPercent: 110, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power3.out" },
+          "-=0.35"
+        );
+      }
+      const floatTl2 = gsap.timeline({ paused: true });
+      if (floatLayer1.current) floatTl2.fromTo(floatLayer1.current, { y: 60, opacity: 0 }, { y: -15, opacity: 0.95, duration: 0.7, ease: "power2.out" });
+      if (floatLayer2.current) floatTl2.fromTo(floatLayer2.current, { y: 80, opacity: 0 }, { y: 20, opacity: 0.95, duration: 0.7, ease: "power2.out" }, "<0.1");
+      if (floatLayer3.current) floatTl2.fromTo(floatLayer3.current, { y: 50, opacity: 0 }, { y: -10, opacity: 0.95, duration: 0.7, ease: "power2.out" }, "<0.1");
+
+      // ─── Chapter 3: Auto-playing text + float + SVG + button timelines ───
+      const textTl3 = gsap.timeline({ paused: true });
+      if (title3Words.length) {
+        textTl3.fromTo(title3Words,
+          { yPercent: 110, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 0.65, stagger: 0.08, ease: "power3.out" }
+        );
+      }
+      if (desc3Lines.length) {
+        textTl3.fromTo(desc3Lines,
+          { yPercent: 110, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power3.out" },
+          "-=0.35"
+        );
+      }
+      const floatTl3 = gsap.timeline({ paused: true });
+      if (ch3Float1.current) floatTl3.fromTo(ch3Float1.current, { y: 60, opacity: 0 }, { y: -10, opacity: 0.95, duration: 0.7, ease: "power2.out" });
+      if (ch3Float2.current) floatTl3.fromTo(ch3Float2.current, { y: 80, opacity: 0 }, { y: 20, opacity: 0.95, duration: 0.7, ease: "power2.out" }, "<0.1");
+
+      const svgBtnTl3 = gsap.timeline({ paused: true });
+      if (svgPathRef.current) {
+        const pathLength = svgPathRef.current.getTotalLength();
+        gsap.set(svgPathRef.current, { strokeDasharray: pathLength, strokeDashoffset: pathLength });
+        svgBtnTl3.to(svgPathRef.current, { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" });
+      }
+      if (magneticButtonRef.current) {
+        svgBtnTl3.fromTo(magneticButtonRef.current,
+          { scale: 0.8, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.7)" },
+          "-=0.4"
+        );
+      }
+
+      // ─── Main scroll-scrubbed timeline: only chapter fades + portal ───
       const tl = gsap.timeline({
         defaults: { force3D: true },
         scrollTrigger: {
           trigger: container,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.5,
+          scrub: 1,
           pin: sticky,
-          anticipatePin: 1,
           invalidateOnRefresh: true,
         }
       });
 
-      tl.timeScale(2.5);
-
-      // Expand Masked Image Portal Ball while scrolling
-      if (portalRef.current) {
-        tl.fromTo(portalRef.current,
-          { clipPath: "circle(14% at 50% 50%)" },
-          { clipPath: "circle(75% at 50% 50%)", duration: 6, ease: "power2.inOut" }
-        );
-      }
-
+      // Portal expand (keeps cinematic scroll-scrubbed feel)
+      tl.fromTo(portalRef.current,
+        { clipPath: "circle(12% at 50% 50%)" },
+        { clipPath: "circle(75% at 50% 50%)", duration: 6, ease: "power2.inOut" }
+      );
       if (portalImgRef.current) {
-        tl.fromTo(portalImgRef.current,
-          { scale: 1.4 },
-          { scale: 1, duration: 6, ease: "power2.inOut" },
-          "<"
-        );
+        tl.fromTo(portalImgRef.current, { scale: 1.4 }, { scale: 1, duration: 6, ease: "power2.inOut" }, "<");
       }
-
-      // Extra Background Parallax Shapes Animation
       tl.fromTo(".parallax-shape-1", { y: -80, rotate: 0 }, { y: 120, rotate: 180, ease: "none", duration: 6 }, "<");
       tl.fromTo(".parallax-shape-2", { y: 150, rotate: 0 }, { y: -180, rotate: -120, ease: "none", duration: 6 }, "<");
       tl.fromTo(".parallax-shape-3", { y: 50, scale: 0.8 }, { y: -100, scale: 1.2, ease: "none", duration: 6 }, "<");
 
-      // Floating 3D Depth Drift for Chapter 1 (Already visible)
-      if (ch1Float1.current) tl.to(ch1Float1.current, { y: -30, opacity: 0.95, duration: 4, ease: "none" }, "-=4.5");
-      if (ch1Float2.current) tl.to(ch1Float2.current, { y: 0, opacity: 0.95, duration: 4, ease: "none" }, "<");
+      // Chapter 1 floats drift with scroll
+      if (ch1Float1.current) tl.to(ch1Float1.current, { y: -30, duration: 4, ease: "none" }, "-=4.5");
+      if (ch1Float2.current) tl.to(ch1Float2.current, { y: 0, duration: 4, ease: "none" }, "<");
 
-      // Fade out Chapter 1 text to make space for Chapter 2
+      // Fade out Chapter 1
       const exitTargets = [title1Ref.current, desc1Ref.current, ch1Float1.current, ch1Float2.current].filter(Boolean);
       if (exitTargets.length) {
-        tl.to(exitTargets, {
-          opacity: 0,
-          y: -50,
-          duration: 2,
-          ease: "power2.in"
-        }, "-=2");
+        tl.to(exitTargets, { opacity: 0, y: -50, duration: 2, ease: "power2.in" }, "-=2");
       }
 
-      // Chapter 2 Animations (The Craft & 3D Parallax layers)
+      // Fade in Chapter 2 container → auto-triggers its text + float animations
       if (chapter2Ref.current) {
         tl.fromTo(chapter2Ref.current,
           { opacity: 0 },
-          { opacity: 1, duration: 2, ease: "power2.out" }
+          {
+            opacity: 1,
+            duration: 2,
+            onStart: () => { textTl2.play(); floatTl2.play(); },
+            onReverseComplete: () => { textTl2.reverse(); floatTl2.reverse(); }
+          }
         );
       }
 
-      // Chapter 2 Text Reveal embedded in main scrubbed timeline
-      if (title2Words.length > 0) {
-        tl.fromTo(title2Words,
-          { yPercent: 100, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 2, stagger: 0.1, ease: "power3.out" },
-          "-=1.5"
-        );
-      }
-      const desc2Lines = desc2Ref.current ? desc2Ref.current.querySelectorAll(".desc-line-reveal") : [];
-      if (desc2Lines.length > 0) {
-        tl.fromTo(desc2Lines,
-          { yPercent: 100, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 2, stagger: 0.1, ease: "power3.out" },
-          "-=1.5"
-        );
-      }
-
-      // Floating 3D Depth Drift for Chapter 2
-      if (floatLayer1.current) tl.fromTo(floatLayer1.current, { y: 100, opacity: 0 }, { y: -15, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=1.5");
-      if (floatLayer2.current) tl.fromTo(floatLayer2.current, { y: 170, opacity: 0 }, { y: 20, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
-      if (floatLayer3.current) tl.fromTo(floatLayer3.current, { y: 70, opacity: 0 }, { y: -10, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
-
-      // Fade out Chapter 2 to reveal Chapter 3
+      // Hold Chapter 2 for a bit, then fade it out
       if (chapter2Ref.current) {
-        tl.to(chapter2Ref.current, {
-          opacity: 0,
-          y: -100,
-          duration: 2,
-          ease: "power2.in"
-        }, "+=1");
+        tl.to(chapter2Ref.current, { opacity: 0, y: -80, duration: 2, ease: "power2.in" }, "+=1");
       }
 
-      // Chapter 3 Animations (The Impact & SVG self-drawing paths)
+      // Fade in Chapter 3 container → locks scroll, auto-plays animations, then unlocks
       if (chapter3Ref.current) {
         tl.fromTo(chapter3Ref.current,
           { opacity: 0 },
-          { opacity: 1, duration: 2, ease: "power2.out" }
+          {
+            opacity: 1,
+            duration: 2,
+            onStart: () => {
+              // Lock scroll so user can't skip past Chapter 3 before it finishes
+              if (window.lenis) window.lenis.stop();
+              textTl3.play();
+              floatTl3.play();
+              svgBtnTl3.play();
+            },
+            onReverseComplete: () => {
+              // User scrolled back — ensure lenis is running
+              if (window.lenis) window.lenis.start();
+              textTl3.reverse();
+              floatTl3.reverse();
+              svgBtnTl3.reverse();
+            }
+          }
         );
       }
 
-      // Chapter 3 Text & Button Reveal embedded in main scrubbed timeline
-      if (title3Words.length > 0) {
-        tl.fromTo(title3Words,
-          { yPercent: 100, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 2, stagger: 0.1, ease: "power3.out" },
-          "-=1.5"
-        );
-      }
-      const desc3Lines = desc3Ref.current ? desc3Ref.current.querySelectorAll(".desc-line-reveal") : [];
-      if (desc3Lines.length > 0) {
-        tl.fromTo(desc3Lines,
-          { yPercent: 100, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 2, stagger: 0.1, ease: "power3.out" },
-          "-=1.5"
-        );
-      }
-      if (magneticButtonRef.current) {
-        tl.fromTo(magneticButtonRef.current,
-          { scale: 0.8, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 2, ease: "back.out(1.7)" },
-          "-=1"
-        );
-      }
-
-      // Floating 3D Depth Drift for Chapter 3
-      if (ch3Float1.current) tl.fromTo(ch3Float1.current, { y: 110, opacity: 0 }, { y: -10, opacity: 0.95, duration: 4, ease: "power2.out" }, "-=3.5");
-      if (ch3Float2.current) tl.fromTo(ch3Float2.current, { y: 190, opacity: 0 }, { y: 20, opacity: 0.95, duration: 4, ease: "power2.out" }, "<");
-
-      // SVG path self-drawing (stroke-dashoffset link)
-      if (svgPathRef.current && window.innerWidth >= 768) {
-        const pathLength = svgPathRef.current.getTotalLength();
-        gsap.set(svgPathRef.current, { strokeDasharray: pathLength, strokeDashoffset: pathLength });
-        tl.to(svgPathRef.current, {
-          strokeDashoffset: 0,
-          duration: 4,
-          ease: "none"
-        }, "-=1.5");
-      }
-
-      let mainSt = tl.scrollTrigger;
-      let activeStep = 0;
-      let lastStepTime = 0;
-      let isTransitioning = false;
-      let hasSettledAtView3 = false;
-      const STEP_COOLDOWN_MS = 1000;
-
-      const isSectionActive = () => {
-        if (!mainSt) return false;
-        if (activeStep === 3) return false; // Unpinned state: allow normal page scrolling
-        const currentY = window.scrollY;
-        const upperLimit = (activeStep === 2 && !hasSettledAtView3) ? mainSt.end + 1200 : mainSt.end + 30;
-        return currentY >= mainSt.start - 50 && currentY <= upperLimit;
-      };
-
-      const goToStepIndex = (targetIndex) => {
-        if (!mainSt) return;
-        activeStep = targetIndex;
-        lastStepTime = Date.now();
-        isTransitioning = true;
-        if (targetIndex !== 2) {
-          hasSettledAtView3 = false;
-        }
-
-        let targetY = mainSt.start;
-        if (targetIndex === 1) {
-          targetY = mainSt.start + (mainSt.end - mainSt.start) * 0.48;
-        } else if (targetIndex === 2) {
-          targetY = mainSt.start + (mainSt.end - mainSt.start) * 0.92;
-        }
-
-        const lenis = window.lenis;
-        if (lenis) {
-          lenis.scrollTo(targetY, {
-            duration: 0.85,
-            ease: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            onComplete: () => {
-              setTimeout(() => {
-                isTransitioning = false;
-                if (targetIndex === 2) {
-                  hasSettledAtView3 = true;
-                }
-              }, 150);
-            }
-          });
-        } else {
-          window.scrollTo({ top: targetY, behavior: "smooth" });
-          setTimeout(() => {
-            isTransitioning = false;
-            if (targetIndex === 2) {
-              hasSettledAtView3 = true;
-            }
-          }, 900);
-        }
-      };
-
-      handleWheel = (e) => {
-        if (!mainSt || !isSectionActive()) return;
-
-        const delta = e.deltaY;
-        if (Math.abs(delta) < 5) return;
-
-        // Block all wheel inputs while transition animation is running or during cooldown
-        if (e.cancelable) e.preventDefault();
-        e.stopImmediatePropagation();
-
-        const now = Date.now();
-        const elapsed = now - lastStepTime;
-
-        if (isTransitioning || elapsed < STEP_COOLDOWN_MS) {
-          return;
-        }
-
-        if (delta > 0) {
-          // Scroll DOWN: View 0 -> View 1 -> View 2 -> Next Section
-          if (activeStep === 0) {
-            goToStepIndex(1);
-          } else if (activeStep === 1) {
-            goToStepIndex(2);
-          } else if (activeStep === 2) {
-            // Unpin to next section ONLY if View 3 has 100% settled and this is a NEW separate gesture
-            if (!hasSettledAtView3) {
-              return;
-            }
-            activeStep = 3;
-            lastStepTime = Date.now();
-            isTransitioning = true;
-            hasSettledAtView3 = false;
-            const nextY = mainSt.end + 120;
-            const lenis = window.lenis;
-            if (lenis) {
-              lenis.scrollTo(nextY, {
-                duration: 0.85,
-                onComplete: () => {
-                  setTimeout(() => { isTransitioning = false; }, 150);
-                }
-              });
-            } else {
-              window.scrollTo({ top: nextY, behavior: "smooth" });
-              setTimeout(() => { isTransitioning = false; }, 900);
-            }
-          }
-        } else if (delta < 0) {
-          // Scroll UP: View 2 -> View 1 -> View 0 -> Previous Section
-          if (activeStep === 2) {
-            goToStepIndex(1);
-          } else if (activeStep === 1) {
-            goToStepIndex(0);
-          } else if (activeStep === 0) {
-            lastStepTime = Date.now();
-            isTransitioning = true;
-            const prevY = Math.max(0, mainSt.start - 50);
-            const lenis = window.lenis;
-            if (lenis) {
-              lenis.scrollTo(prevY, {
-                duration: 0.85,
-                onComplete: () => {
-                  setTimeout(() => { isTransitioning = false; }, 150);
-                }
-              });
-            } else {
-              window.scrollTo({ top: prevY, behavior: "smooth" });
-              setTimeout(() => { isTransitioning = false; }, 900);
-            }
-          }
-        }
-      };
-
-      let touchStartY = 0;
-      handleTouchStart = (e) => {
-        if (e.touches && e.touches.length > 0) {
-          touchStartY = e.touches[0].clientY;
-        }
-      };
-
-      handleTouchMove = (e) => {
-        if (!mainSt || !isSectionActive()) return;
-        if (!e.touches || e.touches.length === 0) return;
-
-        const currentY = e.touches[0].clientY;
-        const diffY = touchStartY - currentY;
-        if (Math.abs(diffY) < 15) return;
-
-        if (e.cancelable) e.preventDefault();
-        e.stopImmediatePropagation();
-
-        const now = Date.now();
-        const elapsed = now - lastStepTime;
-        if (isTransitioning || elapsed < STEP_COOLDOWN_MS) {
-          return;
-        }
-
-        if (diffY > 0) {
-          if (activeStep === 0) {
-            goToStepIndex(1);
-          } else if (activeStep === 1) {
-            goToStepIndex(2);
-          } else if (activeStep === 2) {
-            if (!hasSettledAtView3) {
-              return;
-            }
-            lastStepTime = Date.now();
-            isTransitioning = true;
-            hasSettledAtView3 = false;
-            const nextY = mainSt.end + 50;
-            const lenis = window.lenis;
-            if (lenis) {
-              lenis.scrollTo(nextY, {
-                duration: 0.85,
-                onComplete: () => {
-                  setTimeout(() => { isTransitioning = false; }, 150);
-                }
-              });
-            } else {
-              window.scrollTo({ top: nextY, behavior: "smooth" });
-              setTimeout(() => { isTransitioning = false; }, 900);
-            }
-          }
-        } else if (diffY < 0) {
-          if (activeStep === 2) {
-            goToStepIndex(1);
-          } else if (activeStep === 1) {
-            goToStepIndex(0);
-          } else if (activeStep === 0) {
-            lastStepTime = Date.now();
-            isTransitioning = true;
-            const prevY = Math.max(0, mainSt.start - 50);
-            const lenis = window.lenis;
-            if (lenis) {
-              lenis.scrollTo(prevY, {
-                duration: 0.85,
-                onComplete: () => {
-                  setTimeout(() => { isTransitioning = false; }, 150);
-                }
-              });
-            } else {
-              window.scrollTo({ top: prevY, behavior: "smooth" });
-              setTimeout(() => { isTransitioning = false; }, 900);
-            }
-          }
-        }
-      };
-
-      window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
-      window.addEventListener("touchstart", handleTouchStart, { passive: true, capture: true });
-      window.addEventListener("touchmove", handleTouchMove, { passive: false, capture: true });
+      // Unlock scroll only after the last Chapter 3 animation finishes
+      svgBtnTl3.eventCallback("onComplete", () => {
+        if (window.lenis) window.lenis.start();
+      });
 
     }, container);
 
@@ -589,11 +338,6 @@ export default function CorePillarsSection() {
     }
 
     return () => {
-      if (handleWheel) window.removeEventListener("wheel", handleWheel);
-      if (handleTouchStart) window.removeEventListener("touchstart", handleTouchStart);
-      if (handleTouchMove) window.removeEventListener("touchmove", handleTouchMove);
-      if (transitionTimer) clearTimeout(transitionTimer);
-      if (window.lenis) window.lenis.start();
       ctx.revert();
       if (btnEl) {
         btnEl.removeEventListener("mousemove", handleMouseMove);
@@ -606,7 +350,7 @@ export default function CorePillarsSection() {
     <div
       ref={containerRef}
       className="relative w-full bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-white overflow-visible font-sans select-none"
-      style={{ height: "220vh" }}
+      style={{ height: "320vh" }}
     >
       {/* Top transition blend */}
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#f7faf8] dark:from-zinc-950 to-transparent pointer-events-none z-20" />
@@ -657,29 +401,12 @@ export default function CorePillarsSection() {
         .animate-node-drift {
           animation: node-blink 6s ease-in-out infinite;
         }
-        .perspective-container {
-          perspective: 1200px;
-          transform-style: preserve-3d;
-        }
-        .transform-3d-gpu {
-          transform-style: preserve-3d;
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
-          will-change: transform, opacity;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-        @media (max-width: 767px) {
-          .perspective-container canvas {
-            display: none !important;
-          }
-        }
       `}</style>
 
       {/* Pinned Sticky Viewport */}
       <div
         ref={stickyRef}
-        className="w-full h-screen overflow-hidden flex flex-col justify-center items-center relative perspective-container"
+        className="w-full h-screen overflow-hidden flex flex-col justify-center items-center relative"
       >
         {/* Dynamic ambient grid background */}
         <div className="absolute inset-0 opacity-[0.05] dark:opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#3b82f6_1px,transparent_1px),linear-gradient(to_bottom,#3b82f6_1px,transparent_1px)] bg-[size:4rem_4rem]" />
@@ -740,16 +467,8 @@ export default function CorePillarsSection() {
             </h2>
           </div>
 
-          <p ref={desc1Ref} className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed flex flex-col gap-1 items-center">
-            <span className="block overflow-hidden h-[1.3em]">
-              <span className="desc-line-reveal inline-block">iZone Technologies is an elite software powerhouse.</span>
-            </span>
-            <span className="block overflow-hidden h-[1.3em]">
-              <span className="desc-line-reveal inline-block">We bridge the gap between abstract concept and</span>
-            </span>
-            <span className="block overflow-hidden h-[1.3em]">
-              <span className="desc-line-reveal inline-block">technical mastery to engineer digital breakthroughs.</span>
-            </span>
+          <p ref={desc1Ref} className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed">
+            iZone Technologies is an elite software powerhouse. We bridge the gap between abstract concept and technical mastery to engineer digital breakthroughs.
           </p>
 
           {/* Chapter 1 Floating Cards (Parallel up-sliding) */}
@@ -757,7 +476,7 @@ export default function CorePillarsSection() {
             {/* Float 1 */}
             <div
               ref={ch1Float1}
-              className="absolute top-[18%] left-[2%] sm:top-[26%] sm:left-[10%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
+              className="absolute top-[18%] left-[2%] sm:top-[26%] sm:left-[10%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0"
             >
               <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600 dark:text-emerald-400">
                 <Sparkles size={12} className="fill-emerald-500/30" />
@@ -769,7 +488,7 @@ export default function CorePillarsSection() {
             {/* Float 2 */}
             <div
               ref={ch1Float2}
-              className="absolute bottom-[18%] right-[2%] sm:bottom-[28%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-56 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
+              className="absolute bottom-[18%] right-[2%] sm:bottom-[28%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-56 scale-75 sm:scale-100 opacity-0"
             >
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-500">
                 <Cpu size={14} />
@@ -785,7 +504,7 @@ export default function CorePillarsSection() {
         {/* Masked Portal Graphic */}
         <div
           ref={portalRef}
-          className="absolute inset-0 w-full h-full z-0 overflow-hidden gpu-accelerated"
+          className="absolute inset-0 w-full h-full z-0 overflow-hidden"
           style={{ clipPath: "circle(12% at 50% 50%)" }}
         >
           {/* Cybernetic Grid Image / Vector inside portal */}
@@ -826,19 +545,19 @@ export default function CorePillarsSection() {
                 <span className="word-reveal inline-block text-emerald-600 dark:text-emerald-400">PRECISION</span>
               </span>
             </h2>
-          </div>
 
-          <p ref={desc2Ref} className="text-center text-xs sm:text-sm text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed flex flex-col gap-1 items-center">
-            <span className="block overflow-hidden h-[1.3em]">
-              <span className="desc-line-reveal inline-block">We combine robust architectures with modern tech</span>
-            </span>
-            <span className="block overflow-hidden h-[1.3em]">
-              <span className="desc-line-reveal inline-block">stacks to deliver custom software solutions built</span>
-            </span>
-            <span className="block overflow-hidden h-[1.3em]">
-              <span className="desc-line-reveal inline-block">for optimal speed, reliability, and security.</span>
-            </span>
-          </p>
+            <p ref={desc2Ref} className="text-center text-xs sm:text-sm text-slate-600 dark:text-zinc-400 font-medium max-w-lg mt-6 leading-relaxed flex flex-col gap-1 items-center">
+              <span className="block overflow-hidden h-[1.3em]">
+                <span className="desc-line-reveal inline-block">We combine robust architectures with modern tech</span>
+              </span>
+              <span className="block overflow-hidden h-[1.3em]">
+                <span className="desc-line-reveal inline-block">stacks to deliver custom software solutions built</span>
+              </span>
+              <span className="block overflow-hidden h-[1.3em]">
+                <span className="desc-line-reveal inline-block">for optimal speed, reliability, and security.</span>
+              </span>
+            </p>
+          </div>
 
           {/* 3D Parallax floating widgets */}
           <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
@@ -846,7 +565,7 @@ export default function CorePillarsSection() {
             {/* Widget 1 */}
             <div
               ref={floatLayer1}
-              className="absolute top-[18%] left-[2%] sm:top-[25%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex flex-col gap-1.5 sm:gap-2.5 w-36 sm:w-52 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
+              className="absolute top-[18%] left-[2%] sm:top-[25%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex flex-col gap-1.5 sm:gap-2.5 w-36 sm:w-52 scale-75 sm:scale-100 opacity-0"
             >
               <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600 dark:text-emerald-400">
                 <Cpu size={14} />
@@ -861,7 +580,7 @@ export default function CorePillarsSection() {
             {/* Widget 2 */}
             <div
               ref={floatLayer2}
-              className="absolute bottom-[18%] right-[2%] sm:bottom-[25%] sm:right-[10%] p-4 sm:p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex items-center gap-3 sm:gap-4 w-40 sm:w-60 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
+              className="absolute bottom-[18%] right-[2%] sm:bottom-[25%] sm:right-[10%] p-4 sm:p-6 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex items-center gap-3 sm:gap-4 w-40 sm:w-60 scale-75 sm:scale-100 opacity-0"
             >
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-500">
                 <Layers size={18} />
@@ -875,7 +594,7 @@ export default function CorePillarsSection() {
             {/* Widget 3 */}
             <div
               ref={floatLayer3}
-              className="absolute top-[26%] right-[2%] sm:top-[34%] sm:right-[12%] p-3 rounded-xl border border-slate-200/30 dark:border-white/5 bg-white/90 dark:bg-[#091124]/80 sm:bg-white/60 sm:dark:bg-[#091124]/40 sm:backdrop-blur-sm flex items-center gap-1.5 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
+              className="absolute top-[26%] right-[2%] sm:top-[34%] sm:right-[12%] p-3 rounded-xl border border-slate-200/30 dark:border-white/5 bg-white/60 dark:bg-[#091124]/40 backdrop-blur-sm flex items-center gap-1.5 scale-75 sm:scale-100 opacity-0"
             >
               <ShieldCheck size={12} className="text-emerald-600 dark:text-emerald-500" />
               <span className="text-[8px] sm:text-[9px] font-mono text-slate-500 dark:text-zinc-400 font-bold uppercase tracking-widest">ZERO TRUST NETWORK</span>
@@ -957,7 +676,7 @@ export default function CorePillarsSection() {
             {/* Float 1 */}
             <div
               ref={ch3Float1}
-              className="absolute top-[18%] left-[2%] sm:top-[28%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
+              className="absolute top-[18%] left-[2%] sm:top-[28%] sm:left-[12%] p-3 sm:p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex flex-col gap-1 sm:gap-2 w-36 sm:w-48 scale-75 sm:scale-100 opacity-0"
             >
               <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600 dark:text-emerald-400">
                 <Activity size={12} className="text-emerald-500 animate-pulse" />
@@ -969,7 +688,7 @@ export default function CorePillarsSection() {
             {/* Float 2 */}
             <div
               ref={ch3Float2}
-              className="absolute bottom-[20%] right-[2%] sm:bottom-[30%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white dark:bg-[#091124] sm:bg-white/90 sm:dark:bg-[#091124]/75 sm:backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-52 scale-75 sm:scale-100 opacity-0 transform-3d-gpu"
+              className="absolute bottom-[20%] right-[2%] sm:bottom-[30%] sm:right-[8%] p-3 sm:p-4 rounded-2xl border border-slate-200/50 dark:border-white/10 bg-white/90 dark:bg-[#091124]/75 backdrop-blur-md shadow-2xl flex items-center gap-2 sm:gap-3 w-40 sm:w-52 scale-75 sm:scale-100 opacity-0"
             >
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-500">
                 <ShieldCheck size={14} />
@@ -984,8 +703,6 @@ export default function CorePillarsSection() {
 
       </div>
 
-      {/* Bottom transition blend */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#f7faf8] dark:from-zinc-950 to-transparent pointer-events-none z-20" />
     </div>
   );
 }
