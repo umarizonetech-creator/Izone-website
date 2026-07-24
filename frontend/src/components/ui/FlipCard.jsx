@@ -4938,7 +4938,7 @@ const getCardConfig = (title) => {
     return { tag: "ANALYTICS", themeColor: "orange", icon: LineChart };
   }
 
-  // --- Government Tenders Cards ---
+  // --- Government Digital Solutions Cards ---
   if (norm.includes("minnagam support")) {
     return { tag: "SUPPORT", themeColor: "green", icon: SearchCheck };
   }
@@ -4948,7 +4948,7 @@ const getCardConfig = (title) => {
   if (norm.includes("proposal preparation")) {
     return { tag: "PROPOSAL", themeColor: "purple", icon: Briefcase };
   }
-  if (norm.includes("portal assistance") || norm === "government tenders") {
+  if (norm.includes("portal assistance") || norm === "Government Digital Solutions") {
     return { tag: "ASSISTANCE", themeColor: "indigo", icon: Landmark };
   }
   if (norm.includes("compliance & risk review")) {

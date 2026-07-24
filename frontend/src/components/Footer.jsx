@@ -26,7 +26,7 @@ const footerLinks = {
   services: [
     { name: "Web Development", path: "/development/web-development" },
     { name: "AI & ML", path: "/development/ai-ml" },
-    { name: "Government Tenders", path: "/development/government-tenders" },
+    { name: "Government Digital Solutions", path: "/development/government-digital-solutions" },
     {
       name: "Social Media Marketing",
       path: "/development/social-media-marketing",

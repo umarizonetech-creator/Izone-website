@@ -1558,7 +1558,7 @@ const Index = () => {
 
                 {/* Scroll Parallax Image Container */}
                 <ParallaxImage
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=700&h=500&fit=crop&auto=format&q=75"
+                  src="\hero\choose-us.png"
                   alt="Team collaboration"
                   className="rounded-2xl w-full h-[320px] sm:h-[400px] overflow-hidden"
                   innerClassName="transition-transform duration-500 group-hover:scale-[1.03]"

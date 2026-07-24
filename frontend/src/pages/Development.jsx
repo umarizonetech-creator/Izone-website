@@ -80,11 +80,11 @@ const services = [
     category: "AI Solutions",
   },
   {
-    title: "Government Tenders",
+    title: "Government Digital Solutions",
     summary:
-      "We specialize in helping businesses navigate the government tender process and secure contracts.",
+      "We specialize in helping businesses navigate the Government Digital Solutions process and secure contracts.",
     fullContent:
-    "We support businesses in navigating the complex government tender process, from identifying opportunities to crafting winning proposals. Our expertise in compliance, documentation, and strategic bidding helps you secure valuable government contracts.",
+    "We support businesses in navigating the complex Government Digital Solutions process, from identifying opportunities to crafting winning proposals. Our expertise in compliance, documentation, and strategic bidding helps you secure valuable government contracts.",
     icon: <Building2 className="w-7 h-7 text-primary" />,
     features: [
       "Tender Research",

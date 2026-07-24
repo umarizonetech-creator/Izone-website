@@ -126,8 +126,8 @@ const GovernmentTenders = () => {
     <Layout>
       <PageHero
         badgeIcon={Landmark}
-        badgeText="Government Tenders"
-        titleLine1="Government Tender"
+        badgeText="Government Digital Solutions"
+        titleLine1="Government Digital"
         titleLine2="Solutions"
         description="Digital platforms that simplify Government procurement, connecting vendors, contractors, and deparments seamlessly."
         floatingIcons={[Briefcase, FileCheck2, SearchCheck, Shield]}

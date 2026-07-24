@@ -26,8 +26,8 @@ const developmentServices = [
   { name: "App Development", path: "/development/app-development", icon: Smartphone },
   { name: "AI & ML", path: "/development/ai-ml", icon: BrainCircuit },
   {
-    name: "Government Tenders",
-    path: "/development/government-tenders",
+    name: "Government Digital Solutions",
+    path: "/development/government-digital-solutions",
     icon: Vote,
   },
   {
