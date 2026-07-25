@@ -170,33 +170,33 @@ const timelinePath =
 const sampleLifeImages = [
   {
     id: "sample-1",
-    url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop&q=75",
-    name: "Collaborative Team Brainstorming",
+    url: "public/hero/izone-building.jpeg",
+    name: "Izone Technologies",
   },
   {
     id: "sample-2",
     url: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=600&fit=crop&q=75",
-    name: "Hands-on Development Workshop",
+    name: "Izone Technologies",
   },
   {
     id: "sample-3",
-    url: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=600&fit=crop&q=75",
-    name: "Design and UX Ideation Session",
+    url: "public/hero/front-ofc.jpeg",
+    name: "Modern Reception & Visitor Lounge",
   },
   {
     id: "sample-4",
-    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=600&fit=crop&q=75",
-    name: "Agile Planning and Stand-ups",
+    url: "public/hero/wrk-station-bak.jpeg",
+    name: "Workspace & Development Floor",
   },
   {
     id: "sample-5",
-    url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&h=600&fit=crop&q=75",
-    name: "Interactive Technical Training",
+    url: "public/hero/traning-hall.jpeg",
+    name: "Technical Training & Learning Session",
   },
   {
     id: "sample-6",
-    url: "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop&q=75",
-    name: "Presenting Modern Web Architecture",
+    url: "public/hero/conf-hall.jpeg",
+    name: "Conference Room Team Discussion",
   },
 ];
 
