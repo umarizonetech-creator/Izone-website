@@ -534,7 +534,8 @@ const Career = () => {
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="email" className="text-sm font-medium">Email ID</label>
-                    <Input id="email" type="email" placeholder="Enter Your Email" required className="bg-background/50 border-primary/10" value={formData.email} onChange={handleInputChange} pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Enter a valid email address" />
+                    {/* <Input id="email" type="email" placeholder="Enter Your Email" required className="bg-background/50 border-primary/10" value={formData.email} onChange={handleInputChange} pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Enter a valid email address" /> */}
+                  <Input id="email" type="email" placeholder="Enter Your Email" required className="bg-background/50 border-primary/10" value={formData.email} onChange={handleInputChange} pattern="^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com)$" title="Enter a valid email address" />
                   </div>
                 </div>
 
@@ -663,7 +664,8 @@ const Career = () => {
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="internEmail" className="text-sm font-medium">Email ID</label>
-                    <Input id="internEmail" type="email" placeholder="Enter Your Email" required className="bg-background/50 border-primary/10" value={internFormData.email} onChange={(e) => setInternFormData((prev) => ({ ...prev, email: e.target.value }))} pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Enter a valid email address" />
+                    {/* <Input id="internEmail" type="email" placeholder="Enter Your Email" required className="bg-background/50 border-primary/10" value={internFormData.email} onChange={(e) => setInternFormData((prev) => ({ ...prev, email: e.target.value }))} pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Enter a valid email address" /> */}
+                     <Input id="internEmail" type="email" placeholder="Enter Your Email" required className="bg-background/50 border-primary/10" value={internFormData.email} onChange={(e) => setInternFormData((prev) => ({ ...prev, email: e.target.value }))} pattern="^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com)$" title="Enter a valid email address" />
                   </div>
                 </div>
 

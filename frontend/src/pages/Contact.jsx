@@ -213,7 +213,8 @@ const Contact = () => {
                       placeholder="Enter Your Email"
                       required
                       className="bg-card border-border focus:border-primary"
-                      pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" 
+                      // pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" 
+                      pattern="^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com)$"
                       title="Enter a valid email address"
                     />
                   </div>

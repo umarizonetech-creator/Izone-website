@@ -571,7 +571,8 @@ const GetStarted = () => {
                         type="email"
                         placeholder="Enter Your Email"
                         value={formData.email}
-                        pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+                        // pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+                        pattern="^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com)$"
                         title="Enter a valid email address"
                         required
                         onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
