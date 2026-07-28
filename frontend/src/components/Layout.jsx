@@ -137,17 +137,21 @@ const Layout = ({ children }) => {
     };
   }, []);
 
-  // Synchronous scroll restoration before browser paint on POP navigation
+  // Synchronous scroll restoration / reset before browser paint on navigation
   useLayoutEffect(() => {
+    const lenis = lenisRef.current || window.lenis;
     if (navType === "POP") {
       const savedScroll = getSavedScroll(location);
       if (savedScroll !== null) {
         window.scrollTo(0, savedScroll);
-        if (lenisRef.current) {
-          lenisRef.current.scrollTo(savedScroll, { immediate: true });
-        } else if (window.lenis) {
-          window.lenis.scrollTo(savedScroll, { immediate: true });
+        if (lenis) {
+          lenis.scrollTo(savedScroll, { immediate: true });
         }
+      }
+    } else {
+      window.scrollTo(0, 0);
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
       }
     }
   }, [location.pathname, location.key, navType]);
@@ -181,12 +185,16 @@ const Layout = ({ children }) => {
       return () => clearTimeout(restoreTimer);
     } else {
       // New page navigation (PUSH/REPLACE) -> scroll to top
+      window.scrollTo(0, 0);
       if (lenis) {
         lenis.scrollTo(0, { immediate: true });
       }
-      window.scrollTo(0, 0);
 
       const refreshTimer = setTimeout(() => {
+        window.scrollTo(0, 0);
+        if (lenis) {
+          lenis.scrollTo(0, { immediate: true });
+        }
         ScrollTrigger.refresh();
       }, 50);
 

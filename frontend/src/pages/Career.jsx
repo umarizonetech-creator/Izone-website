@@ -231,8 +231,16 @@ const Career = () => {
     setAgreedToInternTerms(false);
   };
 
+  const isValidEmail = (email) => {
+    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test((email || '').trim());
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isValidEmail(formData.email)) {
+      toast.error('Please enter a valid email address (e.g. user@example.com)');
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -267,6 +275,10 @@ const Career = () => {
 
   const handleInternSubmit = async (e) => {
     e.preventDefault();
+    if (!isValidEmail(internFormData.email)) {
+      toast.error('Please enter a valid email address (e.g. user@example.com)');
+      return;
+    }
     setIsInternSubmitting(true);
 
     try {
@@ -372,7 +384,7 @@ const Career = () => {
         </div>
       </section>
       {/* Open Positions */}
-      <section id="open-positions" className="section-padding bg-card/30">
+      <section id="open-positions" className="section-padding bg-card/30 scroll-mt-24 md:scroll-mt-32">
         <div className="container-custom">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <span className="text-primary font-medium">Open Positions</span>
@@ -597,7 +609,7 @@ const Career = () => {
                   </label>
                 </div>
 
-                <div className="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:justify-end">
+                <div className="sticky bottom-0 -mx-6 -mb-6 mt-4 flex flex-col-reverse gap-3 border-t border-primary/10 bg-background/95 px-6 py-4 backdrop-blur-md sm:flex-row sm:justify-end z-20">
                   <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting} className="border-primary/20">
                     Cancel
                   </Button>
@@ -754,7 +766,7 @@ const Career = () => {
                   </label>
                 </div>
 
-                <div className="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:justify-end">
+                <div className="sticky bottom-0 -mx-6 -mb-6 mt-4 flex flex-col-reverse gap-3 border-t border-primary/10 bg-background/95 px-6 py-4 backdrop-blur-md sm:flex-row sm:justify-end z-20">
                   <Button type="button" variant="outline" onClick={() => setIsInternOpen(false)} disabled={isInternSubmitting} className="border-primary/20">
                     Cancel
                   </Button>

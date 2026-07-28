@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Building2, Users, Globe, Award, Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import Layout from "@/components/Layout";
@@ -192,7 +193,7 @@ const Clients = () => {
       </section>
 
       {/* Clients Grid */}
-      <section id="our-valued-partners" className="section-padding">
+      <section id="our-valued-partners" className="section-padding scroll-mt-24 md:scroll-mt-32">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -303,8 +304,8 @@ const Clients = () => {
                 onDragEnd={index === 0 ? handleTestimonialSwipe : undefined}
                 className={`relative w-full max-w-[360px] md:max-w-none xl:max-w-[360px] group ${isMobile ? "touch-pan-y" : ""}`}
               >
-                <div className="relative overflow-hidden min-h-[330px] md:min-h-[360px] md:aspect-square flex flex-col shadow-2xl rounded-sm border border-black/5">
-                  <div className="h-[40%] md:h-[44%] w-full bg-white transition-colors duration-500" />
+                <div className="relative overflow-hidden min-h-[400px] md:min-h-[440px] flex flex-col shadow-2xl rounded-sm border border-black/5">
+                  <div className="h-[130px] md:h-[140px] w-full bg-white transition-colors duration-500" />
                   <div className="flex-1 w-full bg-[#33353D] transition-colors duration-500" />
 
                   <div className="absolute inset-0 flex flex-col items-center p-6 md:p-8 pointer-events-none">
@@ -340,7 +341,7 @@ const Clients = () => {
                         </div>
 
                         <div className="relative px-2">
-                          <p className="text-zinc-300 text-[13px] leading-relaxed italic md:line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
+                          <p className="text-zinc-300 text-[13px] leading-relaxed italic">
                             "{testimonial.quote}"
                           </p>
                         </div>
@@ -376,12 +377,12 @@ const Clients = () => {
                 Let's discuss how we can help your business achieve its digital
                 goals.
               </p>
-              <a
-                href="/contact"
+              <Link
+                to="/contact"
                 className="inline-flex items-center px-8 py-4 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
               >
                 Contact Us
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>

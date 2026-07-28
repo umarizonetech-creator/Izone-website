@@ -301,7 +301,7 @@ const services = [
     description: "Custom web apps and enterprise software, built to scale.",
     details: "React, Next.js, Node, Python, .NET. Architected for performance, observability, and a clean handoff.",
     tags: ["React", "Next.js", "Node.js", "APIs", "SaaS"],
-    path: "/development?service=web-development",
+    path: "/development/web-development",
     accent: "blue",
   },
   {
@@ -328,7 +328,7 @@ const services = [
     description: "Cloud-native infrastructure with CI/CD that just works.",
     details: "AWS, Azure, GCP. Containerization, IaC, monitoring, and 99.9% uptime SLAs for production workloads.",
     tags: ["AWS", "Azure", "Docker", "Kubernetes", "CI/CD"],
-    path: "/development/cloud-devops",
+    path: "/development?service=web-development",
     accent: "cyan",
   },
   {
@@ -1730,7 +1730,7 @@ const Index = () => {
                     <Button
                       size="lg"
                       variant="outline"
-                      className="w-full sm:w-auto rounded-full border-zinc-300 bg-white/40 dark:border-zinc-800 dark:bg-zinc-950/40 px-8 py-6 text-sm font-bold backdrop-blur-md hover:bg-white/80 dark:hover:bg-zinc-900/80 hover:scale-[1.02] transition-transform duration-300"
+                      className="w-full sm:w-auto rounded-full border-zinc-300 bg-white/40 dark:border-zinc-800 dark:bg-zinc-950/40 text-zinc-900 dark:text-white hover:text-zinc-900 dark:hover:text-white px-8 py-6 text-sm font-bold backdrop-blur-md hover:bg-white/80 dark:hover:bg-zinc-900/80 hover:scale-[1.02] transition-transform duration-300"
                     >
                       Explore Services
                     </Button>

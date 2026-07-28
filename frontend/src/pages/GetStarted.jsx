@@ -10,6 +10,13 @@ import {
   MessageSquare,
   Zap,
   BrainCircuit,
+  PenTool,
+  Building2,
+  Cloud,
+  MessageCircle,
+  Vote,
+  Search,
+  Share2,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -25,10 +32,16 @@ const services = [
   { id: 'web', icon: Globe, label: 'Web Development' },
   { id: 'app', icon: Smartphone, label: 'App Development' },
   { id: 'software', icon: Code, label: 'Software Development' },
-  { id: 'design', icon: Palette, label: 'Graphics Design' },
-  { id: 'marketing', icon: MessageSquare, label: 'Digital Marketing' },
-  { id: 'sms', icon: Zap, label: 'Bulk SMS Services' },
+  { id: 'design', icon: Palette, label: 'Graphics & UI/UX Design' },
+  { id: 'marketing', icon: Share2, label: 'Digital Marketing & Social Media' },
+  { id: 'content', icon: PenTool, label: 'Content Writing' },
+  { id: 'govt', icon: Building2, label: 'Government Digital Solutions' },
   { id: 'aiml', icon: BrainCircuit, label: 'AI & ML Solutions' },
+  { id: 'cloud', icon: Cloud, label: 'Cloud & DevOps' },
+  { id: 'sms', icon: Zap, label: 'Bulk & Voice SMS' },
+  { id: 'whatsapp', icon: MessageCircle, label: 'WhatsApp Panel & Marketing' },
+  { id: 'campaign', icon: Vote, label: 'Digital Election Campaign' },
+  { id: 'seo', icon: Search, label: 'SEO & SMO Optimization' },
 ];
 
 const subServiceOptions = {
@@ -42,32 +55,38 @@ const subServiceOptions = {
   app: [
     'iOS Application',
     'Android Application',
-    'Cross-Platform App',
+    'Cross-Platform App (Flutter/React Native)',
     'Progressive Web App (PWA)',
   ],
   software: [
     'ERP / CRM Solutions',
     'Inventory Management',
     'Custom Billing Software',
-    'Enterprise Software',
+    'Enterprise Software (.NET/Java/Python)',
   ],
   design: [
     'Logo & Branding',
-    'UI/UX Design',
-    'Graphic Design',
+    'UI/UX Design & Prototyping',
+    'Graphic Design & Banners',
     'Social Media Assets',
   ],
   marketing: [
-    'Social Media Marketing',
-    'SEO Optimization',
-    'Pay-Per-Click (PPC)',
-    'Content Strategy',
+    'Social Media Marketing (SMM)',
+    'Brand Strategy',
+    'Pay-Per-Click (PPC) Ads',
+    'Lead Generation',
   ],
-  sms: [
-    'Bulk SMS (Promotional)',
-    'Transactional SMS',
-    'WhatsApp Marketing',
-    'Digital Election Campaign',
+  content: [
+    'Website Content Writing',
+    'Blog Posts & Articles',
+    'Copywriting & Ad Copy',
+    'Technical & Proposal Writing',
+  ],
+  govt: [
+    'Government Tender Bidding',
+    'Proposal Writing & Documentation',
+    'Compliance Management',
+    'Digital Portal Solutions',
   ],
   aiml: [
     'AI Chatbot Development',
@@ -76,6 +95,36 @@ const subServiceOptions = {
     'Computer Vision Solutions',
     'Predictive Analytics',
     'AI Integration & Automation',
+  ],
+  cloud: [
+    'AWS / Azure / GCP Migration',
+    'CI/CD Pipeline Setup',
+    'Docker & Kubernetes Containerization',
+    'Cloud Security & Monitoring',
+  ],
+  sms: [
+    'Bulk SMS (Promotional & Transactional)',
+    'Voice SMS & Automated Calls',
+    'SMS API Integration',
+    'Sender ID Setup',
+  ],
+  whatsapp: [
+    'WhatsApp Bulk Messaging Panel',
+    'WhatsApp API & Marketing',
+    'Interactive WhatsApp Chatbots',
+    'Rich Media Campaign Management',
+  ],
+  campaign: [
+    'Digital Election Strategy',
+    'Targeted Voter Outreach',
+    'Social Media Campaign Management',
+    'Mass Broadcast & Audio Alerts',
+  ],
+  seo: [
+    'On-Page & Off-Page SEO',
+    'Technical SEO Audit',
+    'Social Media Optimization (SMO)',
+    'Keyword Ranking & Analytics',
   ],
 };
 
@@ -145,8 +194,54 @@ const GetStarted = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const isValidEmail = (email) => {
+    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test((email || '').trim());
+  };
+
+  const isValidPhone = (phone) => {
+    if (!phone) return true;
+    return /^[0-9]{10}$/.test(phone.trim());
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
+
+    if (!formData.name || formData.name.trim().length < 2) {
+      toast({
+        title: 'Invalid Name',
+        description: 'Please enter a valid full name (letters only).',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!isValidEmail(formData.email)) {
+      toast({
+        title: 'Invalid Email Address',
+        description: 'Please enter a valid email address (e.g. user@example.com).',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (formData.phone && !isValidPhone(formData.phone)) {
+      toast({
+        title: 'Invalid Phone Number',
+        description: 'Please enter a valid 10-digit mobile number.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!formData.projectDetails || !formData.projectDetails.trim()) {
+      toast({
+        title: 'Project Details Required',
+        description: 'Please enter your project details before submitting.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -194,51 +289,44 @@ const GetStarted = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="pt-8 sm:pt-12 md:pt-16 pb-5 md:pb-24 md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="container-custom relative z-10">
+      {/* Hero & Multi-step Section */}
+      <section className="pt-20 sm:pt-24 pb-6 px-4 md:px-8 relative overflow-hidden min-h-[calc(100vh-80px)] flex flex-col justify-center items-center">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className="container-custom relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center">
+          
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="get-started-hero-content text-center max-w-3xl mx-auto"
+            transition={{ duration: 0.5 }}
+            className="text-center max-w-xl mx-auto mb-3"
           >
-            <span className="get-started-hero-badge inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-medium mb-6">
+            <span className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-2">
               Start Your Journey
             </span>
-            <h1 className="get-started-hero-title font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Let's Build Something
-              <span className="gradient-text block mt-2">
-                Extraordinary
-              </span>
+            <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Let's Build Something <span className="gradient-text">Extraordinary</span>
             </h1>
-            <HeroParagraph
-              text="Tell us about your project and we'll help you bring your vision to life. Our team is ready to create exceptional digital solutions for your business."
-              delay={0.4}
-            />
+            <p className="text-muted-foreground text-xs mt-1 max-w-md mx-auto">
+              Tell us about your project and we'll help you bring your vision to life.
+            </p>
           </motion.div>
-        </div>
-      </section>
 
-      {/* Progress Steps */}
-      <section className="get-started-steps py-8">
-        <div className="container-custom">
-          <div className="get-started-progress flex justify-center items-center gap-4 mb-12">
+          {/* Progress Steps */}
+          <div className="flex justify-center items-center gap-2 mb-4 w-full">
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center">
                 <div
-                  className={`get-started-step-dot w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                     step >= s
-                      ? 'bg-primary text-primary-foreground'
+                      ? 'bg-primary text-primary-foreground shadow-md'
                       : 'bg-muted text-muted-foreground'
                   }`}
                 >
-                  {step > s ? <Check className="w-5 h-5" /> : s}
+                  {step > s ? <Check className="w-3.5 h-3.5" /> : s}
                 </div>
                 {s < 3 && (
                   <div
-                    className={`get-started-step-line w-16 md:w-24 h-1 mx-2 rounded transition-all ${
+                    className={`w-10 sm:w-14 h-1 mx-1 rounded transition-all ${
                       step > s ? 'bg-primary' : 'bg-muted'
                     }`}
                   />
@@ -247,59 +335,68 @@ const GetStarted = () => {
             ))}
           </div>
 
-          <div className="max-w-3xl mx-auto">
+          <div className="w-full max-w-3xl mx-auto">
             {/* Step 1: Select Services */}
             {step === 1 && (
               <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
+                className="w-full"
               >
-                <motion.div variants={itemVariants} className="get-started-step-heading text-center mb-8">
-                  <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">
+                <motion.div variants={itemVariants} className="text-center mb-3">
+                  <h2 className="font-display text-base sm:text-lg font-bold mb-0.5">
                     What services do you need?
                   </h2>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     Select the service that fits your project
                   </p>
                 </motion.div>
 
                 <motion.div
                   variants={containerVariants}
-                  className="get-started-service-grid grid grid-cols-2 md:grid-cols-3 gap-4 mb-8"
+                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-2.5 mb-4"
                 >
-                  {services.map((service) => (
-                    <motion.div
-                      key={service.id}
-                      variants={itemVariants}
-                      onClick={() => handleServiceToggle(service.id)}
-                      className={`get-started-service-card glass-card p-6 cursor-pointer transition-all hover:scale-105 w-full h-full ${
-                        formData.selectedServices.includes(service.id)
-                          ? 'border-primary bg-primary/10 glow-border'
-                          : 'hover:border-primary/50'
-                      }`}
-                    >
-                      <service.icon
-                        className={`w-8 h-8 mb-3 ${
-                          formData.selectedServices.includes(service.id)
-                            ? 'text-primary'
-                            : 'text-muted-foreground'
+                  {services.map((service) => {
+                    const isSelected = formData.selectedServices.includes(service.id);
+                    return (
+                      <motion.div
+                        key={service.id}
+                        variants={itemVariants}
+                        onClick={() => handleServiceToggle(service.id)}
+                        className={`relative glass-card p-2.5 sm:p-3 cursor-pointer transition-all duration-200 hover:scale-[1.03] flex flex-col items-center justify-center text-center rounded-xl border min-h-[76px] select-none ${
+                          isSelected
+                            ? 'border-2 border-primary bg-primary/20 shadow-md ring-2 ring-primary/30 text-primary font-bold'
+                            : 'border-border/60 hover:border-primary/50 text-foreground'
                         }`}
-                      />
-                      <span className="font-medium text-sm">{service.label}</span>
-                    </motion.div>
-                  ))}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
+                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          </div>
+                        )}
+                        <service.icon
+                          className={`w-5 h-5 mb-1 shrink-0 transition-transform duration-200 ${
+                            isSelected
+                              ? 'text-primary scale-110'
+                              : 'text-muted-foreground'
+                          }`}
+                        />
+                        <span className={`text-[11px] sm:text-xs leading-tight line-clamp-2 ${isSelected ? 'font-bold text-primary' : 'font-semibold text-foreground'}`}>{service.label}</span>
+                      </motion.div>
+                    );
+                  })}
                 </motion.div>
 
                 <motion.div variants={itemVariants} className="flex justify-end">
                   <Button
-                    size="lg"
+                    size="default"
                     onClick={() => setStep(2)}
                     disabled={!canProceedStep1}
-                    className="glow-border hover-glow"
+                    className="glow-border hover-glow px-6 text-xs h-9 font-semibold"
                   >
                     Continue
-                    <ArrowRight className="ml-2 w-4 h-4" />
+                    <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                   </Button>
                 </motion.div>
               </motion.div>
@@ -311,17 +408,18 @@ const GetStarted = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
+                className="w-full"
               >
-                <motion.div variants={itemVariants} className="text-center mb-8">
-                  <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">
+                <motion.div variants={itemVariants} className="text-center mb-3">
+                  <h2 className="font-display text-lg sm:text-xl font-bold mb-0.5">
                     Service Details
                   </h2>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     Which specific solutions are you interested in?
                   </p>
                 </motion.div>
 
-                <div className="space-y-8 mb-8">
+                <div className="space-y-4 mb-4">
                   {formData.selectedServices.map((serviceId) => {
                     const parentService = services.find(s => s.id === serviceId);
                     const options = subServiceOptions[serviceId] || [];
@@ -330,13 +428,13 @@ const GetStarted = () => {
 
                     return (
                       <motion.div key={serviceId} variants={itemVariants}>
-                        <div className="flex items-center gap-2 mb-4">
-                           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                             <parentService.icon className="w-4 h-4 text-primary" />
+                        <div className="flex items-center gap-2 mb-2">
+                           <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
+                             <parentService.icon className="w-3.5 h-3.5 text-primary" />
                            </div>
-                           <h3 className="font-display font-semibold text-lg">{parentService.label}</h3>
+                           <h3 className="font-display font-semibold text-sm">{parentService.label}</h3>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-2.5">
                           {options.map((option) => {
                             const description = {
                               'Static Website': 'Simple, fast loading informational website',
@@ -377,23 +475,28 @@ const GetStarted = () => {
                             return (
                               <motion.div
                               key={option}
-                                whileHover={{ y: -4, scale: 1.01 }}
+                                whileHover={{ scale: 1.01 }}
                                 whileTap={{ scale: 0.99 }}
                                 onClick={() => handleSubServiceToggle(option)}
-                                className={`get-started-subservice-card glass-card p-5 cursor-pointer flex flex-col transition-all duration-300 rounded-xl border w-full max-w-sm mx-auto ${
+                                className={`relative glass-card p-3 cursor-pointer flex flex-col transition-all duration-200 rounded-xl border w-full select-none ${
                                   isSelected
-                                    ? 'border-primary bg-primary/5 shadow-lg ring-1 ring-primary/20'
-                                    : 'hover:border-primary/40 hover:shadow-md'
+                                    ? 'border-2 border-primary bg-primary/15 shadow-md ring-2 ring-primary/30'
+                                    : 'border-border/60 hover:border-primary/40'
                                 }`}
                               >
-                                <div className="flex justify-between items-start mb-2">
-                                  <h4 className={`font-bold text-base transition-colors ${
+                                {isSelected && (
+                                  <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
+                                    <Check className="w-2.5 h-2.5 stroke-[3]" />
+                                  </div>
+                                )}
+                                <div className="flex justify-between items-start mb-1 pr-5">
+                                  <h4 className={`font-bold text-xs transition-colors ${
                                     isSelected ? 'text-primary' : ''
                                   }`}>
                                     {option}
                                   </h4>
                                 </div>
-                                <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">
+                                <p className="text-muted-foreground text-[11px] leading-tight line-clamp-2">
                                   {description}
                                 </p>
                               </motion.div>
@@ -407,20 +510,21 @@ const GetStarted = () => {
 
                 <motion.div variants={itemVariants} className="get-started-actions flex justify-between gap-3">
                   <Button
-                    size="lg"
+                    size="default"
                     variant="outline"
                     onClick={() => setStep(1)}
+                    className="h-9 px-5 text-xs font-semibold"
                   >
                     Back
                   </Button>
                   <Button
-                    size="lg"
+                    size="default"
                     onClick={() => setStep(3)}
                     disabled={!canProceedStep2}
-                    className="glow-border hover-glow"
+                    className="glow-border hover-glow px-6 text-xs h-9 font-semibold"
                   >
                     Continue
-                    <ArrowRight className="ml-2 w-4 h-4" />
+                    <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                   </Button>
                 </motion.div>
               </motion.div>
@@ -432,17 +536,18 @@ const GetStarted = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
+                className="w-full"
               >
-                <motion.div variants={itemVariants} className="text-center mb-8">
-                  <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">
+                <motion.div variants={itemVariants} className="text-center mb-3">
+                  <h2 className="font-display text-lg sm:text-xl font-bold mb-0.5">
                     Tell us about yourself
                   </h2>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     We'll use this information to get in touch with you
                   </p>
                 </motion.div>
 
-                <motion.div variants={itemVariants} className="glass-card p-6 md:p-8 mb-8">
+                <motion.div variants={itemVariants} className="glass-card p-4 md:p-5 mb-4 rounded-xl border">
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
                       <label className="block text-sm font-medium mb-2">
