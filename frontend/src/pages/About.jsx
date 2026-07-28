@@ -109,8 +109,8 @@ const MAX_VISIBLE_LIFE_IMAGES = 6;
 
 const normalizeLifeImage = (image, index) => {
   let rawUrl = typeof image === "string" ? image : image?.url || "";
-  if (rawUrl.startsWith("public/")) {
-    rawUrl = "/" + rawUrl.replace(/^public\//, "");
+  if (rawUrl) {
+    rawUrl = rawUrl.replace(/\/public\//, "/").replace(/^public\//, "/");
   }
 
   if (typeof image === "string") {
@@ -228,7 +228,7 @@ const About = () => {
   const [timelineVisibleCount, setTimelineVisibleCount] = useState(0);
   const [timelineDotPoint, setTimelineDotPoint] = useState(null);
   const [selectedLifeImageIndex, setSelectedLifeImageIndex] = useState(null);
-  const lifeImages = sampleLifeImages;
+  const lifeImages = sampleLifeImages.map((img, i) => normalizeLifeImage(img, i));
   const visibleLifeImages = lifeImages.slice(0, MAX_VISIBLE_LIFE_IMAGES);
   const selectedLifeImage =
     selectedLifeImageIndex === null ? null : lifeImages[selectedLifeImageIndex];
