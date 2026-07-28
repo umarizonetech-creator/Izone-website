@@ -259,6 +259,7 @@ export default function Courses() {
                       placeholder="Enter your email"
                       required
                       value={form.email}
+                      pattern="^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com)$"
                       onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
                       className="bg-background/50 border-primary/10"
                     />

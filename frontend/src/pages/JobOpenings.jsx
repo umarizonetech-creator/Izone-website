@@ -225,7 +225,8 @@ const JobOpenings = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email ID</Label>
-                  <Input id="email" type="email" placeholder="Enter your E-Mail" required className="bg-background/50 border-primary/10" value={formData.email} onChange={handleInputChange} pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Enter a valid email address" />
+                  {/* <Input id="email" type="email" placeholder="Enter your E-Mail" required className="bg-background/50 border-primary/10" value={formData.email} onChange={handleInputChange} pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Enter a valid email address" /> */}
+                  <Input id="email" type="email" placeholder="Enter your E-Mail" required className="bg-background/50 border-primary/10" value={formData.email} onChange={handleInputChange} pattern="^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com)$" title="Enter a valid email address" />
                 </div>
               </div>
 
