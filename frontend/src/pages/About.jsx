@@ -108,17 +108,22 @@ const visibleMilestones = milestones;
 const MAX_VISIBLE_LIFE_IMAGES = 6;
 
 const normalizeLifeImage = (image, index) => {
+  let rawUrl = typeof image === "string" ? image : image?.url || "";
+  if (rawUrl.startsWith("public/")) {
+    rawUrl = "/" + rawUrl.replace(/^public\//, "");
+  }
+
   if (typeof image === "string") {
     return {
       id: `default-life-${index}`,
-      url: image,
+      url: rawUrl,
       name: `Life at Izone ${index + 1}`,
     };
   }
 
   return {
     id: image.id || `life-${index}`,
-    url: image.url,
+    url: rawUrl,
     name: image.name || `Life at Izone ${index + 1}`,
   };
 };
@@ -170,27 +175,27 @@ const timelinePath =
 const sampleLifeImages = [
   {
     id: "sample-1",
-    url: "public/hero/izone-building.jpeg",
+    url: "/hero/Izone-building.jpeg",
     name: "Izone Technologies",
   },
   {
     id: "sample-3",
-    url: "public/hero/front-ofc.jpeg",
+    url: "/hero/front-ofc.jpeg",
     name: "Modern Reception & Visitor Lounge",
   },
   {
     id: "sample-4",
-    url: "public/hero/wrk-station-bak.jpeg",
+    url: "/hero/wrk-station-bak.jpeg",
     name: "Workspace & Development Floor",
   },
   {
     id: "sample-5",
-    url: "public/hero/traning-hall.jpeg",
+    url: "/hero/traning-hall.jpeg",
     name: "Technical Training & Learning Session",
   },
   {
     id: "sample-6",
-    url: "public/hero/conf-hall.jpeg",
+    url: "/hero/conf-hall.jpeg",
     name: "Conference Room Team Discussion",
   },
 ];
