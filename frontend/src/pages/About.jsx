@@ -60,7 +60,7 @@ const ceoData = {
   name: "MR.B.KESAVAN M.E",
   role: "Founder & CEO",
   description:
-    "Founder and CEO of Izone Technologies. Over 15 years building software for Indian and international businesses. Kesavan started Izone with a focus on engineering quality and long-term client partnerships — values that still shape every project the team takes on",
+    "Founder and CEO of Izone Technologies. Over 9 years building software for Indian and international businesses. Kesavan started Izone with a focus on engineering quality and long-term client partnerships — values that still shape every project the team takes on",
 };
 
 const milestones = [
@@ -171,11 +171,6 @@ const sampleLifeImages = [
   {
     id: "sample-1",
     url: "public/hero/izone-building.jpeg",
-    name: "Izone Technologies",
-  },
-  {
-    id: "sample-2",
-    url: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=600&fit=crop&q=75",
     name: "Izone Technologies",
   },
   {
@@ -802,7 +797,7 @@ const About = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
-            className="grid grid-cols-2 md:grid-cols-3 gap-4"
+            className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto"
           >
             {visibleLifeImages.map((image, index) => {
               const isLastTile =
@@ -815,7 +810,7 @@ const About = () => {
                 <motion.div
                   key={image.id}
                   variants={itemVariants}
-                  className="relative overflow-hidden rounded-xl aspect-video group cursor-pointer"
+                  className="relative overflow-hidden rounded-xl aspect-video group cursor-pointer w-[calc(50%-8px)] md:w-[calc(33.333%-11px)]"
                   role="button"
                   tabIndex={0}
                   onClick={() =>

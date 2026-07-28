@@ -381,7 +381,7 @@ const services = [
 const stats = [
   { value: 380, label: "Projects Delivered", suffix: "+" },
   { value: 140, label: "Happy Clients", suffix: "+" },
-  { value: 15, label: "Years Experience", suffix: "+" },
+  { value: 9, label: "Years Experience", suffix: "+" },
   { value: "24/7", label: "Support", isStatic: true },
 ];
 

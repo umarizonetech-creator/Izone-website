@@ -1363,8 +1363,8 @@ const AboutHero = () => {
             >
               {[
                 { icon: Users, value: "25+", label: "Team Members" },
-                { icon: Smile, value: "80+", label: "Happy Clients" },
-                { icon: Award, value: "10+", label: "Years Experience" },
+                { icon: Smile, value: "140+", label: "Happy Clients" },
+                { icon: Award, value: "9+", label: "Years Experience" },
               ].map(({ icon: Icon, value, label }, idx) => (
                 <div
                   key={label}
