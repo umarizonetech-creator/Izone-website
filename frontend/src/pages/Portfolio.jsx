@@ -165,7 +165,7 @@ const Portfolio = () => {
                   </Button>
                 </Link>
                 <Link to="/contact">
-                  <Button size="lg" variant="outline" className="border-border hover:bg-muted">
+                  <Button size="lg" variant="outline" className="border-border hover:bg-muted  hover:text-primary">
                     Contact Us
                   </Button>
                 </Link>

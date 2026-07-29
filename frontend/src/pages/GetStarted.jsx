@@ -626,7 +626,10 @@ import {
   Smartphone,
   Globe,
   MessageSquare,
+  PenTool,
   Zap,
+  PhoneCall,
+  MessageCircle,
   BrainCircuit,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -645,7 +648,10 @@ const services = [
   { id: 'software', icon: Code, label: 'Software Development' },
   { id: 'design', icon: Palette, label: 'Graphics Design' },
   { id: 'marketing', icon: MessageSquare, label: 'Digital Marketing' },
+  { id: 'content', icon: PenTool, label: 'Content Writing' },
   { id: 'sms', icon: Zap, label: 'Bulk SMS Services' },
+  { id: 'voice', icon: PhoneCall, label: 'Voice SMS' },
+  { id: 'whatsapp', icon: MessageCircle, label: 'WhatsApp Marketing' },
   { id: 'aiml', icon: BrainCircuit, label: 'AI & ML Solutions' },
 ];
 
@@ -681,11 +687,30 @@ const subServiceOptions = {
     'Pay-Per-Click (PPC)',
     'Content Strategy',
   ],
+  content: [
+    'Website Content',
+    'Blog Writing',
+    'SEO Content Writing',
+    'Social Media Content',
+    'Product Descriptions',
+    'Technical Writing',
+    'Content Editing & Proofreading',
+  ],
   sms: [
     'Bulk SMS (Promotional)',
     'Transactional SMS',
     'WhatsApp Marketing',
     'Digital Election Campaign',
+  ],voice: [
+    'Promotional Voice Calls',
+    'Transactional Voice Alerts',
+    'IVR Services',
+    'Voice Broadcasting',
+  ],
+  whatsapp: [
+    'WhatsApp Bulk Messaging',
+    'WhatsApp Business API',
+    'WhatsApp Chatbot',
   ],
   aiml: [
     'AI Chatbot Development',
@@ -1024,6 +1049,20 @@ const GetStarted = () => {
                               'Computer Vision Solutions': 'Image recognition, object detection, and visual AI systems.',
                               'Predictive Analytics': 'Data-driven forecasting to guide smarter business decisions.',
                               'AI Integration & Automation': 'Seamlessly embed AI into your existing workflows and systems.',
+                              'Website Content': 'Clear, engaging, and SEO-friendly content tailored for your website.',
+                              'Blog Writing': 'Informative and engaging blog articles to attract and retain readers.',
+                              'SEO Content Writing': 'Keyword-optimized content designed to improve search engine rankings.',
+                              'Social Media Content': 'Creative posts and captions that boost engagement across social platforms.',
+                              'Product Descriptions': 'Compelling product descriptions that highlight features and drive sales.',
+                              'Technical Writing': 'Accurate and easy-to-understand technical documentation and guides.',
+                              'Content Editing & Proofreading': 'Professional editing to ensure clarity, consistency, and error-free content.',
+                              'Promotional Voice Calls': 'Reach customers with personalized promotional voice messages.',
+                              'Transactional Voice Alerts': 'Deliver automated voice notifications and important updates.',
+                              'IVR Services': 'Interactive voice response systems for customer support and automation.',
+                              'Voice Broadcasting': 'Broadcast recorded voice messages to thousands of recipients instantly.',
+                              'WhatsApp Bulk Messaging': 'Send personalized promotional messages to a large audience.',
+                              'WhatsApp Business API': 'Official API integration for scalable business communication.',
+                              'WhatsApp Chatbot': 'Automate customer support and lead generation with AI-powered chatbots.',
                             }[option] || 'Professional and scalable digital solutions tailored for your business.';
 
                             const isSelected = formData.subServices.includes(option);

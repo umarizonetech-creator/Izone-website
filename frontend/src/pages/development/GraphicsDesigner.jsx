@@ -109,7 +109,7 @@ const GraphicsDesigner = () => {
               <p className="text-muted-foreground max-w-xl mx-auto mb-8">
                 Let's create designs that make your brand stand out from the competition.
               </p>
-              <Link to="/contact">
+              <Link to="/get-started">
                 <Button size="lg" className="glow-border hover-glow">
                   Start a Project
                   <ArrowRight className="ml-2 w-4 h-4" />

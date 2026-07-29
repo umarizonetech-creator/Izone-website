@@ -120,7 +120,7 @@ const SoftwareDevelopment = () => {
               <p className="text-muted-foreground max-w-xl mx-auto mb-8">
                 Let's discuss your project and create a powerful solution together.
               </p>
-              <Link to="/contact">
+              <Link to="/get-started">
                 <Button size="lg" className="glow-border hover-glow">
                   Start Your Project
                   <ArrowRight className="ml-2 w-4 h-4" />

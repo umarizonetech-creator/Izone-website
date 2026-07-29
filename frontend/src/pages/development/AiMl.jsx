@@ -177,7 +177,7 @@ const AiMl = () => {
                 Let&apos;s build an AI solution that fits your process and scales
                 with your business.
               </p>
-              <Link to="/contact">
+              <Link to="/get-started">
                 <Button size="lg" className="glow-border hover-glow">
                   Start Your Project
                   <ArrowRight className="ml-2 w-4 h-4" />

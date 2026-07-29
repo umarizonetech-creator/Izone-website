@@ -126,7 +126,7 @@ const DigitalElectionCampaign = () => {
               <p className="text-muted-foreground max-w-xl mx-auto mb-8">
                 Partner with us for a winning digital election strategy.
               </p>
-              <Link to="/get-started">
+              <Link to="/contact">
                 <Button size="lg" className="glow-border hover-glow">
                   Get Started
                   <ArrowRight className="ml-2 w-4 h-4" />

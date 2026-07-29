@@ -60,7 +60,7 @@ const socialLinks = [
   },
   {
     icon: Instagram,
-    href: "https://www.instagram.com/izonegroups/",
+    href: "https://www.instagram.com/izone_technologies",
     label: "Instagram",
   },
 ];
