@@ -70,7 +70,7 @@ export function Footer() {
 
   const openDialer = (event) => {
     event.preventDefault();
-    window.location.assign("tel:+919943077284");
+    window.location.assign("tel:+919940048776");
   };
 
   useEffect(() => {
@@ -216,22 +216,22 @@ export function Footer() {
               <li className="footer-contact-item grid grid-cols-[16px_minmax(0,1fr)] items-center gap-2">
                 <Mail size={16} className="flex-shrink-0 text-primary" />
                 <a
-                  href="https://mail.google.com/mail/?view=cm&fs=1&to=innovativezone.tech@gmail.com"
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=reach.izonetech@gmail.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="break-all text-xs text-muted-foreground transition-colors hover:text-primary md:text-[0.8125rem]"
                 >
-                  innovativezone.tech@gmail.com
+                  reach.izonetech@gmail.com
                 </a>
               </li>
               <li className="footer-contact-item grid grid-cols-[16px_minmax(0,1fr)] items-center gap-2">
                 <Phone size={16} className="flex-shrink-0 text-primary" />
                 <a
-                  href="tel:+919943077284"
+                  href="tel:+919940048776"
                   onClick={openDialer}
                   className="text-xs text-muted-foreground transition-colors hover:text-primary md:text-[0.8125rem]"
                 >
-                  +91-9943077284
+                  +91-9940048776
                 </a>
               </li>
             </ul>

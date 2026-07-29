@@ -232,8 +232,8 @@ src/
 - **Company**: Izone Technologies
 - **Founded**: 2016
 - **Location**: 3rd Floor, Aruvi Arcade Complex, 5th Cross Thillainagar, Tiruchirappalli, Tamil Nadu-620018
-- **Email**: innovativezone.tech@gmail.com
-- **Phone**: +91-9943077284
+- **Email**: reach.izonetech@gmail.com
+- **Phone**: +91-9940048776
 - **CEO**: Mr. B. Kesavan M.E
 - **Business Hours**: Mon-Sat: 10:00 AM - 6:30 PM
 

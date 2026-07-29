@@ -31,7 +31,7 @@
 //     icon: Mail,
 //     title: "Email Us",
 //     details: ["innovativezone.tech@gmail.com", ""],
-//     href: "https://mail.google.com/mail/?view=cm&fs=1&to=innovativezone.tech@gmail.com",
+//     href: "https://mail.google.com/mail/?view=cm&fs=1&to=",
 //     external: true,
 //   },
 //   {
@@ -540,15 +540,15 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email Us",
-    details: ["innovativezone.tech@gmail.com", ""],
-    href: "https://mail.google.com/mail/?view=cm&fs=1&to=innovativezone.tech@gmail.com",
+    details: ["reach.izonetech@gmail.com", ""],
+    href: "https://mail.google.com/mail/?view=cm&fs=1&to=reach.izonetech@gmail.com",
     external: true,
   },
   {
     icon: Phone,
     title: "Call Us",
-    details: ["+91-9943077284", ""],
-    href: "tel:+919943077284",
+    details: ["+91-9940048776", ""],
+    href: "tel:+919940048776",
   },
   {
     icon: Clock,
@@ -1020,7 +1020,7 @@ const Contact = () => {
                 variant="outline"
                 className="border-primary/50 bg-card text-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground"
               >
-                <a href="tel:+919943077284" onClick={(event) => handleContactCardClick(event, { href: "tel:+919943077284", title: "Call Us" })}>
+                <a href="tel:+919940048776" onClick={(event) => handleContactCardClick(event, { href: "tel:+919940048776", title: "Call Us" })}>
                   Schedule a Call
                 </a>
               </Button>
