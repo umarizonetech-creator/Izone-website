@@ -55,7 +55,7 @@ const socialLinks = [
   },
   {
     icon: FacebookIcon,
-    href: "https://www.facebook.com/izonegroups/",
+    href: "https://www.facebook.com/izonetechnology",
     label: "Facebook",
   },
   {
