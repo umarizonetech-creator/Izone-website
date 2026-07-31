@@ -343,6 +343,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Layout from '@/components/Layout';
 import PageHero from '@/components/PageHero';
+import SEO from '@/components/SEO';
+import { getCourseSchema, getWebPageSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import { useAdmin } from '@/context/AdminContext';
 import { toast } from 'sonner';
 
@@ -454,13 +456,31 @@ export default function Courses() {
 
   return (
     <Layout>
+      <SEO
+        path="/courses"
+        title="IT Training Institute in Trichy"
+        description="Izone Technologies is a top IT Training Institute in Trichy offering hands-on full-stack development, Python, mobile apps, UI/UX, and AI courses."
+        keywords={["IT Training Institute in Trichy", "Software Training Trichy", "Full Stack Development Course Trichy", "Python Course Tiruchirappalli"]}
+        schema={[
+          getWebPageSchema({
+            name: "IT Training Institute in Trichy",
+            description: "Hands-on IT training programs, software courses, and career certifications in Trichy.",
+            url: "https://izonetech.in/courses"
+          }),
+          getCourseSchema(courses),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "IT Training Institute in Trichy", url: "/courses" }
+          ])
+        ]}
+      />
       {/* Hero */}
       <PageHero
         badgeIcon={GraduationCap}
-        badgeText="Learn & Grow"
-        titleLine1="Our Training"
-        titleLine2="Courses"
-        description="Hands-on programs designed to build real-world skills. Pick a course and start your journey today."
+        badgeText="IT Training Institute in Trichy"
+        titleLine1="IT Training Institute"
+        titleLine2="in Trichy"
+        description="Accelerate your tech career with practical, project-driven software development training and industry certifications."
         floatingIcons={[GraduationCap, BookOpen, Code2, Clock]}
       />
 

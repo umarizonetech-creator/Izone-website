@@ -4,7 +4,7 @@ const CEOCard = ({ name, role, description, image }) => {
   const imageUrl = image || "/testimonials/ceo-potriat.png";
 
   const stats = [
-    { value: "9+", label: "Years Experience" },
+    { value: "10+", label: "Years Experience" },
     { value: "200+", label: "Projects Led" },
     { value: "200+", label: "Team Members" },
   ];

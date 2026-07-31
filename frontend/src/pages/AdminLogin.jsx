@@ -6,6 +6,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAdmin } from "@/context/AdminContext";
+import SEO from "@/components/SEO";
 
 const API_BASE = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 const RESEND_SECONDS = 60;
@@ -273,6 +274,7 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <SEO title="Admin Login" noIndex={true} />
       <div className="w-full max-w-md glass-card rounded-2xl p-8 shadow-xl">
 
         {/* ── Header ── */}

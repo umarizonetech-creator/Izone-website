@@ -10,6 +10,8 @@ import {
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
+import SEO from "@/components/SEO";
+import { getWebPageSchema, getServiceSchema, getBreadcrumbSchema } from "@/utils/seoSchemas";
 import { Button } from "../components/ui/button";
 import FlipCard from "../components/ui/FlipCard";
 
@@ -118,6 +120,22 @@ const containerVariants = {
 const Services = () => {
   return (
     <Layout>
+      <SEO
+        path="/services"
+        title="Communication & Marketing Services"
+        description="Bulk SMS, Voice SMS, WhatsApp Marketing, and Digital Election Campaign solutions by Izone Technologies in Trichy."
+        schema={[
+          getWebPageSchema({
+            name: "Communication Services | Izone Technologies",
+            description: "Bulk SMS, Voice SMS, WhatsApp Panel, and Digital Marketing Services in Trichy.",
+            url: "https://izonetech.in/services"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Services", url: "/services" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={MessageSquare}

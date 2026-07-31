@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import Layout from "../../components/Layout";
 import PageHero from "../../components/PageHero";
+import SEO from "@/components/SEO";
+import { getServiceSchema, getBreadcrumbSchema } from "@/utils/seoSchemas";
 import FlipCard from "../../components/ui/FlipCard";
 
 const services = [
@@ -124,6 +126,24 @@ const containerVariants = {
 const GovernmentTenders = () => {
   return (
     <Layout>
+      <SEO
+        path="/development/government-digital-solutions"
+        title="Government Digital Solutions & Tender Portals"
+        description="Digital platforms and portal solutions that streamline government procurement, vendor onboarding, and public sector workflows."
+        schema={[
+          getServiceSchema({
+            name: "Government Digital Solutions",
+            serviceType: "Government Portals & Software",
+            description: "Custom digital solutions, e-tendering portals, and compliance software for public sector.",
+            url: "https://izonetech.in/development/government-digital-solutions"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Development", url: "/development" },
+            { name: "Government Digital Solutions", url: "/development/government-digital-solutions" }
+          ])
+        ]}
+      />
       <PageHero
         badgeIcon={Landmark}
         badgeText="Government Digital Solutions"

@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
 import PageHero from '@/components/PageHero';
-import ScrollWorksSection from "@/components/ui/ScrollWorksSection";
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 
 const services = [
   {
@@ -40,15 +41,6 @@ const process = [
   { step: '04', title: 'Development', description: 'Building robust, scalable applications using cutting-edge technologies.' },
   { step: '05', title: 'Testing', description: 'Rigorous quality assurance to ensure flawless functionality.' },
   { step: '06', title: 'Launch & Support', description: 'Seamless deployment and ongoing maintenance for lasting success.' },
-];
-
-const portfolio = [
-  { title: 'E-Commerce Platform', category: 'Full Stack Development', description: 'Modern shopping experience with real-time inventory and seamless checkout. Built with cutting-edge technologies for optimal performance.', image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop', tags: ['React', 'Node.js', 'Stripe', 'PostgreSQL'] },
-  { title: 'SaaS Dashboard', category: 'Web Application', description: 'Comprehensive analytics dashboard for enterprise data management. Features real-time data visualization and custom reporting.', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=500&fit=crop', tags: ['TypeScript', 'GraphQL', 'AWS', 'D3.js'] },
-  { title: 'Healthcare Portal', category: 'Enterprise Solution', description: 'HIPAA-compliant patient management system with telemedicine features. Secure, scalable, and user-friendly design.', image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=500&fit=crop', tags: ['React', 'PostgreSQL', 'WebRTC', 'HIPAA'] },
-  { title: 'FinTech Mobile App', category: 'Mobile Development', description: 'Cross-platform mobile banking solution with biometric authentication. Seamless user experience across iOS and Android.', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&h=500&fit=crop', tags: ['React Native', 'Firebase', 'Plaid', 'Biometrics'] },
-  { title: 'Real Estate Platform', category: 'Web Application', description: 'Property listing platform with virtual tours and CRM integration. Interactive maps and advanced search functionality.', image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=500&fit=crop', tags: ['Next.js', 'Prisma', 'Mapbox', '3D Tours'] },
-  { title: 'Learning Management System', category: 'EdTech', description: 'Interactive e-learning platform with video streaming and progress tracking. Gamification elements for better engagement.', image: 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&h=500&fit=crop', tags: ['Vue.js', 'Django', 'Redis', 'WebSockets'] },
 ];
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
@@ -112,13 +104,32 @@ const WebDevelopmentVisual = () => (
 const WebDevelopment = () => {
   return (
     <Layout>
+      <SEO
+        path="/development/web-development"
+        title="Web Development Company in Trichy"
+        description="Izone Technologies is a premier Web Development Company in Trichy, creating fast, responsive websites, e-commerce stores, and custom React/Next.js web applications."
+        keywords={["Web Development Company in Trichy", "Web Design Trichy", "Website Development Tiruchirappalli", "React Developer Trichy"]}
+        schema={[
+          getServiceSchema({
+            name: "Web Development Company in Trichy",
+            serviceType: "Web Development",
+            description: "Leading Web Development Company in Trichy delivering custom, high-performance websites and web applications.",
+            url: "https://izonetech.in/development/web-development"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Development", url: "/development" },
+            { name: "Web Development", url: "/development/web-development" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={Globe2}
-        badgeText="Web Development"
-        titleLine1="Modern Websites"
-        titleLine2="Built to Grow"
-        description="We build responsive, scalable and SEO-friendly websites that represent your brand perfectly and drive results."
+        badgeText="Web Development Company in Trichy"
+        titleLine1="Web Development"
+        titleLine2="Company in Trichy"
+        description="As a top Web Development Company in Trichy, we build responsive, high-converting, and SEO-optimized websites engineered to grow your business."
         floatingIcons={[Code, Palette, Settings, Headphones]}
         actions={[{ label: 'Get Started', icon: ArrowRight, to: '/get-started' }]}
       />
@@ -169,9 +180,6 @@ const WebDevelopment = () => {
           </motion.div>
         </div>
       </section>
-
-      {/* Scroll-Triggered Portfolio Section */}
-      <ScrollWorksSection works={portfolio} title="Our Work" subtitle="Featured Projects" />
 
       {/* CTA */}
       <section className="section-padding">

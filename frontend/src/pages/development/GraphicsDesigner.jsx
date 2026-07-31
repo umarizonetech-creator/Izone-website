@@ -5,6 +5,8 @@ import FlipCard from '../../components/ui/FlipCard';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
 import PageHero from '../../components/PageHero';
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 
 const services = [
   {
@@ -65,13 +67,32 @@ const containerVariants = {
 const GraphicsDesigner = () => {
   return (
     <Layout>
+      <SEO
+        path="/development/graphics-designer"
+        title="Branding and Graphic Design in Trichy"
+        description="Izone Technologies provides top Branding and Graphic Design services in Trichy. Logo design, brand identity systems, corporate brochures, and social media visuals."
+        keywords={["Branding and Graphic Design Trichy", "Logo Designers Tiruchirappalli", "Graphic Design Agency Tamil Nadu", "Brand Identity Designers Trichy"]}
+        schema={[
+          getServiceSchema({
+            name: "Branding and Graphic Design Services",
+            serviceType: "Branding & Graphic Design",
+            description: "Brand identity design, logo creation, corporate branding, and visual marketing assets.",
+            url: "https://izonetech.in/development/graphics-designer"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Development", url: "/development" },
+            { name: "Branding and Graphic Design", url: "/development/graphics-designer" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={Sparkles}
-        badgeText="Graphics Design"
-        titleLine1="Visual Design"
-        titleLine2="Excellence"
-        description="Creative graphic design that transforms your ideas into stunning visuals that captivate and communicate."
+        badgeText="Branding and Graphic Design"
+        titleLine1="Branding and Graphic"
+        titleLine2="Design in Trichy"
+        description="Transform your business identity with custom logo designs, comprehensive brand guidelines, and high-impact visual marketing collateral."
         floatingIcons={[Pen, Image, Layers, Monitor]}
       />
 

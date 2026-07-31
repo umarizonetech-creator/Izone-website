@@ -12,6 +12,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/utils/seoSchemas";
 import ExpertCard from "../components/ui/ExpertCard";
 import DepartmentCard from "../components/ui/DepartmentCard";
 import ValueCard from "../components/ui/ValueCard";
@@ -60,15 +62,15 @@ const ceoData = {
   name: "MR.B.KESAVAN M.E",
   role: "Founder & CEO",
   description:
-    "Founder and CEO of Izone Technologies. Over 9 years building software for Indian and international businesses. Kesavan started Izone with a focus on engineering quality and long-term client partnerships — values that still shape every project the team takes on",
+    "Founder and CEO of Izone Technologies. Over 10 years building software for Indian and international businesses. Kesavan started Izone with a focus on engineering quality and long-term client partnerships — values that still shape every project the team takes on",
 };
 
 const milestones = [
   {
-    year: "2014",
-    title: "Founded",
+    year: "2016",
+    title: "Established",
     description:
-      "Izone Technologies was born with a vision to transform digital experiences.",
+      "Izone Technologies was established in 2016 at Trichy with a vision to transform digital experiences.",
   },
   {
     year: "2016",
@@ -398,6 +400,23 @@ const About = () => {
 
   return (
     <Layout>
+      <SEO
+        path="/about"
+        title="About iZone Technologies"
+        description="Learn about iZone Technologies, a leading software, website development, and IT consulting company established in Trichy, Tamil Nadu since 2016."
+        keywords={["About iZone Technologies", "iZone Technologies Trichy", "Software Company Trichy", "IT Company Tiruchirappalli"]}
+        schema={[
+          getWebPageSchema({
+            name: "About iZone Technologies",
+            description: "Learn about iZone Technologies, a premier software and web development company established in Trichy in 2016.",
+            url: "https://izonetech.in/about"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "About iZone Technologies", url: "/about" }
+          ])
+        ]}
+      />
       <AboutHero />
 
       {/* Mission & Vision */}

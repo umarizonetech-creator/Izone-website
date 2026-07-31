@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
 import PageHero from '../../components/PageHero';
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import FlipCard from '../../components/ui/FlipCard';
 
 const services = [
@@ -68,6 +70,24 @@ const containerVariants = {
 const WhatsappPanel = () => {
   return (
     <Layout>
+      <SEO
+        path="/services/whatsapp-panel"
+        title="WhatsApp API & Broadcast Control Panel"
+        description="Manage multi-agent live chat, automated WhatsApp chatbots, broadcast messaging, and WhatsApp Business API integration."
+        schema={[
+          getServiceSchema({
+            name: "WhatsApp Control Panel Services",
+            serviceType: "WhatsApp API & Panel",
+            description: "WhatsApp Business API control panel, multi-agent chat, and automated chatbot integration.",
+            url: "https://izonetech.in/services/whatsapp-panel"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Services", url: "/services" },
+            { name: "WhatsApp Panel", url: "/services/whatsapp-panel" }
+          ])
+        ]}
+      />
       <PageHero
         badgeIcon={MessageCircle}
         badgeText="WhatsApp Panel"

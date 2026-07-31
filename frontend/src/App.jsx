@@ -35,14 +35,20 @@ const TeamManagement = lazy(() => import("./pages/AdminManagement").then(m => ({
 const TestimonialManagement = lazy(() => import("./pages/AdminManagement").then(m => ({ default: m.TestimonialManagement })));
 
 const WebDevelopment = lazy(() => import("./pages/development/WebDevelopment"));
+const WebApplicationDevelopment = lazy(() => import("./pages/development/WebApplicationDevelopment"));
 const SocialMediaMarketing = lazy(() => import("./pages/development/SocialMediaMarketing"));
 const ContentWriting = lazy(() => import("./pages/development/ContentWriting"));
 const GraphicsDesigner = lazy(() => import("./pages/development/GraphicsDesigner"));
 const SoftwareDevelopment = lazy(() => import("./pages/development/SoftwareDevelopment"));
 const AppDevelopment = lazy(() => import("./pages/development/AppDevelopment"));
+const EcommerceDevelopment = lazy(() => import("./pages/development/EcommerceDevelopment"));
 const AiMl = lazy(() => import("./pages/development/AiMl"));
 const GovernmentTenders = lazy(() => import("./pages/development/GovernmentTenders"));
 
+const SeoServices = lazy(() => import("./pages/services/SeoServices"));
+const DigitalMarketing = lazy(() => import("./pages/services/DigitalMarketing"));
+const ITConsulting = lazy(() => import("./pages/services/ITConsulting"));
+const WebsiteMaintenanceSupport = lazy(() => import("./pages/services/WebsiteMaintenanceSupport"));
 const BulkSms = lazy(() => import("./pages/services/BulkSms"));
 const VoiceSms = lazy(() => import("./pages/services/VoiceSms"));
 const WhatsappPanel = lazy(() => import("./pages/services/WhatsappPanel"));
@@ -86,6 +92,8 @@ const App = () => {
                   <Route path="/admin/photo" element={<ProtectedRoute><PhotoManagement /></ProtectedRoute>} />
                   <Route path="/admin/service-requests" element={<ProtectedRoute><ServiceRequestManagement /></ProtectedRoute>} />
                   <Route path="/development/web-development" element={<WebDevelopment />} />
+                  <Route path="/development/web-application-development" element={<WebApplicationDevelopment />} />
+                  <Route path="/development/ecommerce-development" element={<EcommerceDevelopment />} />
                   <Route path="/development/social-media-marketing" element={<SocialMediaMarketing />} />
                   <Route path="/development/content-writing" element={<ContentWriting />} />
                   <Route path="/development/graphics-designer" element={<GraphicsDesigner />} />
@@ -93,6 +101,10 @@ const App = () => {
                   <Route path="/development/app-development" element={<AppDevelopment />} />
                   <Route path="/development/ai-ml" element={<AiMl />} />
                   <Route path="/development/government-digital-solutions" element={<GovernmentTenders />} />
+                  <Route path="/services/seo-services" element={<SeoServices />} />
+                  <Route path="/services/digital-marketing" element={<DigitalMarketing />} />
+                  <Route path="/services/it-consulting" element={<ITConsulting />} />
+                  <Route path="/services/website-maintenance-support" element={<WebsiteMaintenanceSupport />} />
                   <Route path="/services/bulk-sms" element={<BulkSms />} />
                   <Route path="/services/voice-sms" element={<VoiceSms />} />
                   <Route path="/services/whatsapp-panel" element={<WhatsappPanel />} />

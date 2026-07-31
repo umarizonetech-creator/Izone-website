@@ -3,6 +3,8 @@ import { Code, Smartphone, ArrowRight, BrainCircuit, Building2, Link2, PenLine, 
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
+import SEO from "@/components/SEO";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/utils/seoSchemas";
 import { Button } from "../components/ui/button";
 import FlipCard from "../components/ui/FlipCard";
 
@@ -162,6 +164,22 @@ const containerVariants = {
 const Development = () => {
   return (
     <Layout>
+      <SEO
+        path="/development"
+        title="Web, Mobile & Software Development Services"
+        description="Custom Web Development, Mobile Apps, Custom Software, AI/ML, and UI/UX Design services by Izone Technologies in Trichy."
+        schema={[
+          getWebPageSchema({
+            name: "Development Services | Izone Technologies",
+            description: "Custom Web, Software, Mobile Apps, and AI/ML Development Services in Trichy.",
+            url: "https://izonetech.in/development"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Development", url: "/development" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={Code}

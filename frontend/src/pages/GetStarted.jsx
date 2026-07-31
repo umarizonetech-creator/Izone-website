@@ -637,6 +637,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Layout from '@/components/Layout';
+import SEO from '@/components/SEO';
+import { getWebPageSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import { useToast } from '@/hooks/use-toast';
 import HeroParagraph from '@/components/ui/HeroParagraph';
 
@@ -873,6 +875,22 @@ const GetStarted = () => {
 
   return (
     <Layout>
+      <SEO
+        path="/get-started"
+        title="Start Your Project - Request a Quote"
+        description="Get started with your web development, app development, software, or digital marketing project with Izone Technologies in Trichy."
+        schema={[
+          getWebPageSchema({
+            name: "Get Started | Izone Technologies",
+            description: "Start a project with Izone Technologies.",
+            url: "https://izonetech.in/get-started"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Get Started", url: "/get-started" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <section className="pt-8 sm:pt-12 md:pt-16 pb-5 md:pb-24 md:px-8 relative overflow-hidden md:min-h-screen lg:min-h-screen flex items-center">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />

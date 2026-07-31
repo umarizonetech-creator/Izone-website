@@ -3,6 +3,8 @@ import { Share2, TrendingUp, Users, MessageCircle, BarChart3, Target, ArrowRight
 import { Link } from 'react-router-dom';
 import Layout from '../../components/Layout';
 import PageHero from '../../components/PageHero';
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import { Button } from '../../components/ui/button';
 import FlipCard from '../../components/ui/FlipCard';
 
@@ -69,13 +71,32 @@ const containerVariants = {
 const SocialMediaMarketing = () => {
   return (
     <Layout>
+      <SEO
+        path="/development/social-media-marketing"
+        title="Social Media Management in Trichy"
+        description="Izone Technologies offers strategic Social Media Management in Trichy. Content creation, community engagement, brand management, and analytics across Instagram, Facebook, and LinkedIn."
+        keywords={["Social Media Management Trichy", "Social Media Agency Tiruchirappalli", "Instagram Management Trichy", "Brand Management Tamil Nadu"]}
+        schema={[
+          getServiceSchema({
+            name: "Social Media Management Services",
+            serviceType: "Social Media Management",
+            description: "Social media strategy, content creation, community engagement, and brand building.",
+            url: "https://izonetech.in/development/social-media-marketing"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Development", url: "/development" },
+            { name: "Social Media Management", url: "/development/social-media-marketing" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={Share2}
-        badgeText="Social Media Marketing"
-        titleLine1="Grow Your Brand"
-        titleLine2="Online"
-        description="Strategic social media management that builds community, drives engagement, and converts followers into customers."
+        badgeText="Social Media Management"
+        titleLine1="Social Media Management"
+        titleLine2="Services in Trichy"
+        description="Build a powerful online presence, engage your target audience, and convert followers into loyal customers with strategic social media management."
         floatingIcons={[Share2, TrendingUp, Users, BarChart3]}
       />
 

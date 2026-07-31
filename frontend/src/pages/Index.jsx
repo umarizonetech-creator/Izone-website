@@ -1,6 +1,8 @@
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import { useTheme } from "@/hooks/useTheme";
+import SEO from "@/components/SEO";
+import { getOrganizationSchema, getLocalBusinessSchema, getWebSiteSchema } from "@/utils/seoSchemas";
 import ClientMarquee from "@/components/ClientMarquee";
 import {
   ArrowRight,
@@ -381,7 +383,7 @@ const services = [
 const stats = [
   { value: 380, label: "Projects Delivered", suffix: "+" },
   { value: 140, label: "Happy Clients", suffix: "+" },
-  { value: 9, label: "Years Experience", suffix: "+" },
+  { value: 10, label: "Years Experience", suffix: "+" },
   { value: "24/7", label: "Support", isStatic: true },
 ];
 
@@ -493,31 +495,31 @@ const normalizeTestimonial = (testimonial) => {
 
 const projects = [
   {
-    title: "RIITS",
-    category: "Web Development",
+    title: "Riits Metal Craft",
+    category: "Corporate Website",
     description:
-      "Modern shopping experience with real-time inventory and seamless checkout.",
-    image: "/portfolio/dental-school.png",
-    tags: ["React", "Node.js", "Stripe", "MongoDB"],
-    client: "ShopMax Inc.",
-  },
-  {
-    title: "ZEN TONEZ Parlour",
-    category: "WEB Application",
-    description:
-      "Comprehensive analytics dashboard for enterprise data management.",
-    image: "/portfolio/zen-tonez-salon.png",
-    tags: ["TypeScript", "GraphQL", "AWS", "D3.js"],
-    client: "DataFlow Systems",
-  },
-  {
-    title: "KINGS DENTAL ACADEMY",
-    category: "Web Application",
-    description:
-      "Patient management system with appointment scheduling, telemedicine integration, and secure medical records.",
+      "A modern, responsive corporate website showcasing premium metal fabrication services with a clean design and seamless user experience.",
     image: "/portfolio/metal-fabricators.png",
-    tags: ["vue.js", "python", "PostgreSql", "HIPAA"],
-    client: "MediCare plus",
+    tags: ["React", "Tailwind CSS", "Node.js"],
+    client: "Riits Metal Craft",
+  },
+  {
+    title: "Zentonez",
+    category: "Corporate Website",
+    description:
+      "A modern, responsive corporate website designed to showcase the company's services, strengthen its digital presence, and deliver a seamless user experience.",
+    image: "/portfolio/zen-tonez-salon.png",
+    tags: ["React", "Tailwind CSS", "Node.js"],
+    client: "Zentonez",
+  },
+  {
+    title: "Kings Dental Academy",
+    category: "Educational Website",
+    description:
+      "A modern, responsive website built to showcase dental courses, training programs, and provide a seamless learning experience for aspiring dental professionals.",
+    image: "/portfolio/dental-school.png",
+    tags: ["React", "Tailwind CSS", "Node.js"],
+    client: "Kings Dental Academy",
   },
 ];
 
@@ -1140,6 +1142,13 @@ const Index = () => {
 
   return (
     <Layout>
+      <SEO
+        path="/"
+        title="Digital Solutions Company in Trichy"
+        description="Izone Technologies is a leading Digital Solutions Company in Trichy offering Web Development, Mobile Apps, Custom Software, AI/ML, and Digital Marketing."
+        keywords={["Digital Solutions Company in Trichy", "Digital Solutions Trichy", "IT Services Trichy", "Digital Agency Tiruchirappalli"]}
+        schema={[getOrganizationSchema(), getLocalBusinessSchema(), getWebSiteSchema()]}
+      />
       <AdminPopup />
 
       <style>{`
@@ -1253,7 +1262,7 @@ const Index = () => {
                 <span className="inline-block" style={{ opacity: 0 }}>to SEO and growth, <span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone Technologies</span> is your trusted partner.</span>
               </span>
               <span className="hero-desc-line block overflow-hidden">
-                <span className="inline-block" style={{ opacity: 0 }}>9 years. 100+ launches. One expert team.</span>
+                <span className="inline-block" style={{ opacity: 0 }}>10+ years. 100+ launches. One expert team.</span>
               </span>
             </p>
 
@@ -1287,7 +1296,7 @@ const Index = () => {
             {/* The 3D Ball Element Graphic */}
             <div className="relative w-[90%] max-w-[390px] sm:max-w-[390px] md:max-w-[440px] lg:max-w-none max-h-[30vh] sm:max-h-[35vh] lg:max-h-none flex justify-center items-center">
               <img
-                src="/ball-element.png"
+                src="/ball-element.webp"
                 alt="iZone Core System"
                 className="max-w-full max-h-full object-contain drop-shadow-[0_20px_40px_rgba(47,133,90,0.1)]"
               />

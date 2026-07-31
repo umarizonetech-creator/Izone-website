@@ -12,6 +12,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
 import PageHero from '../../components/PageHero';
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import FlipCard from '../../components/ui/FlipCard';
 
 const services = [
@@ -118,12 +120,31 @@ const containerVariants = {
 const AppDevelopment = () => {
   return (
     <Layout>
+      <SEO
+        path="/development/app-development"
+        title="Mobile App Development Company in Trichy"
+        description="Izone Technologies is a top Mobile App Development Company in Trichy engineering native iOS, Android, and Flutter cross-platform mobile applications."
+        keywords={["Mobile App Development Company in Trichy", "App Developers Trichy", "Android App Development Tiruchirappalli", "iOS App Development Trichy"]}
+        schema={[
+          getServiceSchema({
+            name: "Mobile App Development Company in Trichy",
+            serviceType: "Mobile App Development",
+            description: "Top Mobile App Development Company in Trichy building iOS, Android, and cross-platform mobile apps.",
+            url: "https://izonetech.in/development/app-development"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Development", url: "/development" },
+            { name: "App Development", url: "/development/app-development" }
+          ])
+        ]}
+      />
       <PageHero
         badgeIcon={Smartphone}
-        badgeText="App Development"
-        titleLine1="Apps That Users"
-        titleLine2="Love"
-        description="Native and cross-platform mobile applications that deliver exceptional user experiences."
+        badgeText="Mobile App Development Company in Trichy"
+        titleLine1="Mobile App Development"
+        titleLine2="Company in Trichy"
+        description="As a premier Mobile App Development Company in Trichy, we design and build feature-rich mobile applications for iOS and Android."
         floatingIcons={[Smartphone, TabletSmartphone, Layers, Zap]}
       />
 

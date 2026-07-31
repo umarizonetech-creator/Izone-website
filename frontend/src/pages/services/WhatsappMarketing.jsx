@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
 import PageHero from '../../components/PageHero';
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import FlipCard from '../../components/ui/FlipCard';
 
 const services = [
@@ -68,6 +70,24 @@ const containerVariants = {
 const WhatsappMarketing = () => {
   return (
     <Layout>
+      <SEO
+        path="/services/whatsapp-marketing"
+        title="WhatsApp Marketing & High-Conversion Messaging Services"
+        description="Drive customer engagement, automate follow-ups, and run promotional WhatsApp campaigns with high open rates."
+        schema={[
+          getServiceSchema({
+            name: "WhatsApp Marketing Services",
+            serviceType: "WhatsApp Marketing",
+            description: "Direct customer messaging, automated drip campaigns, and promotional WhatsApp marketing in Trichy.",
+            url: "https://izonetech.in/services/whatsapp-marketing"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Services", url: "/services" },
+            { name: "WhatsApp Marketing", url: "/services/whatsapp-marketing" }
+          ])
+        ]}
+      />
       <PageHero
         badgeIcon={Megaphone}
         badgeText="WhatsApp Marketing"

@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
 import PageHero from '../../components/PageHero';
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import FlipCard from '../../components/ui/FlipCard';
 
 const services = [
@@ -68,12 +70,31 @@ const containerVariants = {
 const BulkSms = () => {
   return (
     <Layout>
+      <SEO
+        path="/services/bulk-sms"
+        title="Bulk SMS & WhatsApp Marketing Services in Trichy"
+        description="Izone Technologies provides reliable Bulk SMS & WhatsApp Marketing Services in Trichy. High-delivery messaging, transactional SMS APIs, and WhatsApp broadcasting."
+        keywords={["Bulk SMS & WhatsApp Marketing Services in Trichy", "Bulk SMS Trichy", "WhatsApp Marketing Trichy", "Transactional SMS Gateway Tiruchirappalli"]}
+        schema={[
+          getServiceSchema({
+            name: "Bulk SMS & WhatsApp Marketing Services in Trichy",
+            serviceType: "Messaging Solutions",
+            description: "Transactional Bulk SMS, WhatsApp Business API broadcasting, and promotional messaging.",
+            url: "https://izonetech.in/services/bulk-sms"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Services", url: "/services" },
+            { name: "Bulk Messaging Solutions", url: "/services/bulk-sms" }
+          ])
+        ]}
+      />
       <PageHero
         badgeIcon={MessageSquare}
-        badgeText="Bulk SMS Services"
-        titleLine1="Reach Thousands"
-        titleLine2="Instantly"
-        description="Powerful bulk SMS solutions to connect with your audience effectively and drive engagement at scale."
+        badgeText="Bulk SMS & WhatsApp Marketing"
+        titleLine1="Bulk SMS & WhatsApp Marketing"
+        titleLine2="Services in Trichy"
+        description="Connect directly with your customers through high-speed DLT-approved Bulk SMS gateways and targeted WhatsApp marketing campaigns."
         floatingIcons={[MessageSquare, Send, Users, BarChart3]}
       />
 

@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
 import PageHero from '../../components/PageHero';
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import FlipCard from '../../components/ui/FlipCard';
 
 
@@ -69,6 +71,24 @@ const containerVariants = {
 const ContentWriting = () => {
   return (
     <Layout>
+      <SEO
+        path="/development/content-writing"
+        title="Professional Content Writing & SEO Copywriting Services"
+        description="High-converting website copy, SEO blog posts, technical documentation, and brand storytelling by Izone Technologies."
+        schema={[
+          getServiceSchema({
+            name: "Content Writing Services",
+            serviceType: "Content Writing & Copywriting",
+            description: "Professional content writing, SEO copywriting, and technical documentation in Trichy.",
+            url: "https://izonetech.in/development/content-writing"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Development", url: "/development" },
+            { name: "Content Writing", url: "/development/content-writing" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={PenTool}

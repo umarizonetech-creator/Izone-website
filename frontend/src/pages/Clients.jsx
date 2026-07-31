@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Building2, Users, Globe, Award, Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageHero from "@/components/PageHero";
+import SEO from "@/components/SEO";
+import { getWebPageSchema, getBreadcrumbSchema } from "@/utils/seoSchemas";
 import { useAdmin } from "@/context/AdminContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -147,6 +149,22 @@ const Clients = () => {
 
   return (
     <Layout>
+      <SEO
+        path="/clients"
+        title="Our Clients & Client Success Stories"
+        description="See how Izone Technologies partners with leading companies across industries to build high-impact web and digital solutions."
+        schema={[
+          getWebPageSchema({
+            name: "Clients & Partners | Izone Technologies",
+            description: "Trusted partners and client success stories by Izone Technologies.",
+            url: "https://izonetech.in/clients"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Clients", url: "/clients" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={Award}

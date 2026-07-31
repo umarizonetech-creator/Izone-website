@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
-import Layout from "../../components/Layout";
-import PageHero from "../../components/PageHero";
-import FlipCard from "../../components/ui/FlipCard";
+import Layout from "@/components/Layout";
+import PageHero from "@/components/PageHero";
+import SEO from "@/components/SEO";
+import { getServiceSchema, getBreadcrumbSchema } from "@/utils/seoSchemas";
+import FlipCard from "@/components/ui/FlipCard";
 
 const services = [
   {
@@ -124,12 +126,31 @@ const containerVariants = {
 const AiMl = () => {
   return (
     <Layout>
+      <SEO
+        path="/development/ai-ml"
+        title="AI Solutions Company in Tamil Nadu"
+        description="Izone Technologies is a pioneering AI Solutions Company in Tamil Nadu, delivering custom machine learning models, NLP, predictive analytics, and computer vision."
+        keywords={["AI Solutions Company in Tamil Nadu", "Artificial Intelligence Trichy", "Machine Learning Company Tamil Nadu", "AI Developers Trichy"]}
+        schema={[
+          getServiceSchema({
+            name: "AI Solutions Company in Tamil Nadu",
+            serviceType: "Artificial Intelligence",
+            description: "Pioneering AI Solutions Company in Tamil Nadu delivering custom ML algorithms, NLP, and predictive analytics.",
+            url: "https://izonetech.in/development/ai-ml"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Development", url: "/development" },
+            { name: "AI & ML", url: "/development/ai-ml" }
+          ])
+        ]}
+      />
       <PageHero
         badgeIcon={Brain}
-        badgeText="AI & Machine Learning"
-        titleLine1="Intelligent Solutions"
-        titleLine2="Powered by AI"
-        description="Transform your business with cutting-edge artificial intelligence and machine learning solutions built for real-world impact."
+        badgeText="AI Solutions Company in Tamil Nadu"
+        titleLine1="AI Solutions Company"
+        titleLine2="in Tamil Nadu"
+        description="As an innovative AI Solutions Company in Tamil Nadu, we build intelligent algorithms, natural language tools, and automated machine learning systems."
         floatingIcons={[Brain, Bot, LineChart, Workflow]}
       />
 

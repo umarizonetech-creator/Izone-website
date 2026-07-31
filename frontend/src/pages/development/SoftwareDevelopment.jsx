@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
 import PageHero from '../../components/PageHero';
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import FlipCard from '../../components/ui/FlipCard';
 
 const services = [
@@ -68,12 +70,31 @@ const containerVariants = {
 const SoftwareDevelopment = () => {
   return (
     <Layout>
+      <SEO
+        path="/development/software-development"
+        title="Software Company in Tiruchirappalli"
+        description="Izone Technologies is a leading Software Company in Tiruchirappalli, Tamil Nadu providing custom enterprise software development, database architecture, and DevOps."
+        keywords={["Software Company in Tiruchirappalli", "Software Company Trichy", "Custom Software Development Trichy", "IT Services Tiruchirappalli"]}
+        schema={[
+          getServiceSchema({
+            name: "Software Company in Tiruchirappalli",
+            serviceType: "Software Development",
+            description: "Top Software Company in Tiruchirappalli providing enterprise software engineering, cloud integration, and backend development.",
+            url: "https://izonetech.in/development/software-development"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Development", url: "/development" },
+            { name: "Software Development", url: "/development/software-development" }
+          ])
+        ]}
+      />
       <PageHero
         badgeIcon={Cpu}
-        badgeText="Software Development"
-        titleLine1="Build Powerful"
-        titleLine2="Software Solutions"
-        description="Custom software development that transforms your ideas into powerful, scalable applications."
+        badgeText="Software Company in Tiruchirappalli"
+        titleLine1="Software Company in"
+        titleLine2="Tiruchirappalli"
+        description="As a trusted Software Company in Tiruchirappalli, we transform complex business requirements into powerful, scalable enterprise software solutions."
         floatingIcons={[Cpu, Database, Cloud, Shield]}
       />
 

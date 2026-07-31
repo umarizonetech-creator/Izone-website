@@ -18,6 +18,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
 import PageHero from "@/components/PageHero";
+import SEO from "@/components/SEO";
+import { getContactPageSchema, getLocalBusinessSchema, getBreadcrumbSchema } from "@/utils/seoSchemas";
 import { useAdmin } from "@/context/AdminContext";
 import FacebookIcon from "@/components/icons/FacebookIcon";
 
@@ -30,8 +32,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email Us",
-    details: ["reach.izonetech@gmail.com", ""],
-    href: "https://mail.google.com/mail/?view=cm&fs=1&to=reach.izonetech@gmail.com",
+    details: ["info@izonetech.in", ""],
+    href: "https://mail.google.com/mail/?view=cm&fs=1&to=info@izonetech.in",
     external: true,
   },
   {
@@ -183,13 +185,27 @@ const Contact = () => {
 
   return (
     <Layout>
+      <SEO
+        path="/contact"
+        title="Contact iZone Technologies Trichy"
+        description="Contact iZone Technologies Trichy for custom website development, mobile apps, software solutions, and digital marketing services."
+        keywords={["Contact iZone Technologies Trichy", "Contact Izone Trichy", "Software Company Trichy Address", "IT Company Tiruchirappalli Contact"]}
+        schema={[
+          getContactPageSchema({ url: "https://izonetech.in/contact" }),
+          getLocalBusinessSchema(),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Contact iZone Technologies Trichy", url: "/contact" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={Mail}
-        badgeText="Get In Touch"
-        titleLine1="Let's Start a"
-        titleLine2="Conversation"
-        description="Have a project in mind? We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+        badgeText="Contact iZone Technologies Trichy"
+        titleLine1="Contact iZone Technologies"
+        titleLine2="Trichy"
+        description="Have a project in mind? We'd love to hear from you. Send us a message and our technology team in Trichy will respond promptly."
         floatingIcons={[Mail, Phone, MapPin, Send]}
       />
 

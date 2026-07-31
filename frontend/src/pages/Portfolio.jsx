@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
 import PageHero from '@/components/PageHero';
+import SEO from '@/components/SEO';
+import { getWebPageSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import { useAdmin } from '@/context/AdminContext';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
@@ -51,13 +53,30 @@ const Portfolio = () => {
 
   return (
     <Layout>
+      <SEO
+        path="/portfolio"
+        title="Website & Software Development Portfolio"
+        description="Explore the official Website & Software Development Portfolio of Izone Technologies. Showcasing web applications, custom software, and digital solutions."
+        keywords={["Website & Software Development Portfolio", "Web Development Portfolio Trichy", "Software Project Showcase", "Izone Technologies Work"]}
+        schema={[
+          getWebPageSchema({
+            name: "Website & Software Development Portfolio",
+            description: "Official web application, website, and custom software development portfolio of Izone Technologies.",
+            url: "https://izonetech.in/portfolio"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Website & Software Development Portfolio", url: "/portfolio" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={Sparkles}
-        badgeText="Our Portfolio"
-        titleLine1="Projects That"
-        titleLine2="Define Excellence"
-        description="Explore our collection of successful projects that showcase our expertise in creating innovative digital solutions for businesses across industries."
+        badgeText="Website & Software Development Portfolio"
+        titleLine1="Website & Software"
+        titleLine2="Development Portfolio"
+        description="Explore our proven track record of delivering custom websites, mobile applications, and enterprise software solutions for clients across Trichy and global markets."
         floatingIcons={[Layers, Code2, Rocket, Globe]}
       />
 

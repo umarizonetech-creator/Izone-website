@@ -810,6 +810,8 @@ import { Heart, Coffee, Laptop, Globe, Users, Rocket, Clock, MapPin, Briefcase, 
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
 import PageHero from '@/components/PageHero';
+import SEO from '@/components/SEO';
+import { getWebPageSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
@@ -1161,13 +1163,30 @@ const Career = () => {
 
   return (
     <Layout>
+      <SEO
+        path="/career"
+        title="Final Year Project Center in Trichy"
+        description="Izone Technologies is a premier Final Year Project Center in Trichy. We offer real-time project guidance, internships, and career training for engineering students."
+        keywords={["Final Year Project Center in Trichy", "Engineering Projects Trichy", "CS IT Projects Tiruchirappalli", "Internship & Project Center Trichy"]}
+        schema={[
+          getWebPageSchema({
+            name: "Final Year Project Center in Trichy",
+            description: "Final year project guidance, software internships, and career opportunities at Izone Technologies in Trichy.",
+            url: "https://izonetech.in/career"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Final Year Project Center in Trichy", url: "/career" }
+          ])
+        ]}
+      />
       {/* Hero Section */}
       <PageHero
         badgeIcon={Briefcase}
-        badgeText="Join Our Team"
-        titleLine1="Build Your Career"
-        titleLine2="With Us"
-        description="Join a team of passionate innovators shaping the future of web development. We're always looking for talented individuals to grow with us."
+        badgeText="Final Year Project Center in Trichy"
+        titleLine1="Final Year Project"
+        titleLine2="Center in Trichy"
+        description="Get hands-on final year project guidance, industry internships, and career training in Web, Mobile, Cloud, and AI engineering."
         floatingIcons={[Briefcase, Rocket, Users, Globe]}
         actions={[
           { label: 'View Openings', href: '#open-positions' },

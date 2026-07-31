@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { MessageSquare, Star, Briefcase, Mail, Users, Building2, Image, UserCircle, FolderKanban, BookOpen } from "lucide-react";
 import { AdminLayout } from "@/components/admin";
 import { useAdmin } from "@/context/AdminContext";
+import SEO from "@/components/SEO";
 
 const modules = [
   { label: "Popups",       icon: MessageSquare, path: "/admin/popups",       key: "popups",             color: "text-blue-500",   bg: "bg-blue-500/10" },
@@ -21,6 +22,7 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout>
+      <SEO title="Admin Dashboard" noIndex={true} />
       <div className="mb-6">
         <h1 className="font-display text-xl md:text-2xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground text-sm mt-1">Welcome to iZone Admin Panel</p>

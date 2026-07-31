@@ -17,28 +17,32 @@ gsap.registerPlugin(ScrollTrigger);
 
 const footerLinks = {
   company: [
+    { name: "Home", path: "/" },
     { name: "About Us", path: "/about" },
     { name: "Our Team", path: "/about#team" },
+    { name: "Portfolio", path: "/portfolio" },
+    { name: "Our Clients", path: "/clients" },
     { name: "Careers", path: "/career" },
     { name: "Courses", path: "/courses" },
     { name: "Contact", path: "/contact" },
   ],
-  services: [
-    { name: "Web Development", path: "/development/web-development" },
-    { name: "AI & ML", path: "/development/ai-ml" },
-    { name: "Government Digital Solutions", path: "/development/government-digital-solutions" },
-    {
-      name: "Social Media Marketing",
-      path: "/development/social-media-marketing",
-    },
-    { name: "Content Writing", path: "/development/content-writing" },
-    { name: "Graphics Designer", path: "/development/graphics-designer" },
+  development: [
+    { name: "Website Development", path: "/development/web-development" },
+    { name: "Web Application Dev", path: "/development/web-application-development" },
+    { name: "Mobile App Development", path: "/development/app-development" },
+    { name: "Custom Software Dev", path: "/development/software-development" },
+    { name: "E-commerce Development", path: "/development/ecommerce-development" },
+    { name: "Social Media Management", path: "/development/social-media-marketing" },
+    { name: "Branding & Graphic Design", path: "/development/graphics-designer" },
   ],
-  resources: [
-    { name: "Blog", path: "#" },
-    { name: "Case Studies", path: "/development#portfolio" },
-    { name: "Documentation", path: "#" },
-    { name: "FAQ", path: "#" },
+  services: [
+    { name: "SEO Services", path: "/services/seo-services" },
+    { name: "Digital Marketing", path: "/services/digital-marketing" },
+    { name: "IT Consulting Services", path: "/services/it-consulting" },
+    { name: "Political Digital Campaigns", path: "/services/digital-election-campaign" },
+    { name: "Website Maintenance & Support", path: "/services/website-maintenance-support" },
+    { name: "Bulk SMS", path: "/services/bulk-sms" },
+    { name: "Get Started", path: "/get-started" },
   ],
 };
 
@@ -127,20 +131,20 @@ export function Footer() {
       <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
 
       <div className="container-custom relative z-10 px-4 pb-4 pt-5 md:px-6 md:pb-5 md:pt-7">
-        <div className="grid grid-cols-1 gap-x-8 gap-y-5 text-left sm:grid-cols-3 lg:grid-cols-[minmax(220px,1.45fr)_minmax(120px,0.7fr)_minmax(190px,0.95fr)_minmax(260px,1.2fr)] lg:items-start">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-6 text-left sm:grid-cols-2 lg:grid-cols-[minmax(200px,1.2fr)_minmax(120px,0.65fr)_minmax(185px,0.95fr)_minmax(175px,0.9fr)_minmax(240px,1.1fr)] lg:items-start">
 
-          {/* Brand — full width on tablet, 1 col on desktop */}
-          <div className="sm:col-span-3 lg:col-span-1">
+          {/* Brand */}
+          <div className="sm:col-span-2 lg:col-span-1">
             <Link to="/" className="footer-logo mb-2.5 flex items-center justify-start gap-2">
-              <div className="flex h-16 w-52 items-center justify-start md:h-20 md:w-64 lg:h-24 lg:w-80">
+              <div className="flex h-12 w-48 items-center justify-start md:h-14 md:w-56 lg:h-16 lg:w-60">
                 <img
-                  src="/izone-logo.png"
-                  alt="iZone"
+                  src="/izone-logo.webp"
+                  alt="Izone Technologies Logo"
                   className="h-full w-full object-contain object-left"
                 />
               </div>
             </Link>
-            <p className="footer-desc mb-2 max-w-xs text-xs leading-relaxed text-muted-foreground text-justify md:text-[0.8125rem]">
+            <p className="footer-desc mb-3 max-w-xs text-xs leading-relaxed text-muted-foreground text-justify md:text-[0.8125rem]">
               Transforming ideas into exceptional digital experiences. We build
               modern, scalable web solutions that drive business growth.
             </p>
@@ -162,12 +166,12 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Company — 1 of 3 cols on tablet */}
-          <div className="text-left text-xs md:text-[0.8125rem] lg:pl-1">
-            <h4 className="footer-company-title mb-2 font-display pt-5 text-sm font-semibold text-foreground text-center md:text-justify lg:text-justify ">
+          {/* Company */}
+          <div className="text-left text-xs md:text-[0.8125rem]">
+            <h4 className="footer-company-title mb-2.5 font-display text-sm font-semibold text-foreground">
               Company
             </h4>
-            <ul className="space-y-1.5 pl-5 md:pl-0 lg:pl-0">
+            <ul className="space-y-1.5">
               {footerLinks.company.map((link) => (
                 <li className="footer-company-item" key={link.name}>
                   <Link
@@ -181,12 +185,31 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Services — 1 of 3 cols on tablet */}
+          {/* Development */}
           <div className="text-left text-xs md:text-[0.8125rem]">
-            <h4 className="footer-services-title mb-2 font-display text-sm font-semibold text-foreground text-center md:text-justify lg:text-justify">
+            <h4 className="footer-dev-title mb-2.5 font-display text-sm font-semibold text-foreground">
+              Development
+            </h4>
+            <ul className="space-y-1.5">
+              {footerLinks.development.map((link) => (
+                <li className="footer-dev-item" key={link.name}>
+                  <Link
+                    to={link.path}
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div className="text-left text-xs md:text-[0.8125rem]">
+            <h4 className="footer-services-title mb-2.5 font-display text-sm font-semibold text-foreground">
               Services
             </h4>
-            <ul className="space-y-1.5 pl-5 md:pl-0 lg:pl-0">
+            <ul className="space-y-1.5">
               {footerLinks.services.map((link) => (
                 <li className="footer-services-item" key={link.name}>
                   <Link
@@ -200,12 +223,12 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact — 1 of 3 cols on tablet */}
-          <div className="text-left">
-            <h4 className="footer-contact-title mb-2 font-display text-sm font-semibold text-foreground text-center md:text-justify lg:text-justify">
-              Contact
+          {/* Contact */}
+          <div className="text-left text-xs md:text-[0.8125rem]">
+            <h4 className="footer-contact-title mb-2.5 font-display text-sm font-semibold text-foreground">
+              Contact Us
             </h4>
-            <ul className="space-y-2.5 pl-5 md:pl-0 lg:pl-0">
+            <ul className="space-y-2.5">
               <li className="footer-contact-item grid grid-cols-[16px_minmax(0,1fr)] items-start gap-2 text-left">
                 <MapPin size={16} className="mt-0.5 flex-shrink-0 text-primary" />
                 <span className="text-xs text-justify leading-relaxed text-muted-foreground md:text-[0.8125rem]">
@@ -216,12 +239,12 @@ export function Footer() {
               <li className="footer-contact-item grid grid-cols-[16px_minmax(0,1fr)] items-center gap-2">
                 <Mail size={16} className="flex-shrink-0 text-primary" />
                 <a
-                  href="https://mail.google.com/mail/?view=cm&fs=1&to=reach.izonetech@gmail.com"
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=info@izonetech.in"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="break-all text-xs text-muted-foreground transition-colors hover:text-primary md:text-[0.8125rem]"
                 >
-                  reach.izonetech@gmail.com
+                  info@izonetech.in
                 </a>
               </li>
               <li className="footer-contact-item grid grid-cols-[16px_minmax(0,1fr)] items-center gap-2">
@@ -239,22 +262,16 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-4 flex flex-col items-start  gap-1.5 md:gap-20 border-t border-border pt-2 text-left md:mt-5 md:flex-row">
-          <div className="footer-bottom-links flex flex-wrap justify-start gap-3 sm:gap-4">
-            <Link
-              to="#"
-              className="text-xs text-muted-foreground transition-colors hover:text-primary pl-[90px] md:pl-0 lg:pl-0"
-            >
+        <div className="mt-6 flex flex-col items-center justify-between gap-3 border-t border-border pt-4 text-center sm:flex-row sm:text-left">
+          <div className="footer-bottom-links flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-muted-foreground">
+            <Link to="/contact" className="transition-colors hover:text-primary">
               Privacy Policy
             </Link>
-            <Link
-              to="#"
-              className="text-xs text-muted-foreground transition-colors hover:text-primary"
-            >
+            <Link to="/contact" className="transition-colors hover:text-primary">
               Terms of Service
             </Link>
           </div>
-          <p className="footer-bottom-copy text-xs leading-4 text-muted-foreground pl-10 md:pl-20 pt-5 md:pt-0 lg:pl-20 lg:pt-0">
+          <p className="footer-bottom-copy text-xs leading-4 text-muted-foreground">
             &copy; {new Date().getFullYear()} Izone Technologies. All rights
             reserved.
           </p>

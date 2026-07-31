@@ -6,6 +6,11 @@ import {
   X,
   ChevronDown,
   Code,
+  Code2,
+  ShoppingCart,
+  Search,
+  Settings,
+  Headphones,
   Share2,
   PenTool,
   Pen,
@@ -21,46 +26,24 @@ import {
 import { Button } from "@/components/ui/button";
 
 const developmentServices = [
-  { name: "Web Development", path: "/development/web-development", icon: Code },
-  { name: "Software Development", path: "/development/software-development", icon: Terminal },
-  { name: "App Development", path: "/development/app-development", icon: Smartphone },
-  { name: "AI & ML", path: "/development/ai-ml", icon: BrainCircuit },
-  {
-    name: "Government Digital Solutions",
-    path: "/development/government-digital-solutions",
-    icon: Vote,
-  },
-  {
-    name: "Social Media Marketing",
-    path: "/development/social-media-marketing",
-    icon: Share2,
-  },
-  {
-    name: "Content Writing",
-    path: "/development/content-writing",
-    icon: PenTool,
-  },
-  { name: "Graphics Designer", path: "/development/graphics-designer", icon: Pen },
+  { name: "Website Development", path: "/development/web-development", icon: Code },
+  { name: "Web Application Development", path: "/development/web-application-development", icon: Code2 },
+  { name: "Mobile App Development", path: "/development/app-development", icon: Smartphone },
+  { name: "Custom Software Development", path: "/development/software-development", icon: Terminal },
+  { name: "E-commerce Development", path: "/development/ecommerce-development", icon: ShoppingCart },
+  { name: "Social Media Management", path: "/development/social-media-marketing", icon: Share2 },
+  { name: "Branding & Graphic Design", path: "/development/graphics-designer", icon: Pen },
+  { name: "AI & ML Solutions", path: "/development/ai-ml", icon: BrainCircuit },
 ];
 
 const servicesItems = [
+  { name: "SEO Services", path: "/services/seo-services", icon: Search },
+  { name: "Digital Marketing", path: "/services/digital-marketing", icon: Megaphone },
+  { name: "IT Consulting Services", path: "/services/it-consulting", icon: Settings },
+  { name: "Political Digital Campaigns", path: "/services/digital-election-campaign", icon: Vote },
+  { name: "Website Maintenance & Support", path: "/services/website-maintenance-support", icon: Headphones },
   { name: "Bulk SMS", path: "/services/bulk-sms", icon: MessageSquare },
-  { name: "Voice SMS", path: "/services/voice-sms", icon: Phone },
-  {
-    name: "WhatsApp Panel",
-    path: "/services/whatsapp-panel",
-    icon: MessageCircle,
-  },
-  {
-    name: "WhatsApp Marketing",
-    path: "/services/whatsapp-marketing",
-    icon: Megaphone,
-  },
-  {
-    name: "Digital Election Campaign",
-    path: "/services/digital-election-campaign",
-    icon: Vote,
-  },
+  { name: "WhatsApp Panel & Marketing", path: "/services/whatsapp-panel", icon: MessageCircle },
 ];
 
 const navLinks = [
@@ -78,7 +61,7 @@ const navLinks = [
     hasDropdown: true,
     dropdownType: "services",
   },
-  {name: "Portfolio", path:"/Portfolio"},
+  { name: "Portfolio", path: "/portfolio" },
   { name: "Clients", path: "/clients" },
   { name: "Career", path: "/career" },
   { name: "Courses", path: "/courses" },
@@ -146,21 +129,23 @@ export function Navbar() {
     : "py-4 bg-background/95 backdrop-blur-md border-b border-border/70";
 
   return (
-    <nav
-      className={`fixed top-0 left-0 z-[100] w-full overflow-visible transition-all duration-200 ${navSurface}`}
-    >
-      <div className="container-custom flex w-full max-w-full items-center justify-between gap-3 px-4 xl:max-w-none xl:px-10 2xl:px-14 overflow-visible">
-        {/* Logo */}
-        <Link to="/" className="flex min-w-0 items-center gap-3 group xl:mr-8">
-          <img
-            src="/izone-logo.png"
-            alt="iZone"
-            fetchpriority="high"
-            loading="eager"
-            decoding="async"
-            className="h-16 w-auto max-w-[195px] rounded-md object-contain transition-transform duration-200 group-hover:scale-[1.02] min-[380px]:max-w-[210px] min-[769px]:h-[4.5rem] min-[769px]:max-w-[250px] xl:h-20 xl:max-w-[280px]"
-          />
-        </Link>
+    <header className="fixed top-0 left-0 z-[100] w-full overflow-visible">
+      <nav
+        aria-label="Main Navigation"
+        className={`w-full overflow-visible transition-all duration-200 ${navSurface}`}
+      >
+        <div className="container-custom flex w-full max-w-full items-center justify-between gap-3 px-4 xl:max-w-none xl:px-10 2xl:px-14 overflow-visible">
+          {/* Logo */}
+          <Link to="/" className="flex min-w-0 items-center gap-3 group xl:mr-8">
+            <img
+              src="/izone-logo.webp"
+              alt="Izone Technologies - Digital & IT Solutions"
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
+              className="h-10 sm:h-12 lg:h-14 w-auto max-w-[170px] sm:max-w-[200px] lg:max-w-[230px] rounded-md object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+            />
+          </Link>
 
         {/* Desktop Menu */}
         <div
@@ -368,6 +353,7 @@ export function Navbar() {
         )}
       </AnimatePresence>
     </nav>
+    </header>
   );
 }
 

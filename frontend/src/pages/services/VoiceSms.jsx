@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import Layout from '../../components/Layout';
 import PageHero from '../../components/PageHero';
+import SEO from '@/components/SEO';
+import { getServiceSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import FlipCard from '../../components/ui/FlipCard';
 
 const services = [
@@ -68,6 +70,24 @@ const containerVariants = {
 const VoiceSms = () => {
   return (
     <Layout>
+      <SEO
+        path="/services/voice-sms"
+        title="Voice SMS & Bulk Voice Call Broadcasting Services"
+        description="Automated pre-recorded voice broadcasting & outbound calling services in regional languages by Izone Technologies."
+        schema={[
+          getServiceSchema({
+            name: "Voice SMS Services",
+            serviceType: "Voice SMS & Voice Broadcasting",
+            description: "Automated voice call broadcasting and pre-recorded message delivery in Trichy.",
+            url: "https://izonetech.in/services/voice-sms"
+          }),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Services", url: "/services" },
+            { name: "Voice SMS", url: "/services/voice-sms" }
+          ])
+        ]}
+      />
       <PageHero
         badgeIcon={Phone}
         badgeText="Voice SMS Services"
