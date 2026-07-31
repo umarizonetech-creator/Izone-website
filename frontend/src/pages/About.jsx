@@ -105,7 +105,7 @@ const milestones = [
 const visibleMilestones = milestones;
 
 
-const MAX_VISIBLE_LIFE_IMAGES = 6;
+const MAX_VISIBLE_LIFE_IMAGES = 12;
 
 const normalizeLifeImage = (image, index) => {
   let rawUrl = typeof image === "string" ? image : image?.url || "";
@@ -172,11 +172,75 @@ const timelineLineVariants = {
 const timelinePath =
   "M 0,50 Q 100,5 200,50 T 400,50 T 600,50 T 800,50 T 1000,50";
 
+// const sampleLifeImages = [
+//   {
+//     id: "sample-1",
+//     url: "/hero/Izone-building.jpeg",
+//     name: "Izone Technologies",
+//   },
+//   {
+//     id: "sample-3",
+//     url: "/hero/front-ofc.jpeg",
+//     name: "Modern Reception & Visitor Lounge",
+//   },
+//   {
+//     id: "sample-4",
+//     url: "/hero/wrk-station1.jpeg",
+//     name: "Workspace & Development Floor",
+//   },
+//   {
+//     id: "sample-5",
+//     url: "/hero/wrk-station2.jpeg",
+//     name: "Workspace & Development Floor",
+//   },
+//   {
+//     id: "sample-6",
+//     url: "/hero/wrk-station3.jpeg",
+//     name: "Workspace & Development Floor",
+//   },
+//   {
+//     id: "sample-7",
+//     url: "/hero/wrk-station4.jpeg",
+//     name: "Workspace & Development Floor",
+//   },
+//   {
+//     id: "sample-8",
+//     url: "/hero/traning-hall1.jpeg",
+//     name: "Technical Training & Learning Session",
+//   },
+//   {
+//     id: "sample-9",
+//     url: "/hero/traning-hall2.jpeg",
+//     name: "Technical Training & Learning Session",
+//   },
+//   {
+//     id: "sample-10",
+//     url: "/hero/conf-hall1.jpeg",
+//     name: "Conference Room Team Discussion",
+//   },
+//   {
+//     id: "sample-11",
+//     url: "/hero/conf-hall2.jpeg",
+//     name: "Conference Room Team Discussion",
+//   },
+//   {
+//     id: "sample-12",
+//     url: "/hero/entrance.jpeg",
+//     name: "Conference Room Team Discussion",
+//   },
+// ];
+
+
 const sampleLifeImages = [
   {
     id: "sample-1",
     url: "/hero/Izone-building.jpeg",
     name: "Izone Technologies",
+  },
+  {
+    id: "sample-2",
+    url: "/hero/entrance.jpeg",
+    name: "Office Entrance",
   },
   {
     id: "sample-3",
@@ -185,17 +249,47 @@ const sampleLifeImages = [
   },
   {
     id: "sample-4",
-    url: "/hero/wrk-station-bak.jpeg",
+    url: "/hero/wrk-station1.jpeg",
     name: "Workspace & Development Floor",
   },
   {
     id: "sample-5",
-    url: "/hero/traning-hall.jpeg",
-    name: "Technical Training & Learning Session",
+    url: "/hero/wrk-station2.jpeg",
+    name: "Workspace & Development Floor",
   },
   {
     id: "sample-6",
-    url: "/hero/conf-hall.jpeg",
+    url: "/hero/wrk-station3.jpeg",
+    name: "Workspace & Development Floor",
+  },
+  {
+    id: "sample-7",
+    url: "/hero/wrk-station4.jpeg",
+    name: "Workspace & Development Floor",
+  },
+  {
+    id: "sample-8",
+    url: "/hero/traning-hall1.jpeg",
+    name: "Technical Training & Learning Session",
+  },
+  {
+    id: "sample-9",
+    url: "/hero/traning-hall2.jpeg",
+    name: "Technical Training & Learning Session",
+  },
+  {
+    id: "sample-10",
+    url: "/hero/traning-hall3.jpeg",
+    name: "Technical Training & Learning Session",
+  },
+  {
+    id: "sample-11",
+    url: "/hero/conf-hall1.jpeg",
+    name: "Conference Room Team Discussion",
+  },
+  {
+    id: "sample-12",
+    url: "/hero/conf-hall2.jpeg",
     name: "Conference Room Team Discussion",
   },
 ];
