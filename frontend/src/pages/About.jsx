@@ -402,8 +402,8 @@ const About = () => {
     <Layout>
       <SEO
         path="/about"
-        title="About iZone Technologies"
-        description="Learn about iZone Technologies, a leading software, website development, and IT consulting company established in Trichy, Tamil Nadu since 2016."
+        title="About Us | Software & Web Company | iZone Technologies"
+        description="Learn about iZone Technologies, a premier software, website development, and IT solutions company established in Trichy, Tamil Nadu since 2016."
         keywords={["About iZone Technologies", "iZone Technologies Trichy", "Software Company Trichy", "IT Company Tiruchirappalli"]}
         schema={[
           getWebPageSchema({
@@ -413,7 +413,7 @@ const About = () => {
           }),
           getBreadcrumbSchema([
             { name: "Home", url: "/" },
-            { name: "About iZone Technologies", url: "/about" }
+            { name: "About Us", url: "/about" }
           ])
         ]}
       />

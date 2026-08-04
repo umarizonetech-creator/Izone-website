@@ -128,14 +128,14 @@ const AiMl = () => {
     <Layout>
       <SEO
         path="/development/ai-ml"
-        title="AI Solutions Company in Tamil Nadu"
-        description="Izone Technologies is a pioneering AI Solutions Company in Tamil Nadu, delivering custom machine learning models, NLP, predictive analytics, and computer vision."
+        title="AI & Machine Learning Solutions | iZone Technologies"
+        description="iZone Technologies is a pioneering AI Solutions Company in Tamil Nadu, delivering custom machine learning models, NLP, predictive analytics, and computer vision."
         keywords={["AI Solutions Company in Tamil Nadu", "Artificial Intelligence Trichy", "Machine Learning Company Tamil Nadu", "AI Developers Trichy"]}
         schema={[
           getServiceSchema({
-            name: "AI Solutions Company in Tamil Nadu",
+            name: "AI Solutions & Machine Learning",
             serviceType: "Artificial Intelligence",
-            description: "Pioneering AI Solutions Company in Tamil Nadu delivering custom ML algorithms, NLP, and predictive analytics.",
+            description: "Pioneering AI Solutions Company in Tamil Nadu delivering custom ML algorithms, NLP, and predictive analytics by iZone Technologies.",
             url: "https://izonetech.in/development/ai-ml"
           }),
           getBreadcrumbSchema([

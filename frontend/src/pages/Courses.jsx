@@ -458,19 +458,19 @@ export default function Courses() {
     <Layout>
       <SEO
         path="/courses"
-        title="IT Training Institute in Trichy"
-        description="Izone Technologies is a top IT Training Institute in Trichy offering hands-on full-stack development, Python, mobile apps, UI/UX, and AI courses."
+        title="IT Training & Certification Courses | iZone Technologies"
+        description="iZone Technologies offers hands-on full-stack development, Python, mobile apps, UI/UX, and AI training courses in Trichy."
         keywords={["IT Training Institute in Trichy", "Software Training Trichy", "Full Stack Development Course Trichy", "Python Course Tiruchirappalli"]}
         schema={[
           getWebPageSchema({
-            name: "IT Training Institute in Trichy",
-            description: "Hands-on IT training programs, software courses, and career certifications in Trichy.",
+            name: "IT Training & Certification Courses | iZone Technologies",
+            description: "Hands-on IT training programs, software courses, and career certifications by iZone Technologies in Trichy.",
             url: "https://izonetech.in/courses"
           }),
           getCourseSchema(courses),
           getBreadcrumbSchema([
             { name: "Home", url: "/" },
-            { name: "IT Training Institute in Trichy", url: "/courses" }
+            { name: "Courses", url: "/courses" }
           ])
         ]}
       />

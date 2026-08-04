@@ -51,14 +51,14 @@ const SeoServices = () => {
     <Layout>
       <SEO
         path="/services/seo-services"
-        title="SEO Services in Trichy | Search Engine Optimization"
-        description="Izone Technologies offers top SEO Services in Trichy, Tamil Nadu. Rank #1 on Google with our On-Page, Local SEO, and Technical SEO strategies."
+        title="SEO Services & Digital Growth | iZone Technologies"
+        description="iZone Technologies offers top SEO Services in Trichy, Tamil Nadu. Rank #1 on Google with our On-Page, Local SEO, and Technical SEO strategies."
         keywords={["SEO Services Trichy", "SEO Agency Tiruchirappalli", "Local SEO Company Tamil Nadu", "Search Engine Optimization Trichy"]}
         schema={[
           getServiceSchema({
-            name: "SEO Services",
+            name: "SEO Services in Trichy",
             serviceType: "Search Engine Optimization",
-            description: "On-Page SEO, Local SEO in Trichy, Technical Audits, and Off-Page link building.",
+            description: "On-Page SEO, Local SEO in Trichy, Technical Audits, and Off-Page link building by iZone Technologies.",
             url: "https://izonetech.in/services/seo-services"
           }),
           getBreadcrumbSchema([

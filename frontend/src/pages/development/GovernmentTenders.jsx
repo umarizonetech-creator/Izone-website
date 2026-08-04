@@ -128,13 +128,13 @@ const GovernmentTenders = () => {
     <Layout>
       <SEO
         path="/development/government-digital-solutions"
-        title="Government Digital Solutions & Tender Portals"
-        description="Digital platforms and portal solutions that streamline government procurement, vendor onboarding, and public sector workflows."
+        title="Government Software Projects | iZone Technologies"
+        description="Digital platforms and portal solutions by iZone Technologies that streamline government procurement, vendor onboarding, and public sector workflows."
         schema={[
           getServiceSchema({
             name: "Government Digital Solutions",
             serviceType: "Government Portals & Software",
-            description: "Custom digital solutions, e-tendering portals, and compliance software for public sector.",
+            description: "Custom digital solutions, e-tendering portals, and compliance software for public sector by iZone Technologies.",
             url: "https://izonetech.in/development/government-digital-solutions"
           }),
           getBreadcrumbSchema([

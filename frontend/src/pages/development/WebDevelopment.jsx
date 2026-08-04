@@ -106,14 +106,14 @@ const WebDevelopment = () => {
     <Layout>
       <SEO
         path="/development/web-development"
-        title="Web Development Company in Trichy"
-        description="Izone Technologies is a premier Web Development Company in Trichy, creating fast, responsive websites, e-commerce stores, and custom React/Next.js web applications."
+        title="Web Development Company | iZone Technologies Trichy"
+        description="Build a fast, responsive and SEO-ready business website with iZone Technologies, a website development company in Trichy. Request a consultation today."
         keywords={["Web Development Company in Trichy", "Web Design Trichy", "Website Development Tiruchirappalli", "React Developer Trichy"]}
         schema={[
           getServiceSchema({
             name: "Web Development Company in Trichy",
             serviceType: "Web Development",
-            description: "Leading Web Development Company in Trichy delivering custom, high-performance websites and web applications.",
+            description: "Leading Web Development Company in Trichy delivering custom, high-performance websites and web applications by iZone Technologies.",
             url: "https://izonetech.in/development/web-development"
           }),
           getBreadcrumbSchema([

@@ -1144,9 +1144,9 @@ const Index = () => {
     <Layout>
       <SEO
         path="/"
-        title="Digital Solutions Company in Trichy"
-        description="Izone Technologies is a leading Digital Solutions Company in Trichy offering Web Development, Mobile Apps, Custom Software, AI/ML, and Digital Marketing."
-        keywords={["Digital Solutions Company in Trichy", "Digital Solutions Trichy", "IT Services Trichy", "Digital Agency Tiruchirappalli"]}
+        title="iZone Technologies | Digital Solutions Company in Trichy"
+        description="iZone Technologies is a website development, software, mobile app, SEO and digital marketing company in Trichy. We create reliable digital solutions for businesses, institutions and growing brands."
+        keywords={["iZone Technologies", "Digital Solutions Company in Trichy", "Website Development Trichy", "Software Company Trichy", "SEO Company Trichy"]}
         schema={[getOrganizationSchema(), getLocalBusinessSchema(), getWebSiteSchema()]}
       />
       <AdminPopup />
@@ -1254,15 +1254,11 @@ const Index = () => {
               </span>
             </h1>
 
-            <p ref={heroDescRef} className="text-sm sm:text-base lg:text-[1.05rem] text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0 flex flex-col gap-0.5">
+            <p ref={heroDescRef} className="text-sm sm:text-base lg:text-[1.05rem] text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0">
               <span className="hero-desc-line block overflow-hidden">
-                <span className="inline-block" style={{ opacity: 0 }}>From modern websites and digital campaigns</span>
-              </span>
-              <span className="hero-desc-line block overflow-hidden">
-                <span className="inline-block" style={{ opacity: 0 }}>to SEO and growth, <span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone Technologies</span> is your trusted partner.</span>
-              </span>
-              <span className="hero-desc-line block overflow-hidden">
-                <span className="inline-block" style={{ opacity: 0 }}>10+ years. 100+ launches. One expert team.</span>
+                <span className="inline-block" style={{ opacity: 0 }}>
+                  <span className="font-semibold text-[#2f855a] dark:text-[#6ba67e]">iZone Technologies</span> is a Trichy-based digital solutions company specialising in website development, web applications, mobile apps, custom software, SEO, digital marketing and technology-led business solutions.
+                </span>
               </span>
             </p>
 

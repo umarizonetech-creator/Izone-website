@@ -72,14 +72,14 @@ const SoftwareDevelopment = () => {
     <Layout>
       <SEO
         path="/development/software-development"
-        title="Software Company in Tiruchirappalli"
-        description="Izone Technologies is a leading Software Company in Tiruchirappalli, Tamil Nadu providing custom enterprise software development, database architecture, and DevOps."
+        title="Custom Software Development | iZone Technologies"
+        description="iZone Technologies develops custom CRM, ERP, workflow and business software solutions designed around your operational requirements."
         keywords={["Software Company in Tiruchirappalli", "Software Company Trichy", "Custom Software Development Trichy", "IT Services Tiruchirappalli"]}
         schema={[
           getServiceSchema({
-            name: "Software Company in Tiruchirappalli",
+            name: "Custom Software Development Services",
             serviceType: "Software Development",
-            description: "Top Software Company in Tiruchirappalli providing enterprise software engineering, cloud integration, and backend development.",
+            description: "Top software company in Trichy providing enterprise software engineering, cloud integration, and backend development by iZone Technologies.",
             url: "https://izonetech.in/development/software-development"
           }),
           getBreadcrumbSchema([

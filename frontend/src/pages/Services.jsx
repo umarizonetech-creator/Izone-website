@@ -122,12 +122,12 @@ const Services = () => {
     <Layout>
       <SEO
         path="/services"
-        title="Communication & Marketing Services"
-        description="Bulk SMS, Voice SMS, WhatsApp Marketing, and Digital Election Campaign solutions by Izone Technologies in Trichy."
+        title="Digital & IT Services Company | iZone Technologies"
+        description="Explore IT services, Bulk SMS, Voice SMS, WhatsApp Marketing, and Digital Campaign solutions by iZone Technologies in Trichy."
         schema={[
           getWebPageSchema({
-            name: "Communication Services | Izone Technologies",
-            description: "Bulk SMS, Voice SMS, WhatsApp Panel, and Digital Marketing Services in Trichy.",
+            name: "Communication & Digital Services | iZone Technologies",
+            description: "Bulk SMS, Voice SMS, WhatsApp Panel, and Digital Marketing Services by iZone Technologies in Trichy.",
             url: "https://izonetech.in/services"
           }),
           getBreadcrumbSchema([

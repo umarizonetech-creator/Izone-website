@@ -51,14 +51,14 @@ const ITConsulting = () => {
     <Layout>
       <SEO
         path="/services/it-consulting"
-        title="IT Consulting Services in Trichy"
-        description="Izone Technologies provides top IT Consulting Services in Trichy. Technology architecture, cloud strategy, digital transformation, and security audits."
+        title="IT Consulting & Technology | iZone Technologies"
+        description="iZone Technologies provides top IT Consulting Services in Trichy. Technology architecture, cloud strategy, digital transformation, and security audits."
         keywords={["IT Consulting Services in Trichy", "IT Consulting Trichy", "Technology Advisory Tiruchirappalli", "Digital Transformation Consulting Tamil Nadu"]}
         schema={[
           getServiceSchema({
-            name: "IT Consulting Services in Trichy",
+            name: "IT Consulting Services",
             serviceType: "IT Consulting Services",
-            description: "Technology architecture consulting, infrastructure security audits, and digital transformation.",
+            description: "Technology architecture consulting, infrastructure security audits, and digital transformation by iZone Technologies.",
             url: "https://izonetech.in/services/it-consulting"
           }),
           getBreadcrumbSchema([

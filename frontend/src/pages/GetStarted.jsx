@@ -877,12 +877,12 @@ const GetStarted = () => {
     <Layout>
       <SEO
         path="/get-started"
-        title="Start Your Project - Request a Quote"
-        description="Get started with your web development, app development, software, or digital marketing project with Izone Technologies in Trichy."
+        title="Start Your Digital Project | iZone Technologies"
+        description="Get started with your web development, mobile app, software, or digital marketing project with iZone Technologies in Trichy."
         schema={[
           getWebPageSchema({
-            name: "Get Started | Izone Technologies",
-            description: "Start a project with Izone Technologies.",
+            name: "Start Your Project | iZone Technologies",
+            description: "Start a digital project with iZone Technologies in Trichy.",
             url: "https://izonetech.in/get-started"
           }),
           getBreadcrumbSchema([

@@ -187,15 +187,15 @@ const Contact = () => {
     <Layout>
       <SEO
         path="/contact"
-        title="Contact iZone Technologies Trichy"
-        description="Contact iZone Technologies Trichy for custom website development, mobile apps, software solutions, and digital marketing services."
-        keywords={["Contact iZone Technologies Trichy", "Contact Izone Trichy", "Software Company Trichy Address", "IT Company Tiruchirappalli Contact"]}
+        title="Contact Us | IT Company in Trichy | iZone Technologies"
+        description="Contact iZone Technologies in Trichy for custom website development, mobile apps, software solutions, and digital marketing services."
+        keywords={["Contact iZone Technologies", "Software Company Trichy Address", "IT Company Tiruchirappalli Contact", "Contact iZone Trichy"]}
         schema={[
           getContactPageSchema({ url: "https://izonetech.in/contact" }),
           getLocalBusinessSchema(),
           getBreadcrumbSchema([
             { name: "Home", url: "/" },
-            { name: "Contact iZone Technologies Trichy", url: "/contact" }
+            { name: "Contact Us", url: "/contact" }
           ])
         ]}
       />

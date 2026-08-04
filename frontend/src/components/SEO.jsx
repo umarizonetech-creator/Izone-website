@@ -1,9 +1,9 @@
 import { Helmet } from "react-helmet-async";
 
 const BASE_URL = "https://izonetech.in";
-const DEFAULT_TITLE = "Izone Technologies | Leading IT & Digital Solutions in Trichy";
+const DEFAULT_TITLE = "iZone Technologies | Digital Solutions Company in Trichy";
 const DEFAULT_DESCRIPTION =
-  "IZONE Technologies is a top IT company in Trichy offering Web Development, Mobile App Development, Digital Marketing, AI/ML Solutions, Custom Software, and IT Training.";
+  "iZone Technologies is a website development, software, mobile app, SEO and digital marketing company in Trichy. We create reliable digital solutions for businesses, institutions and growing brands.";
 const DEFAULT_OG_IMAGE = `${BASE_URL}/hero/about-hero.png`;
 
 export default function SEO({
@@ -18,7 +18,7 @@ export default function SEO({
   schema,
 }) {
   const fullTitle = title
-    ? `${title} | Izone Technologies`
+    ? (/izone technologies/i.test(title) ? title : `${title} | iZone Technologies`)
     : DEFAULT_TITLE;
   const metaDescription = description || DEFAULT_DESCRIPTION;
   const currentUrl = canonicalUrl || (path ? `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}` : BASE_URL);
@@ -46,7 +46,7 @@ export default function SEO({
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={ogType} />
-      <meta property="og:site_name" content="Izone Technologies" />
+      <meta property="og:site_name" content="iZone Technologies" />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={metaDescription} />
       <meta property="og:url" content={currentUrl} />

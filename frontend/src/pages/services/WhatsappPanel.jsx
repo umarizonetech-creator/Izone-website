@@ -72,13 +72,13 @@ const WhatsappPanel = () => {
     <Layout>
       <SEO
         path="/services/whatsapp-panel"
-        title="WhatsApp API & Broadcast Control Panel"
-        description="Manage multi-agent live chat, automated WhatsApp chatbots, broadcast messaging, and WhatsApp Business API integration."
+        title="WhatsApp Marketing Panel | iZone Technologies"
+        description="Manage multi-agent live chat, automated WhatsApp chatbots, broadcast messaging, and WhatsApp Business API integration with iZone Technologies."
         schema={[
           getServiceSchema({
             name: "WhatsApp Control Panel Services",
             serviceType: "WhatsApp API & Panel",
-            description: "WhatsApp Business API control panel, multi-agent chat, and automated chatbot integration.",
+            description: "WhatsApp Business API control panel, multi-agent chat, and automated chatbot integration by iZone Technologies.",
             url: "https://izonetech.in/services/whatsapp-panel"
           }),
           getBreadcrumbSchema([

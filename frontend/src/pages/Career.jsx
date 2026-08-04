@@ -1165,18 +1165,18 @@ const Career = () => {
     <Layout>
       <SEO
         path="/career"
-        title="Final Year Project Center in Trichy"
-        description="Izone Technologies is a premier Final Year Project Center in Trichy. We offer real-time project guidance, internships, and career training for engineering students."
-        keywords={["Final Year Project Center in Trichy", "Engineering Projects Trichy", "CS IT Projects Tiruchirappalli", "Internship & Project Center Trichy"]}
+        title="Careers & Student Internships | iZone Technologies"
+        description="Explore project guidance, software internships, final year project guidance, and career opportunities at iZone Technologies in Trichy."
+        keywords={["Careers iZone Technologies", "Final Year Project Center in Trichy", "Engineering Projects Trichy", "Internship Trichy"]}
         schema={[
           getWebPageSchema({
-            name: "Final Year Project Center in Trichy",
-            description: "Final year project guidance, software internships, and career opportunities at Izone Technologies in Trichy.",
+            name: "Careers & Internships | iZone Technologies",
+            description: "Final year project guidance, software internships, and career opportunities at iZone Technologies in Trichy.",
             url: "https://izonetech.in/career"
           }),
           getBreadcrumbSchema([
             { name: "Home", url: "/" },
-            { name: "Final Year Project Center in Trichy", url: "/career" }
+            { name: "Career", url: "/career" }
           ])
         ]}
       />

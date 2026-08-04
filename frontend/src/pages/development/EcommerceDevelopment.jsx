@@ -51,14 +51,14 @@ const EcommerceDevelopment = () => {
     <Layout>
       <SEO
         path="/development/ecommerce-development"
-        title="E-commerce Development Company in Trichy"
-        description="Izone Technologies builds custom E-commerce websites, Shopify stores, WooCommerce platforms, and payment gateways in Trichy & Tamil Nadu."
+        title="E-commerce Development | iZone Technologies Trichy"
+        description="iZone Technologies builds custom E-commerce websites, Shopify stores, WooCommerce platforms, and payment gateways in Trichy & Tamil Nadu."
         keywords={["Ecommerce Development Trichy", "Shopify Developers Trichy", "Online Store Development Tiruchirappalli", "Payment Gateway Integration Trichy"]}
         schema={[
           getServiceSchema({
             name: "E-commerce Development Services",
             serviceType: "E-commerce Development",
-            description: "Custom online store development, shopping cart systems, and payment gateway integration.",
+            description: "Custom online store development, shopping cart systems, and payment gateway integration by iZone Technologies.",
             url: "https://izonetech.in/development/ecommerce-development"
           }),
           getBreadcrumbSchema([

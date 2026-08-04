@@ -166,12 +166,12 @@ const Development = () => {
     <Layout>
       <SEO
         path="/development"
-        title="Web, Mobile & Software Development Services"
-        description="Custom Web Development, Mobile Apps, Custom Software, AI/ML, and UI/UX Design services by Izone Technologies in Trichy."
+        title="Custom Software & Web Development | iZone Technologies"
+        description="Custom Web Development, Mobile Apps, Custom Software, AI/ML, and UI/UX Design services by iZone Technologies in Trichy."
         schema={[
           getWebPageSchema({
-            name: "Development Services | Izone Technologies",
-            description: "Custom Web, Software, Mobile Apps, and AI/ML Development Services in Trichy.",
+            name: "Development Services | iZone Technologies",
+            description: "Custom Web, Software, Mobile Apps, and AI/ML Development Services by iZone Technologies in Trichy.",
             url: "https://izonetech.in/development"
           }),
           getBreadcrumbSchema([

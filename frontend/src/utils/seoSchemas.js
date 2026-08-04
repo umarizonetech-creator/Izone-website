@@ -5,12 +5,12 @@ export const getOrganizationSchema = () => ({
   "@context": "https://schema.org",
   "@type": "Organization",
   "@id": `${BASE_URL}/#organization`,
-  "name": "Izone Technologies",
-  "legalName": "Izone Technologies Private Limited",
+  "name": "iZone Technologies",
+  "legalName": "iZone Technologies Private Limited",
   "url": BASE_URL,
   "logo": ORG_LOGO,
   "image": "https://izonetech.in/hero/about-hero.png",
-  "description": "Leading IT & Digital Solutions Company in Trichy offering Web Development, Mobile Apps, AI/ML, Software Development, Digital Marketing, and IT Training.",
+  "description": "iZone Technologies is a website development, software, mobile app, SEO and digital marketing company in Trichy. We create reliable digital solutions for businesses, institutions and growing brands.",
   "email": "info@izonetech.in",
   "telephone": "+91-9940048776",
   "founder": {
@@ -71,8 +71,8 @@ export const getWebSiteSchema = () => ({
   "@type": "WebSite",
   "@id": `${BASE_URL}/#website`,
   "url": BASE_URL,
-  "name": "Izone Technologies",
-  "description": "Custom Software, Web Development, Mobile Apps & Digital Marketing Services in Trichy",
+  "name": "iZone Technologies",
+  "description": "Website development, software, mobile apps, SEO and digital marketing company in Trichy.",
   "publisher": {
     "@id": `${BASE_URL}/#organization`
   }
@@ -122,8 +122,8 @@ export const getContactPageSchema = ({ url = `${BASE_URL}/contact` }) => ({
   "@type": "ContactPage",
   "@id": `${url}#contactpage`,
   "url": url,
-  "name": "Contact Izone Technologies",
-  "description": "Get in touch with Izone Technologies for software development, web & mobile app projects, or IT consultations in Trichy.",
+  "name": "Contact iZone Technologies",
+  "description": "Get in touch with iZone Technologies for software development, web & mobile app projects, or IT consultations in Trichy.",
   "mainEntity": {
     "@id": `${BASE_URL}/#localbusiness`
   }
@@ -134,7 +134,7 @@ export const getCourseSchema = (courses = []) => {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "IT Training Courses at Izone Technologies",
+    "name": "IT Training Courses at iZone Technologies",
     "itemListElement": courses.map((course, idx) => ({
       "@type": "ListItem",
       "position": idx + 1,
@@ -144,7 +144,7 @@ export const getCourseSchema = (courses = []) => {
         "description": course.description || `Comprehensive training program for ${course.title}`,
         "provider": {
           "@type": "Organization",
-          "name": "Izone Technologies",
+          "name": "iZone Technologies",
           "sameAs": BASE_URL
         }
       }

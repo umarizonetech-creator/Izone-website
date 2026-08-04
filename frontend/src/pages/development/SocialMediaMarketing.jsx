@@ -73,14 +73,14 @@ const SocialMediaMarketing = () => {
     <Layout>
       <SEO
         path="/development/social-media-marketing"
-        title="Social Media Management in Trichy"
-        description="Izone Technologies offers strategic Social Media Management in Trichy. Content creation, community engagement, brand management, and analytics across Instagram, Facebook, and LinkedIn."
+        title="Social Media Marketing Agency | iZone Technologies"
+        description="iZone Technologies offers strategic Social Media Management in Trichy. Content creation, community engagement, brand management, and analytics across social platforms."
         keywords={["Social Media Management Trichy", "Social Media Agency Tiruchirappalli", "Instagram Management Trichy", "Brand Management Tamil Nadu"]}
         schema={[
           getServiceSchema({
             name: "Social Media Management Services",
             serviceType: "Social Media Management",
-            description: "Social media strategy, content creation, community engagement, and brand building.",
+            description: "Social media strategy, content creation, community engagement, and brand building by iZone Technologies.",
             url: "https://izonetech.in/development/social-media-marketing"
           }),
           getBreadcrumbSchema([

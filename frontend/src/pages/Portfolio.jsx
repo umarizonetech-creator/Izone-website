@@ -55,18 +55,18 @@ const Portfolio = () => {
     <Layout>
       <SEO
         path="/portfolio"
-        title="Website & Software Development Portfolio"
-        description="Explore the official Website & Software Development Portfolio of Izone Technologies. Showcasing web applications, custom software, and digital solutions."
-        keywords={["Website & Software Development Portfolio", "Web Development Portfolio Trichy", "Software Project Showcase", "Izone Technologies Work"]}
+        title="Our Work & Project Portfolio | iZone Technologies"
+        description="Explore the official Website & Software Development Portfolio of iZone Technologies showcasing web applications, custom software, and digital solutions."
+        keywords={["Website & Software Development Portfolio", "Web Development Portfolio Trichy", "Software Project Showcase", "iZone Technologies Work"]}
         schema={[
           getWebPageSchema({
-            name: "Website & Software Development Portfolio",
-            description: "Official web application, website, and custom software development portfolio of Izone Technologies.",
+            name: "Our Portfolio | iZone Technologies",
+            description: "Official web application, website, and custom software development portfolio of iZone Technologies.",
             url: "https://izonetech.in/portfolio"
           }),
           getBreadcrumbSchema([
             { name: "Home", url: "/" },
-            { name: "Website & Software Development Portfolio", url: "/portfolio" }
+            { name: "Portfolio", url: "/portfolio" }
           ])
         ]}
       />

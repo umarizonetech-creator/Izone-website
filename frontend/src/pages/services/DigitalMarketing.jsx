@@ -51,14 +51,14 @@ const DigitalMarketing = () => {
     <Layout>
       <SEO
         path="/services/digital-marketing"
-        title="Digital Marketing Agency in Trichy"
-        description="Izone Technologies is a top Digital Marketing Agency in Trichy providing Google Ads, Meta Ads, Lead Generation, and Performance Marketing."
+        title="Digital Marketing Agency | iZone Technologies Trichy"
+        description="iZone Technologies is a top Digital Marketing Agency in Trichy providing Google Ads, Meta Ads, Lead Generation, and Performance Marketing."
         keywords={["Digital Marketing Agency Trichy", "PPC Agency Tiruchirappalli", "Google Ads Trichy", "Lead Generation Company Tamil Nadu"]}
         schema={[
           getServiceSchema({
             name: "Digital Marketing Services",
             serviceType: "Digital Marketing",
-            description: "Google Ads, Meta Paid Campaigns, Lead Generation Funnels, and Performance Marketing.",
+            description: "Google Ads, Meta Paid Campaigns, Lead Generation Funnels, and Performance Marketing by iZone Technologies.",
             url: "https://izonetech.in/services/digital-marketing"
           }),
           getBreadcrumbSchema([

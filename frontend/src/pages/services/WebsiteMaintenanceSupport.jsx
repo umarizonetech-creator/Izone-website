@@ -51,14 +51,14 @@ const WebsiteMaintenanceSupport = () => {
     <Layout>
       <SEO
         path="/services/website-maintenance-support"
-        title="Website Maintenance and Support Services in Trichy"
-        description="Izone Technologies offers 24/7 Website Maintenance & Support in Trichy. Security audits, daily backups, speed tuning, and regular updates."
+        title="Website Maintenance & Support | iZone Technologies"
+        description="iZone Technologies offers 24/7 Website Maintenance & Support in Trichy. Security audits, daily backups, speed tuning, and regular updates."
         keywords={["Website Maintenance Trichy", "Web Support Services Tiruchirappalli", "WordPress Maintenance Trichy", "Website Security Audits Tamil Nadu"]}
         schema={[
           getServiceSchema({
             name: "Website Maintenance and Support Services",
             serviceType: "Website Maintenance",
-            description: "24/7 uptime monitoring, security audits, cloud backups, speed tuning, and content updates.",
+            description: "24/7 uptime monitoring, security audits, cloud backups, speed tuning, and content updates by iZone Technologies.",
             url: "https://izonetech.in/services/website-maintenance-support"
           }),
           getBreadcrumbSchema([

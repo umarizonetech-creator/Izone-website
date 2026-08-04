@@ -122,14 +122,14 @@ const AppDevelopment = () => {
     <Layout>
       <SEO
         path="/development/app-development"
-        title="Mobile App Development Company in Trichy"
-        description="Izone Technologies is a top Mobile App Development Company in Trichy engineering native iOS, Android, and Flutter cross-platform mobile applications."
+        title="Mobile App Development Company | iZone Technologies"
+        description="iZone Technologies is a top Mobile App Development Company in Trichy engineering native iOS, Android, and Flutter cross-platform mobile applications."
         keywords={["Mobile App Development Company in Trichy", "App Developers Trichy", "Android App Development Tiruchirappalli", "iOS App Development Trichy"]}
         schema={[
           getServiceSchema({
             name: "Mobile App Development Company in Trichy",
             serviceType: "Mobile App Development",
-            description: "Top Mobile App Development Company in Trichy building iOS, Android, and cross-platform mobile apps.",
+            description: "Top Mobile App Development Company in Trichy building iOS, Android, and cross-platform mobile apps by iZone Technologies.",
             url: "https://izonetech.in/development/app-development"
           }),
           getBreadcrumbSchema([

@@ -79,20 +79,20 @@ const DigitalElectionCampaign = () => {
     <Layout>
       <SEO
         path="/services/digital-election-campaign"
-        title="Political Digital Campaign Solutions in Tamil Nadu"
-        description="Izone Technologies delivers comprehensive Political Digital Campaign Solutions. Voter outreach, constituency analytics, digital media broadcasting, and political branding."
+        title="Digital Election Campaign | iZone Technologies"
+        description="iZone Technologies delivers comprehensive Political Digital Campaign Solutions. Voter outreach, constituency analytics, digital media broadcasting, and political branding."
         keywords={["Political Digital Campaign Solutions", "Election Campaign Management Trichy", "Digital Election Campaign Tamil Nadu", "Political Branding Agency"]}
         schema={[
           getServiceSchema({
             name: "Political Digital Campaign Solutions",
             serviceType: "Political Digital Campaigning",
-            description: "Political campaign management, voter outreach, bulk broadcasting, and candidate branding.",
+            description: "Political campaign management, voter outreach, bulk broadcasting, and candidate branding by iZone Technologies.",
             url: "https://izonetech.in/services/digital-election-campaign"
           }),
           getBreadcrumbSchema([
             { name: "Home", url: "/" },
             { name: "Services", url: "/services" },
-            { name: "Political Digital Campaign Solutions", url: "/services/digital-election-campaign" }
+            { name: "Digital Election Campaign", url: "/services/digital-election-campaign" }
           ])
         ]}
       />

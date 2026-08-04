@@ -72,20 +72,20 @@ const BulkSms = () => {
     <Layout>
       <SEO
         path="/services/bulk-sms"
-        title="Bulk SMS & WhatsApp Marketing Services in Trichy"
-        description="Izone Technologies provides reliable Bulk SMS & WhatsApp Marketing Services in Trichy. High-delivery messaging, transactional SMS APIs, and WhatsApp broadcasting."
-        keywords={["Bulk SMS & WhatsApp Marketing Services in Trichy", "Bulk SMS Trichy", "WhatsApp Marketing Trichy", "Transactional SMS Gateway Tiruchirappalli"]}
+        title="Bulk SMS & DLT Service Provider | iZone Technologies"
+        description="iZone Technologies provides reliable Bulk SMS & DLT services in Trichy. High-delivery messaging, transactional SMS APIs, and messaging solutions."
+        keywords={["Bulk SMS Trichy", "DLT SMS Provider Trichy", "Transactional SMS Gateway Tiruchirappalli", "iZone Technologies SMS"]}
         schema={[
           getServiceSchema({
-            name: "Bulk SMS & WhatsApp Marketing Services in Trichy",
+            name: "Bulk SMS & Messaging Services",
             serviceType: "Messaging Solutions",
-            description: "Transactional Bulk SMS, WhatsApp Business API broadcasting, and promotional messaging.",
+            description: "Transactional Bulk SMS, DLT compliance guidance, and promotional messaging by iZone Technologies in Trichy.",
             url: "https://izonetech.in/services/bulk-sms"
           }),
           getBreadcrumbSchema([
             { name: "Home", url: "/" },
             { name: "Services", url: "/services" },
-            { name: "Bulk Messaging Solutions", url: "/services/bulk-sms" }
+            { name: "Bulk SMS Solutions", url: "/services/bulk-sms" }
           ])
         ]}
       />

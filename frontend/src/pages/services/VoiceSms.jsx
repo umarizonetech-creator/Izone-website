@@ -72,13 +72,13 @@ const VoiceSms = () => {
     <Layout>
       <SEO
         path="/services/voice-sms"
-        title="Voice SMS & Bulk Voice Call Broadcasting Services"
-        description="Automated pre-recorded voice broadcasting & outbound calling services in regional languages by Izone Technologies."
+        title="Voice SMS & OBD Call Solutions | iZone Technologies"
+        description="Automated pre-recorded voice broadcasting & outbound calling services in regional languages by iZone Technologies in Trichy."
         schema={[
           getServiceSchema({
             name: "Voice SMS Services",
             serviceType: "Voice SMS & Voice Broadcasting",
-            description: "Automated voice call broadcasting and pre-recorded message delivery in Trichy.",
+            description: "Automated voice call broadcasting and pre-recorded message delivery by iZone Technologies in Trichy.",
             url: "https://izonetech.in/services/voice-sms"
           }),
           getBreadcrumbSchema([

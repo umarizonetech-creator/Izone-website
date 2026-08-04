@@ -72,13 +72,13 @@ const WhatsappMarketing = () => {
     <Layout>
       <SEO
         path="/services/whatsapp-marketing"
-        title="WhatsApp Marketing & High-Conversion Messaging Services"
-        description="Drive customer engagement, automate follow-ups, and run promotional WhatsApp campaigns with high open rates."
+        title="WhatsApp Marketing Solutions | iZone Technologies"
+        description="Drive customer engagement, automate follow-ups, and run promotional WhatsApp campaigns with iZone Technologies in Trichy."
         schema={[
           getServiceSchema({
             name: "WhatsApp Marketing Services",
             serviceType: "WhatsApp Marketing",
-            description: "Direct customer messaging, automated drip campaigns, and promotional WhatsApp marketing in Trichy.",
+            description: "Direct customer messaging, automated drip campaigns, and promotional WhatsApp marketing by iZone Technologies in Trichy.",
             url: "https://izonetech.in/services/whatsapp-marketing"
           }),
           getBreadcrumbSchema([

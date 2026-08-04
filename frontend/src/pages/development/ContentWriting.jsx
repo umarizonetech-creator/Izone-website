@@ -73,13 +73,13 @@ const ContentWriting = () => {
     <Layout>
       <SEO
         path="/development/content-writing"
-        title="Professional Content Writing & SEO Copywriting Services"
-        description="High-converting website copy, SEO blog posts, technical documentation, and brand storytelling by Izone Technologies."
+        title="SEO Content Writing Services | iZone Technologies"
+        description="High-converting website copy, SEO blog posts, technical documentation, and brand storytelling by iZone Technologies."
         schema={[
           getServiceSchema({
             name: "Content Writing Services",
             serviceType: "Content Writing & Copywriting",
-            description: "Professional content writing, SEO copywriting, and technical documentation in Trichy.",
+            description: "Professional content writing, SEO copywriting, and technical documentation by iZone Technologies in Trichy.",
             url: "https://izonetech.in/development/content-writing"
           }),
           getBreadcrumbSchema([

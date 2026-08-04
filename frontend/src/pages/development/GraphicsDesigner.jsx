@@ -69,14 +69,14 @@ const GraphicsDesigner = () => {
     <Layout>
       <SEO
         path="/development/graphics-designer"
-        title="Branding and Graphic Design in Trichy"
-        description="Izone Technologies provides top Branding and Graphic Design services in Trichy. Logo design, brand identity systems, corporate brochures, and social media visuals."
+        title="Branding & Graphic Design | iZone Technologies"
+        description="iZone Technologies provides top Branding and Graphic Design services in Trichy. Logo design, brand identity systems, corporate brochures, and social media visuals."
         keywords={["Branding and Graphic Design Trichy", "Logo Designers Tiruchirappalli", "Graphic Design Agency Tamil Nadu", "Brand Identity Designers Trichy"]}
         schema={[
           getServiceSchema({
             name: "Branding and Graphic Design Services",
             serviceType: "Branding & Graphic Design",
-            description: "Brand identity design, logo creation, corporate branding, and visual marketing assets.",
+            description: "Brand identity design, logo creation, corporate branding, and visual marketing assets by iZone Technologies.",
             url: "https://izonetech.in/development/graphics-designer"
           }),
           getBreadcrumbSchema([

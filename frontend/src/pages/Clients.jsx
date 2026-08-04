@@ -151,12 +151,12 @@ const Clients = () => {
     <Layout>
       <SEO
         path="/clients"
-        title="Our Clients & Client Success Stories"
-        description="See how Izone Technologies partners with leading companies across industries to build high-impact web and digital solutions."
+        title="Our Clients & Client Reviews | iZone Technologies"
+        description="See how iZone Technologies partners with leading companies across industries to build high-impact web, mobile app, and software solutions."
         schema={[
           getWebPageSchema({
-            name: "Clients & Partners | Izone Technologies",
-            description: "Trusted partners and client success stories by Izone Technologies.",
+            name: "Clients & Partners | iZone Technologies",
+            description: "Trusted partners and client success stories by iZone Technologies in Trichy.",
             url: "https://izonetech.in/clients"
           }),
           getBreadcrumbSchema([

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ArrowUpRight, Trophy} from "lucide-react";
 
 const G = "hsl(159, 58%, 34%)";
@@ -210,26 +210,27 @@ export default function HeroVisualCard() {
       </motion.div>
 
       {/* ── CTA badge (top-right float) ── */}
-      <motion.button
-        onClick={() => navigate("/contact")}
-        initial={{ opacity: 0, scale: 0.85 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.45, delay: 0.6 }}
-        whileHover={{ scale: 1.07 }}
-        whileTap={{ scale: 0.96 }}
-        style={{
-          position: "absolute", top: -16, right: 56, zIndex: 30,
-          background: G,
-          color: "#fff",
-          border: "none", borderRadius: 12, padding: "10px 14px",
-          cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
-          fontSize: 12, fontWeight: 700, letterSpacing: "0.04em",
-          boxShadow: `0 8px 24px hsla(159,58%,34%,0.38)`,
-        }}
-      >
-        Start a Project
-        <ArrowUpRight size={13} strokeWidth={2.5} />
-      </motion.button>
+      <Link to="/contact">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.45, delay: 0.6 }}
+          whileHover={{ scale: 1.07 }}
+          whileTap={{ scale: 0.96 }}
+          style={{
+            position: "absolute", top: -16, right: 56, zIndex: 30,
+            background: G,
+            color: "#fff",
+            border: "none", borderRadius: 12, padding: "10px 14px",
+            cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
+            fontSize: 12, fontWeight: 700, letterSpacing: "0.04em",
+            boxShadow: `0 8px 24px hsla(159,58%,34%,0.38)`,
+          }}
+        >
+          Start a Project
+          <ArrowUpRight size={13} strokeWidth={2.5} />
+        </motion.div>
+      </Link>
     </div>
   );
 }
