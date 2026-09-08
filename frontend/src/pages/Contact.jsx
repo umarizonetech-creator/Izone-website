@@ -66,8 +66,8 @@ const socialLinks = [
     label: "LinkedIn",
   },
   { icon: Twitter, href: "https://x.com/izonegroups/", label: "Twitter" },
-  { icon: FacebookIcon, href: "https://www.facebook.com/izonegroups/", label: "Facebook" },
-  { icon: Instagram, href: "https://www.instagram.com/izonegroups/", label: "Instagram" },
+  { icon: FacebookIcon, href: "https://www.facebook.com/izonetechnology", label: "Facebook" },
+  { icon: Instagram, href: "https://www.instagram.com/izone_technologies/", label: "Instagram" },
 ];
 
 const isOfficeInfo = (title) =>
