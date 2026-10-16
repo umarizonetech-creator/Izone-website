@@ -15,8 +15,16 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column('team_members', sa.Column('category', sa.String(100), nullable=True, server_default=''))
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    columns = [c['name'] for c in inspector.get_columns('team_members')]
+    if 'category' not in columns:
+        op.add_column('team_members', sa.Column('category', sa.String(100), nullable=True, server_default=''))
 
 
 def downgrade():
-    op.drop_column('team_members', 'category')
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    columns = [c['name'] for c in inspector.get_columns('team_members')]
+    if 'category' in columns:
+        op.drop_column('team_members', 'category')

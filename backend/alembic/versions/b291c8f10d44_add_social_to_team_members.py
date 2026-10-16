@@ -18,8 +18,16 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column('team_members', sa.Column('social', JSONB, nullable=True, server_default='{}'))
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    columns = [c['name'] for c in inspector.get_columns('team_members')]
+    if 'social' not in columns:
+        op.add_column('team_members', sa.Column('social', JSONB, nullable=True, server_default='{}'))
 
 
 def downgrade() -> None:
-    op.drop_column('team_members', 'social')
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    columns = [c['name'] for c in inspector.get_columns('team_members')]
+    if 'social' in columns:
+        op.drop_column('team_members', 'social')
