@@ -222,8 +222,36 @@ const endpointConfig = {
   portfolios: { path: "/api/portfolios", fromApi: mapPortfolioFromApi, toApi: mapPortfolioToApi, method: "PUT" },
   courses: {
     path: "/api/courses",
-    fromApi: (item) => ({ ...withMeta(item), techStack: parseList(item.techStack || item.tech_stack) }),
-    toApi: (item) => ({ title: item.title || "", description: item.description || "", duration: item.duration || "", techStack: Array.isArray(item.techStack) ? item.techStack : parseList(item.techStack) }),
+    fromApi: (item) => ({
+      ...withMeta(item),
+      slug: item.slug || "",
+      techStack: parseList(item.techStack || item.tech_stack),
+      headline: item.headline || "",
+      badge: item.badge || "",
+      mode: item.mode && !item.mode.toLowerCase().includes("online") ? item.mode : "Offline Classroom Training",
+      certificate: item.certificate || "Certificate Included",
+      highlights: Array.isArray(item.highlights)
+        ? item.highlights
+        : (typeof item.highlights === "string" ? parseList(item.highlights) : []),
+      basicPlan: item.basicPlan || item.basic_plan || {},
+      advancedPlan: item.advancedPlan || item.advanced_plan || {},
+      imageUrl: item.imageUrl || item.image_url || "",
+    }),
+    toApi: (item) => ({
+      title: item.title || "",
+      slug: item.slug !== undefined ? item.slug : "",
+      description: item.description || "",
+      duration: item.duration || "",
+      techStack: Array.isArray(item.techStack) ? item.techStack : parseList(item.techStack),
+      headline: item.headline || "",
+      badge: item.badge || "",
+      mode: item.mode || "Offline Classroom Training",
+      certificate: item.certificate || "Certificate Included",
+      highlights: item.highlights || [],
+      basicPlan: item.basicPlan || item.basic_plan || {},
+      advancedPlan: item.advancedPlan || item.advanced_plan || {},
+      imageUrl: item.imageUrl || item.image_url || "",
+    }),
     method: "PUT",
   },
   courseApplications: {

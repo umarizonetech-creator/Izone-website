@@ -336,8 +336,9 @@
 
 
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Clock, Code2, CheckCircle2, X, BookOpen, Filter, GraduationCap } from 'lucide-react';
+import { Clock, Code2, CheckCircle2, X, BookOpen, Filter, GraduationCap, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -346,6 +347,7 @@ import PageHero from '@/components/PageHero';
 import SEO from '@/components/SEO';
 import { getCourseSchema, getWebPageSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import { useAdmin } from '@/context/AdminContext';
+import { getCourseUrl } from '@/utils/courseSlug';
 import { toast } from 'sonner';
 
 const containerVariants = {
@@ -575,10 +577,18 @@ export default function Courses() {
                       </div>
                     )}
 
-                    {/* Apply button */}
-                    <div className="mt-auto pt-2">
+                    {/* Action buttons */}
+                    <div className="mt-auto pt-3 flex items-center gap-2">
+                      <Link to={getCourseUrl(course)} className="flex-1">
+                        <Button
+                          variant="outline"
+                          className="w-full border-primary/30 hover:border-primary hover:bg-primary/5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 h-10"
+                        >
+                          More Details <ArrowRight className="w-3.5 h-3.5" />
+                        </Button>
+                      </Link>
                       <Button
-                        className="w-full glow-border hover-glow rounded-xl"
+                        className="flex-1 glow-border hover-glow rounded-xl text-xs font-semibold h-10"
                         onClick={() => handleApply(course)}
                       >
                         Apply Now

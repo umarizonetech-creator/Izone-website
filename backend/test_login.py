@@ -18,9 +18,9 @@ def test_login():
         print(f"\nVerification result: {result}")
         
         if result:
-            print("✓ Password verification successful!")
+            print("[OK] Password verification successful!")
         else:
-            print("✗ Password verification failed!")
+            print("[FAILED] Password verification failed!")
             
     except Exception as e:
         print(f"Error: {e}")

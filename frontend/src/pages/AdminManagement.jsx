@@ -24,6 +24,7 @@ import {
   UserCircle,
   Link as LinkIcon,
   BookOpen,
+  ExternalLink,
 } from "lucide-react";
 import {
   AdminLayout,
@@ -37,6 +38,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAdmin } from "@/context/AdminContext";
 import { useToast } from "@/hooks/use-toast";
+import { getCourseUrl } from "@/utils/courseSlug";
+import { AVAILABLE_COURSE_ICONS } from "@/utils/courseIcons";
 
 function SectionHeader({ title, description, action }) {
   return (
@@ -2037,6 +2040,170 @@ export function CourseManagement() {
   const [activeTab, setActiveTab] = useState("courses");
   const [selectedApplication, setSelectedApplication] = useState(null);
 
+  // Course Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCourse, setEditingCourse] = useState(null);
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [activeModalSection, setActiveModalSection] = useState("basic");
+
+  const defaultCourseForm = {
+    title: "",
+    slug: "",
+    badge: "",
+    headline: "",
+    description: "",
+    duration: "3 & 6 Months",
+    mode: "Offline Classroom Training",
+    certificate: "Certificate Included",
+    techStack: "",
+    highlight1: "Understand design principles and layouts",
+    highlight1Icon: "palette",
+    highlight2: "Create strong visual identities",
+    highlight2Icon: "sparkles",
+    highlight3: "Photoshop, Illustrator, InDesign & more",
+    highlight3Icon: "layers",
+    highlight4: "Work on real projects & build your portfolio",
+    highlight4Icon: "folder",
+    plansCount: 2,
+    basicPlanName: "Basic",
+    basicPlanDuration: "3 Months",
+    basicPlanPrice: "₹30,000",
+    basicPlanFeatures: "Design principles & typography\nBasic tools and techniques\n1-2 mini projects\nProfessional guidance",
+    advancedPlanName: "Advanced",
+    advancedPlanDuration: "6 Months",
+    advancedPlanPrice: "₹60,000",
+    advancedPlanFeatures: "Advanced design & branding\nSocial media & print design\nReal-world projects\nPortfolio development & career support",
+    imageUrl: "/images/course-students.png",
+  };
+
+  const [formData, setFormData] = useState(defaultCourseForm);
+
+  const populateForm = (course) => {
+    const hl = course.highlights || [];
+    const getHl = (i) => (hl[i] ? (typeof hl[i] === "string" ? hl[i] : hl[i].title || "") : "");
+    const getHlIcon = (i, fallback) => (hl[i] && typeof hl[i] === "object" && hl[i].icon ? hl[i].icon : fallback);
+    const bp = course.basicPlan || {};
+    const ap = course.advancedPlan || {};
+    const isSinglePlan =
+      course.plansCount === 1 ||
+      (!ap.name && !ap.price && !ap.duration) ||
+      (ap.price && ap.price.trim() === "") ||
+      ap.price === "₹0" ||
+      ap.price === "0";
+    return {
+      title: course.title || "",
+      slug: course.slug || "",
+      badge: course.badge || "",
+      headline: course.headline || "",
+      description: course.description || "",
+      duration: course.duration || "3 & 6 Months",
+      mode: course.mode && !course.mode.toLowerCase().includes("online") ? course.mode : "Offline Classroom Training",
+      certificate: course.certificate || "Certificate Included",
+      techStack: Array.isArray(course.techStack) ? course.techStack.join(", ") : (course.techStack || ""),
+      highlight1: getHl(0) || "Understand design principles and layouts",
+      highlight1Icon: getHlIcon(0, "palette"),
+      highlight2: getHl(1) || "Create strong visual identities",
+      highlight2Icon: getHlIcon(1, "sparkles"),
+      highlight3: getHl(2) || "Photoshop, Illustrator, InDesign & more",
+      highlight3Icon: getHlIcon(2, "layers"),
+      highlight4: getHl(3) || "Work on real projects & build your portfolio",
+      highlight4Icon: getHlIcon(3, "folder"),
+      plansCount: isSinglePlan ? 1 : 2,
+      basicPlanName: bp.name || (isSinglePlan ? "Standard" : "Basic"),
+      basicPlanDuration: bp.duration || course.duration || "3 Months",
+      basicPlanPrice: bp.price || "₹30,000",
+      basicPlanFeatures: Array.isArray(bp.features) ? bp.features.join("\n") : (bp.features || ""),
+      advancedPlanName: ap.name || "Advanced",
+      advancedPlanDuration: ap.duration || "6 Months",
+      advancedPlanPrice: ap.price || "₹60,000",
+      advancedPlanFeatures: Array.isArray(ap.features) ? ap.features.join("\n") : (ap.features || ""),
+      imageUrl: course.imageUrl || "/images/course-students.png",
+    };
+  };
+
+  const openCreateModal = () => {
+    setEditingCourse(null);
+    setFormData(defaultCourseForm);
+    setActiveModalSection("basic");
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (course) => {
+    setEditingCourse(course);
+    setFormData(populateForm(course));
+    setActiveModalSection("basic");
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingCourse(null);
+    setFormData(defaultCourseForm);
+  };
+
+  const handleFormChange = (key) => (e) => {
+    setFormData((prev) => ({ ...prev, [key]: e.target.value }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    setFormSubmitting(true);
+    try {
+      const payload = {
+        title: formData.title,
+        slug: formData.slug || "",
+        badge: formData.badge,
+        headline: formData.headline,
+        description: formData.description,
+        duration: formData.duration,
+        mode: formData.mode,
+        certificate: formData.certificate,
+        techStack: formData.techStack
+          ? formData.techStack.split(",").map((s) => s.trim()).filter(Boolean)
+          : [],
+        highlights: [
+          { title: formData.highlight1, icon: formData.highlight1Icon || "palette" },
+          { title: formData.highlight2, icon: formData.highlight2Icon || "sparkles" },
+          { title: formData.highlight3, icon: formData.highlight3Icon || "layers" },
+          { title: formData.highlight4, icon: formData.highlight4Icon || "folder" },
+        ].filter((h) => Boolean(h.title)),
+        plansCount: Number(formData.plansCount) || 2,
+        basicPlan: {
+          name: formData.basicPlanName || "Basic",
+          duration: formData.basicPlanDuration || "3 Months",
+          price: formData.basicPlanPrice || "₹30,000",
+          features: formData.basicPlanFeatures
+            ? formData.basicPlanFeatures.split("\n").map((s) => s.trim()).filter(Boolean)
+            : [],
+        },
+        advancedPlan:
+          Number(formData.plansCount) === 1
+            ? null
+            : {
+                name: formData.advancedPlanName || "Advanced",
+                duration: formData.advancedPlanDuration || "6 Months",
+                price: formData.advancedPlanPrice || "₹60,000",
+                features: formData.advancedPlanFeatures
+                  ? formData.advancedPlanFeatures.split("\n").map((s) => s.trim()).filter(Boolean)
+                  : [],
+              },
+        imageUrl: formData.imageUrl || "/images/course-students.png",
+      };
+
+      if (editingCourse) {
+        await courseOps.update(editingCourse.id, payload);
+      } else {
+        await courseOps.add(payload);
+      }
+      closeModal();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save course. Please check inputs and try again.");
+    } finally {
+      setFormSubmitting(false);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -2045,13 +2212,13 @@ export function CourseManagement() {
             Course Management
           </h1>
           <p className="mt-1 text-xs text-muted-foreground md:text-base">
-            Add courses for the public Courses page and review course applications.
+            Customize separate landing page contents (headline, highlights, pricing plans) for each course.
           </p>
         </div>
         {activeTab === "courses" ? (
           <Button
             className="rounded-2xl px-6 py-6 text-base font-semibold"
-            onClick={() => document.getElementById("course-create")?.click()}
+            onClick={openCreateModal}
           >
             <Plus className="h-5 w-5" />
             Add Course
@@ -2074,7 +2241,7 @@ export function CourseManagement() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            Courses
+            Courses ({courses.length})
           </button>
           <button
             type="button"
@@ -2093,32 +2260,118 @@ export function CourseManagement() {
         </div>
 
         {activeTab === "courses" ? (
-          <CrudPageInner
-            title="Course"
-            framed={false}
-            addLabel="Add Course"
-            createButtonId="course-create"
-            hideCreateButton
-            data={courses}
-            operations={courseOps}
-            emptyItem={{ title: "", description: "", duration: "", techStack: "" }}
-            columns={[
-              { key: "title", label: "Title" },
-              { key: "duration", label: "Duration" },
-              {
-                key: "techStack",
-                label: "Tech Stack",
-                render: (value) => (Array.isArray(value) ? value.join(", ") : value || "Not set"),
-              },
-              { key: "description", label: "Description" },
-            ]}
-            fields={[
-              { key: "title", label: "Course Title", placeholder: "Full Stack Web Development", required: true },
-              { key: "description", label: "Description", placeholder: "Describe the course", type: "textarea", required: true },
-              { key: "duration", label: "Duration", placeholder: "3 Months", required: true },
-              { key: "techStack", label: "Tech Stack", placeholder: "React, Node.js, PostgreSQL", required: true },
-            ]}
-          />
+          <div className="space-y-4">
+            <DataTable
+              columns={[
+                {
+                  key: "title",
+                  label: "Course Details",
+                  render: (_, row) => (
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-foreground text-sm">{row.title}</span>
+                        {row.badge && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold">
+                            {row.badge}
+                          </span>
+                        )}
+                      </div>
+                      {row.headline && (
+                        <p className="text-xs text-muted-foreground italic line-clamp-1">
+                          "{row.headline}"
+                        </p>
+                      )}
+                    </div>
+                  ),
+                },
+                {
+                  key: "duration",
+                  label: "Duration & Mode",
+                  render: (_, row) => (
+                    <div className="text-xs space-y-0.5">
+                      <div className="font-medium text-foreground">{row.duration || "3 & 6 Months"}</div>
+                      <div className="text-muted-foreground">
+                        {row.mode && !row.mode.toLowerCase().includes("online") ? row.mode : "Offline Classroom Training"}
+                      </div>
+                    </div>
+                  ),
+                },
+                {
+                  key: "plans",
+                  label: "Plans / Pricing",
+                  render: (_, row) => {
+                    const bp = row.basicPlan || {};
+                    const ap = row.advancedPlan || {};
+                    const hasAp =
+                      row.plansCount !== 1 &&
+                      ap &&
+                      (Boolean(ap.name) || Boolean(ap.price)) &&
+                      Boolean(ap.price?.trim()) &&
+                      ap.price?.trim() !== "₹0" &&
+                      ap.price?.trim() !== "0";
+
+                    return (
+                      <div className="text-xs space-y-0.5">
+                        <div className="text-foreground">
+                          <strong>{bp.name || "Plan"}:</strong> {bp.price || "₹30,000"} ({bp.duration || "3 Months"})
+                        </div>
+                        {hasAp ? (
+                          <div className="text-foreground">
+                            <strong>{ap.name || "Advanced"}:</strong> {ap.price || "₹60,000"} ({ap.duration || "6 Months"})
+                          </div>
+                        ) : (
+                          <div className="text-muted-foreground text-[11px] italic">
+                            (Single Plan Only)
+                          </div>
+                        )}
+                      </div>
+                    );
+                  },
+                },
+                {
+                  key: "actions",
+                  label: "Actions",
+                  render: (_, row) => (
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={getCourseUrl(row)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline px-2.5 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors"
+                        title="View Course Page"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Preview
+                      </a>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8"
+                        onClick={() => openEditModal(row)}
+                        title="Edit Course Content"
+                      >
+                        <Pencil size={14} />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete course "${row.title}"?`)) {
+                            courseOps.remove(row.id);
+                          }
+                        }}
+                        title="Delete Course"
+                      >
+                        <Trash2 size={14} />
+                      </Button>
+                    </div>
+                  ),
+                },
+              ]}
+              data={courses}
+            />
+          </div>
         ) : (
           <DataTable
             columns={[
@@ -2203,6 +2456,362 @@ export function CourseManagement() {
           />
         )}
       </div>
+
+      {/* Course Edit/Create Modal with Right-Side Content Fields */}
+      {isModalOpen && (
+        <FormModal
+          title={editingCourse ? `Edit Course: ${editingCourse.title}` : "Create New Course"}
+          onClose={closeModal}
+          onSubmit={handleFormSubmit}
+          submitting={formSubmitting}
+        >
+          {/* Section Navigation Tabs inside Modal */}
+          <div className="flex flex-wrap items-center gap-1 p-1 bg-muted/40 rounded-xl mb-4 border border-border">
+            {[
+              { id: "basic", label: "1. Basic Info" },
+              { id: "highlights", label: "2. Right Highlights (4)" },
+              { id: "plans", label: "3. Pricing Plans (Basic & Adv)" },
+              { id: "visuals", label: "4. Visuals & Mode" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveModalSection(tab.id)}
+                className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-lg transition-all ${
+                  activeModalSection === tab.id
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Section 1: Basic Information */}
+          {activeModalSection === "basic" && (
+            <div className="space-y-4">
+              <TextField
+                label="Course Title *"
+                placeholder="e.g. Graphic Design Course"
+                value={formData.title}
+                onChange={handleFormChange("title")}
+                required
+              />
+              <TextField
+                label="URL Slug (Optional - auto-generated from title if blank)"
+                placeholder="e.g. fullstack-development or digital-marketing"
+                value={formData.slug}
+                onChange={handleFormChange("slug")}
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <TextField
+                  label="Category Badge"
+                  placeholder="e.g. GRAPHIC DESIGN COURSE"
+                  value={formData.badge}
+                  onChange={handleFormChange("badge")}
+                />
+                <TextField
+                  label="Duration Text"
+                  placeholder="e.g. 3 & 6 Months"
+                  value={formData.duration}
+                  onChange={handleFormChange("duration")}
+                  required
+                />
+              </div>
+              <TextField
+                label="Headline (Right Side Big Title)"
+                placeholder="e.g. Turn Creativity into a Career."
+                value={formData.headline}
+                onChange={handleFormChange("headline")}
+              />
+              <TextField
+                label="Course Description"
+                placeholder="Overview of curriculum and objectives..."
+                value={formData.description}
+                onChange={handleFormChange("description")}
+                textarea
+                required
+              />
+              <TextField
+                label="Tech Stack / Software Tools (comma-separated)"
+                placeholder="Photoshop, Illustrator, InDesign, Figma"
+                value={formData.techStack}
+                onChange={handleFormChange("techStack")}
+              />
+            </div>
+          )}
+
+          {/* Section 2: Right Side 4 Highlights with Icon Selection */}
+          {activeModalSection === "highlights" && (
+            <div className="space-y-4">
+              <p className="text-xs text-muted-foreground">
+                Select an icon and enter the description for each of the 4 highlight cards displayed on the course landing page.
+              </p>
+
+              {[
+                { key: "highlight1", iconKey: "highlight1Icon", label: "Highlight 1", defaultIcon: "palette" },
+                { key: "highlight2", iconKey: "highlight2Icon", label: "Highlight 2", defaultIcon: "sparkles" },
+                { key: "highlight3", iconKey: "highlight3Icon", label: "Highlight 3", defaultIcon: "layers" },
+                { key: "highlight4", iconKey: "highlight4Icon", label: "Highlight 4", defaultIcon: "folder" },
+              ].map(({ key, iconKey, label }) => {
+                const currentIconId = formData[iconKey] || "palette";
+                const matchedIcon = AVAILABLE_COURSE_ICONS.find((i) => i.id === currentIconId) || AVAILABLE_COURSE_ICONS[0];
+                const IconComponent = matchedIcon.icon;
+
+                return (
+                  <div key={key} className="p-3.5 rounded-xl border border-border bg-muted/20 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-foreground">{label}</span>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-primary/10 border border-primary/20 text-xs font-semibold text-primary">
+                        <IconComponent className="w-3.5 h-3.5" />
+                        <span>{matchedIcon.label}</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                      <div className="sm:col-span-8">
+                        <TextField
+                          placeholder="e.g. Master modern design techniques & layouts"
+                          value={formData[key]}
+                          onChange={handleFormChange(key)}
+                        />
+                      </div>
+                      <div className="sm:col-span-4 space-y-1">
+                        <label className="text-[11px] font-semibold text-muted-foreground block">Choose Icon</label>
+                        <select
+                          value={formData[iconKey] || "palette"}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, [iconKey]: e.target.value }))}
+                          className="w-full text-xs rounded-xl border border-border bg-background px-2.5 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary font-medium"
+                        >
+                          {AVAILABLE_COURSE_ICONS.map((opt) => (
+                            <option key={opt.id} value={opt.id}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Quick-pick Icon Grid */}
+                    <div className="pt-1">
+                      <span className="text-[10px] text-muted-foreground block mb-1.5 font-medium">Quick Icon Picks:</span>
+                      <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1 rounded-lg border border-border/40 bg-background/50">
+                        {AVAILABLE_COURSE_ICONS.map((opt) => {
+                          const ItemIcon = opt.icon;
+                          const isSelected = (formData[iconKey] || "palette") === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => setFormData((prev) => ({ ...prev, [iconKey]: opt.id }))}
+                              title={opt.label}
+                              className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 transition-all ${
+                                isSelected
+                                  ? "bg-primary text-white border-primary shadow-sm scale-105"
+                                  : "bg-muted/40 border-transparent hover:border-primary/40 text-muted-foreground hover:text-foreground"
+                              }`}
+                            >
+                              <ItemIcon className="w-3.5 h-3.5" />
+                              <span className="text-[10px] hidden md:inline">{opt.label.split("/")[0].trim()}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Section 3: Pricing Plans */}
+          {activeModalSection === "plans" && (
+            <div className="space-y-6">
+              {/* Plan Mode Selector */}
+              <div className="p-3.5 rounded-xl border border-primary/30 bg-primary/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="font-bold text-xs sm:text-sm text-foreground">
+                    Number of Pricing Plans
+                  </div>
+                  <div className="text-[11px] text-muted-foreground">
+                    Choose whether this course has a single pricing plan or two tiers (e.g. Basic & Advanced).
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 p-1 bg-background rounded-lg border border-border shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, plansCount: 1 }))}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+                      Number(formData.plansCount) === 1
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    1 Single Plan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, plansCount: 2 }))}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+                      Number(formData.plansCount) === 2
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    2 Plans (Basic & Adv)
+                  </button>
+                </div>
+              </div>
+
+              {/* Plan 1: Basic / Standard Plan */}
+              <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
+                <h4 className="font-bold text-sm text-foreground flex items-center justify-between">
+                  <span>
+                    {Number(formData.plansCount) === 1 ? "Course Pricing Plan" : "Plan 1: Basic Plan Card"}
+                  </span>
+                  <span className="text-xs text-primary font-semibold">
+                    {Number(formData.plansCount) === 1 ? "Single Tier" : "Tier 1"}
+                  </span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <TextField
+                    label="Plan Name"
+                    placeholder={Number(formData.plansCount) === 1 ? "Standard" : "Basic"}
+                    value={formData.basicPlanName}
+                    onChange={handleFormChange("basicPlanName")}
+                  />
+                  <TextField
+                    label="Duration"
+                    placeholder="3 Months"
+                    value={formData.basicPlanDuration}
+                    onChange={handleFormChange("basicPlanDuration")}
+                  />
+                  <TextField
+                    label="Price"
+                    placeholder="₹30,000"
+                    value={formData.basicPlanPrice}
+                    onChange={handleFormChange("basicPlanPrice")}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-foreground mb-1">
+                    Features (one bullet point per line)
+                  </label>
+                  <textarea
+                    rows={4}
+                    className="w-full text-xs p-2.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Design principles & typography&#10;Basic tools and techniques&#10;1-2 mini projects&#10;Professional guidance"
+                    value={formData.basicPlanFeatures}
+                    onChange={handleFormChange("basicPlanFeatures")}
+                  />
+                </div>
+              </div>
+
+              {/* Plan 2: Advanced Plan (Visible only when 2 plans are selected) */}
+              {Number(formData.plansCount) === 2 && (
+                <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
+                  <h4 className="font-bold text-sm text-foreground flex items-center justify-between">
+                    <span>Plan 2: Advanced Plan Card</span>
+                    <span className="text-xs text-primary font-semibold">Tier 2</span>
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <TextField
+                      label="Plan Name"
+                      placeholder="Advanced"
+                      value={formData.advancedPlanName}
+                      onChange={handleFormChange("advancedPlanName")}
+                    />
+                    <TextField
+                      label="Duration"
+                      placeholder="6 Months"
+                      value={formData.advancedPlanDuration}
+                      onChange={handleFormChange("advancedPlanDuration")}
+                    />
+                    <TextField
+                      label="Price"
+                      placeholder="₹60,000"
+                      value={formData.advancedPlanPrice}
+                      onChange={handleFormChange("advancedPlanPrice")}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-foreground mb-1">
+                      Features (one bullet point per line)
+                    </label>
+                    <textarea
+                      rows={4}
+                      className="w-full text-xs p-2.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      placeholder="Advanced design & branding&#10;Social media & print design&#10;Real-world projects&#10;Portfolio development & career support"
+                      value={formData.advancedPlanFeatures}
+                      onChange={handleFormChange("advancedPlanFeatures")}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Section 4: Visuals, Mode & Certificate */}
+          {activeModalSection === "visuals" && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <TextField
+                  label="Learning Mode (Bottom Bar)"
+                  placeholder="Offline Classroom Training"
+                  value={formData.mode}
+                  onChange={handleFormChange("mode")}
+                />
+                <TextField
+                  label="Certificate (Bottom Bar)"
+                  placeholder="Certificate Included"
+                  value={formData.certificate}
+                  onChange={handleFormChange("certificate")}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-foreground mb-1">
+                  Left Side Student Image URL
+                </label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="/images/course-students.png"
+                    value={formData.imageUrl}
+                    onChange={handleFormChange("imageUrl")}
+                    className="text-xs"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 text-xs"
+                    onClick={() => setFormData((p) => ({ ...p, imageUrl: "/images/course-students.png" }))}
+                  >
+                    Reset Default
+                  </Button>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Default: <code>/images/course-students.png</code> (the inserted students cutout).
+                </p>
+                {formData.imageUrl && (
+                  <div className="mt-3 p-3 bg-muted/30 rounded-xl border border-border flex items-center gap-3">
+                    <img
+                      src={formData.imageUrl}
+                      alt="Preview"
+                      className="w-16 h-16 object-contain rounded-lg bg-emerald-100/30 p-1 border border-emerald-200"
+                    />
+                    <div className="text-xs">
+                      <span className="font-semibold text-foreground">Current Image Preview</span>
+                      <p className="text-muted-foreground text-[11px] truncate max-w-xs">{formData.imageUrl}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </FormModal>
+      )}
 
       {selectedApplication && (
         <CourseApplicationDetailModal

@@ -41,6 +41,15 @@ SCHEMA_UPDATES = [
     "ALTER TABLE portfolios ADD COLUMN IF NOT EXISTS tags JSON DEFAULT '[]'::json",
     "ALTER TABLE portfolios ADD COLUMN IF NOT EXISTS client_name VARCHAR(255) DEFAULT ''",
     "ALTER TABLE portfolios ADD COLUMN IF NOT EXISTS link TEXT DEFAULT ''",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS slug VARCHAR(100) DEFAULT ''",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS headline VARCHAR(255) DEFAULT ''",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS badge VARCHAR(100) DEFAULT ''",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS mode VARCHAR(100) DEFAULT 'Offline Classroom Training'",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS certificate VARCHAR(100) DEFAULT 'Certificate Included'",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS highlights JSON DEFAULT '[]'::json",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS basic_plan JSON DEFAULT '{}'::json",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS advanced_plan JSON DEFAULT '{}'::json",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT ''",
     """
     CREATE TABLE IF NOT EXISTS courses (
         id SERIAL PRIMARY KEY,

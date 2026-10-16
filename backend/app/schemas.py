@@ -7,7 +7,7 @@ Field names use camelCase to match the React frontend's JSON payloads.
 
 from __future__ import annotations
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
 import re
 
@@ -278,18 +278,36 @@ class InternApplicationOut(InternApplicationBase):
 # Course
 class CourseBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
+    slug: Optional[str] = Field("", max_length=100)
     description: str = Field("", max_length=5000)
     duration: str = Field("", max_length=100)
     techStack: List[str] = Field(default_factory=list)
+    headline: Optional[str] = Field("", max_length=255)
+    badge: Optional[str] = Field("", max_length=100)
+    mode: Optional[str] = Field("Offline Classroom Training", max_length=100)
+    certificate: Optional[str] = Field("Certificate Included", max_length=100)
+    highlights: Optional[Any] = Field(default_factory=list)
+    basicPlan: Optional[Any] = Field(default_factory=dict)
+    advancedPlan: Optional[Any] = Field(default_factory=dict)
+    imageUrl: Optional[str] = Field("", max_length=50000)
 
 class CourseCreate(CourseBase):
     pass
 
 class CourseUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=200)
+    slug: Optional[str] = Field(None, max_length=100)
     description: Optional[str] = Field(None, max_length=5000)
     duration: Optional[str] = Field(None, max_length=100)
     techStack: Optional[List[str]] = None
+    headline: Optional[str] = None
+    badge: Optional[str] = None
+    mode: Optional[str] = None
+    certificate: Optional[str] = None
+    highlights: Optional[Any] = None
+    basicPlan: Optional[Any] = None
+    advancedPlan: Optional[Any] = None
+    imageUrl: Optional[str] = None
 
 class CourseOut(CourseBase):
     id: int

@@ -16,13 +16,13 @@ def init_admin_credentials():
         # Set admin password (which creates/updates the record)
         _set_admin_password(conn, ADMIN_PASSWORD)
         
-        print(f"✓ Admin credentials initialized successfully!")
+        print(f"[OK] Admin credentials initialized successfully!")
         print(f"  Username: {ADMIN_USERNAME}")
         print(f"  Password: {'*' * len(ADMIN_PASSWORD)}")
         print("\nYou can now login with these credentials.")
         
     except Exception as e:
-        print(f"✗ Error initializing admin credentials: {str(e)}", file=sys.stderr)
+        print(f"[ERROR] Error initializing admin credentials: {str(e)}", file=sys.stderr)
         import traceback
         traceback.print_exc()
         sys.exit(1)

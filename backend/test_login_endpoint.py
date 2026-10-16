@@ -35,10 +35,10 @@ def test_login_endpoint():
         print(f"Response Body: {response_body}")
         
         if 200 <= status_code < 300:
-            print("\n✓ Login successful!")
+            print("\n[OK] Login successful!")
             print(json.dumps(json.loads(response_body), indent=2))
         else:
-            print("\n✗ Login failed!")
+            print("\n[FAILED] Login failed!")
             
     except Exception as e:
         print(f"Error: {e}")

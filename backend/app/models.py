@@ -159,9 +159,18 @@ class Course(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
+    slug = Column(String(100), default="", index=True)
     description = Column(Text, default="")
     duration = Column(String(100), default="")
     tech_stack = Column(JSON, default=[])
+    headline = Column(String(255), default="")
+    badge = Column(String(100), default="")
+    mode = Column(String(100), default="Offline Classroom Training")
+    certificate = Column(String(100), default="Certificate Included")
+    highlights = Column(JSON, default=[])
+    basic_plan = Column(JSON, default={})
+    advanced_plan = Column(JSON, default={})
+    image_url = Column(Text, default="")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
