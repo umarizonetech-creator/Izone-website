@@ -237,11 +237,11 @@ export default function CourseDetails() {
           {/* ── Left Side: Full uncropped student graphic with transparent background (padding: 0) ── */}
           <div className="lg:col-span-5 relative w-full h-full self-stretch flex items-center justify-start overflow-visible p-0 m-0">
             <img
-              src="/images/course-students.png"
+              src={courseImage}
               alt={course?.title || "iZone Technologies Students"}
               className="w-full max-w-[500px] lg:max-w-[560px] h-auto max-h-[540px] lg:max-h-[600px] object-contain object-left select-none drop-shadow-sm block m-0 p-0"
               onError={(e) => {
-                if (!e.currentTarget.src.endsWith(".png")) {
+                if (e.currentTarget.src !== "/images/course-students.png") {
                   e.currentTarget.src = "/images/course-students.png";
                 }
               }}
@@ -266,6 +266,46 @@ export default function CourseDetails() {
                       Turn Creativity{" "}
                       <span className="text-[#207a2c] dark:text-emerald-400 relative inline-block">
                         into a Career.
+                        <svg
+                          className="absolute -bottom-2 left-0 w-full h-3 text-[#207a2c] dark:text-emerald-400"
+                          viewBox="0 0 200 12"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M2 8C50 3 150 3 198 8"
+                            stroke="currentColor"
+                            strokeWidth="3.5"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </span>
+                    </>
+                  ) : headline.includes("Implement. Grow.") ? (
+                    <>
+                      Learn. Implement.{" "}
+                      <span className="text-[#207a2c] dark:text-emerald-400 relative inline-block">
+                        Grow.
+                        <svg
+                          className="absolute -bottom-2 left-0 w-full h-3 text-[#207a2c] dark:text-emerald-400"
+                          viewBox="0 0 200 12"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M2 8C50 3 150 3 198 8"
+                            stroke="currentColor"
+                            strokeWidth="3.5"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </span>
+                    </>
+                  ) : headline.includes("Create. Inspire.") ? (
+                    <>
+                      Learn. Edit. Create.{" "}
+                      <span className="text-[#207a2c] dark:text-emerald-400 relative inline-block">
+                        Inspire.
                         <svg
                           className="absolute -bottom-2 left-0 w-full h-3 text-[#207a2c] dark:text-emerald-400"
                           viewBox="0 0 200 12"
