@@ -212,34 +212,16 @@ export default function CourseDetails() {
         />
       </Helmet>
 
-      {/* ── Subheader / Navigation breadcrumbs ── */}
-      <div className="border-b border-border/40 bg-muted/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <Link
-            to="/courses"
-            className="inline-flex items-center gap-2 text-xs md:text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to All Courses</span>
-          </Link>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span>Courses</span>
-            <span>/</span>
-            <span className="text-foreground font-medium truncate max-w-[200px]">{course?.title}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Main Hero Section (Full 100vw with Left Image starting from left 0) ── */}
-      <section className="relative w-screen max-w-none left-1/2 -translate-x-1/2 overflow-hidden bg-background border-b border-border/40">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 items-center">
+      {/* ── Main Hero Section (Fits compactly within 100vh with main navbar) ── */}
+      <section className="relative w-screen max-w-none left-1/2 -translate-x-1/2 overflow-hidden bg-background border-b border-border/40 lg:min-h-[calc(100vh-6.5rem)] flex flex-col justify-between">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 items-center flex-1">
           
-          {/* ── Left Side: Full uncropped student graphic with transparent background (padding: 0) ── */}
-          <div className="lg:col-span-5 relative w-full h-full self-stretch flex items-center justify-start overflow-visible p-0 m-0">
+          {/* ── Left Side: Student graphic with transparent background ── */}
+          <div className="lg:col-span-5 xl:col-span-6 relative w-full h-full self-stretch flex items-center justify-start overflow-visible p-0 m-0">
             <img
               src={courseImage}
               alt={course?.title || "iZone Technologies Students"}
-              className="w-full max-w-[500px] lg:max-w-[560px] h-auto max-h-[540px] lg:max-h-[600px] object-contain object-left select-none drop-shadow-sm block m-0 p-0"
+              className="w-full max-w-[500px] lg:max-w-[580px] xl:max-w-[650px] 2xl:max-w-[720px] h-auto max-h-[460px] lg:max-h-[540px] xl:max-h-[600px] object-contain object-left select-none drop-shadow-sm block m-0 p-0"
               onError={(e) => {
                 if (e.currentTarget.src !== "/images/course-students.png") {
                   e.currentTarget.src = "/images/course-students.png";
@@ -248,237 +230,244 @@ export default function CourseDetails() {
             />
           </div>
 
-          {/* ── Right Side: Course Content shifted slightly leftward ── */}
-          <div className="lg:col-span-7 flex flex-col justify-center gap-5 px-4 sm:px-6 lg:pl-0 lg:-ml-4 xl:-ml-8 lg:pr-8 xl:pr-14 py-6 lg:py-8">
+          {/* ── Right Side: Course Content ── */}
+          <div className="lg:col-span-7 xl:col-span-6 flex flex-col justify-center gap-3.5 px-4 sm:px-6 lg:pl-0 lg:-ml-2 xl:-ml-4 lg:pr-8 xl:pr-12 py-4 lg:py-5">
             
-            {/* 1. Category Tag / Badge */}
-            <div>
-              <span className="inline-block px-4 py-1.5 rounded-full bg-[#eaf8e2] text-[#2c7a26] dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/50 text-xs font-bold tracking-wider uppercase border border-[#c2e8b2] shadow-sm">
+            {/* Top row: Badge and Back Link */}
+            <div className="flex items-center justify-between gap-3">
+              <span className="inline-block px-3 py-1 rounded-full bg-[#eaf8e2] text-[#2c7a26] dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/50 text-[11px] font-bold tracking-wider uppercase border border-[#c2e8b2] shadow-sm">
                 {badgeText}
               </span>
+              <Link
+                to="/courses"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors py-1"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Back to Courses</span>
+              </Link>
             </div>
 
-              {/* 2. Main Catchy Headline with Green Accent Underline */}
-              <div>
-                <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-foreground leading-[1.15] tracking-tight">
-                  {headline.includes("into a Career") ? (
-                    <>
-                      Turn Creativity{" "}
-                      <span className="text-[#207a2c] dark:text-emerald-400 relative inline-block">
-                        into a Career.
-                        <svg
-                          className="absolute -bottom-2 left-0 w-full h-3 text-[#207a2c] dark:text-emerald-400"
-                          viewBox="0 0 200 12"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M2 8C50 3 150 3 198 8"
-                            stroke="currentColor"
-                            strokeWidth="3.5"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </span>
-                    </>
-                  ) : headline.includes("Implement. Grow.") ? (
-                    <>
-                      Learn. Implement.{" "}
-                      <span className="text-[#207a2c] dark:text-emerald-400 relative inline-block">
-                        Grow.
-                        <svg
-                          className="absolute -bottom-2 left-0 w-full h-3 text-[#207a2c] dark:text-emerald-400"
-                          viewBox="0 0 200 12"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M2 8C50 3 150 3 198 8"
-                            stroke="currentColor"
-                            strokeWidth="3.5"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </span>
-                    </>
-                  ) : headline.includes("Create. Inspire.") ? (
-                    <>
-                      Learn. Edit. Create.{" "}
-                      <span className="text-[#207a2c] dark:text-emerald-400 relative inline-block">
-                        Inspire.
-                        <svg
-                          className="absolute -bottom-2 left-0 w-full h-3 text-[#207a2c] dark:text-emerald-400"
-                          viewBox="0 0 200 12"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M2 8C50 3 150 3 198 8"
-                            stroke="currentColor"
-                            strokeWidth="3.5"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-foreground">
-                      {headline}
+            {/* Main Catchy Headline with Green Accent Underline */}
+            <div>
+              <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-black text-foreground leading-[1.12] tracking-tight">
+                {headline.includes("into a Career") ? (
+                  <>
+                    Turn Creativity{" "}
+                    <span className="text-[#207a2c] dark:text-emerald-400 relative inline-block">
+                      into a Career.
+                      <svg
+                        className="absolute -bottom-1.5 left-0 w-full h-2.5 text-[#207a2c] dark:text-emerald-400"
+                        viewBox="0 0 200 12"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2 8C50 3 150 3 198 8"
+                          stroke="currentColor"
+                          strokeWidth="3.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
                     </span>
-                  )}
-                </h1>
-                {course?.description && (
-                  <p className="mt-3 text-muted-foreground text-sm md:text-base leading-relaxed max-w-2xl">
-                    {course.description}
-                  </p>
+                  </>
+                ) : headline.includes("Implement. Grow.") ? (
+                  <>
+                    Learn. Implement.{" "}
+                    <span className="text-[#207a2c] dark:text-emerald-400 relative inline-block">
+                      Grow.
+                      <svg
+                        className="absolute -bottom-1.5 left-0 w-full h-2.5 text-[#207a2c] dark:text-emerald-400"
+                        viewBox="0 0 200 12"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2 8C50 3 150 3 198 8"
+                          stroke="currentColor"
+                          strokeWidth="3.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </span>
+                  </>
+                ) : headline.includes("Create. Inspire.") ? (
+                  <>
+                    Learn. Edit. Create.{" "}
+                    <span className="text-[#207a2c] dark:text-emerald-400 relative inline-block">
+                      Inspire.
+                      <svg
+                        className="absolute -bottom-1.5 left-0 w-full h-2.5 text-[#207a2c] dark:text-emerald-400"
+                        viewBox="0 0 200 12"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2 8C50 3 150 3 198 8"
+                          stroke="currentColor"
+                          strokeWidth="3.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-foreground">
+                    {headline}
+                  </span>
                 )}
-              </div>
+              </h1>
+              {course?.description && (
+                <p className="mt-1.5 text-muted-foreground text-xs sm:text-sm leading-relaxed max-w-2xl line-clamp-2">
+                  {course.description}
+                </p>
+              )}
+            </div>
 
-              {/* 3. 4 Highlights Row (Icons + Description) */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-                {highlights.slice(0, 4).map((h, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-card rounded-2xl p-3.5 border border-emerald-100 dark:border-border/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col gap-2.5 hover:border-emerald-300 dark:hover:border-emerald-500/50 transition-all group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-[#ecf9e5] dark:bg-emerald-950/60 border border-[#d2f0c2] dark:border-emerald-900/60 flex items-center justify-center text-[#2c7a26] dark:text-emerald-400 group-hover:scale-105 transition-transform">
-                      {h.icon === "layers" && (!course?.highlights || course?.highlights?.length === 0) ? (
-                        <div className="flex items-center gap-0.5 text-[10px] font-bold">
-                          <span className="px-1 py-0.5 rounded bg-emerald-700 text-white">Ps</span>
-                          <span className="px-1 py-0.5 rounded bg-emerald-600 text-white">Ai</span>
-                        </div>
-                      ) : (
-                        renderCourseHighlightIcon(h.icon || "palette", "w-5 h-5")
+            {/* Highlights Row (Icons + Description) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-0.5">
+              {highlights.slice(0, 4).map((h, idx) => (
+                <div
+                  key={idx}
+                  className="bg-card rounded-xl p-2.5 border border-emerald-100 dark:border-border/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col gap-1.5 hover:border-emerald-300 dark:hover:border-emerald-500/50 transition-all group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-[#ecf9e5] dark:bg-emerald-950/60 border border-[#d2f0c2] dark:border-emerald-900/60 flex items-center justify-center text-[#2c7a26] dark:text-emerald-400 group-hover:scale-105 transition-transform">
+                    {h.icon === "layers" && (!course?.highlights || course?.highlights?.length === 0) ? (
+                      <div className="flex items-center gap-0.5 text-[10px] font-bold">
+                        <span className="px-1 py-0.5 rounded bg-emerald-700 text-white">Ps</span>
+                        <span className="px-1 py-0.5 rounded bg-emerald-600 text-white">Ai</span>
+                      </div>
+                    ) : (
+                      renderCourseHighlightIcon(h.icon || "palette", "w-4 h-4")
+                    )}
+                  </div>
+                  <p className="text-[11px] font-semibold text-foreground/90 leading-tight line-clamp-2">
+                    {h.title}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Pricing / Plan Cards (1 Plan or 2 Plans) */}
+            <div
+              className={`grid gap-3 pt-0.5 ${
+                advancedPlan ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 max-w-xl"
+              }`}
+            >
+              {/* Card 1: Basic / Standard Plan */}
+              <div className="rounded-2xl border-2 border-[#b5e69e] dark:border-emerald-800/60 bg-[#f9fdf7] dark:bg-card/70 p-4 flex flex-col justify-between hover:shadow-lg hover:border-[#8ad46b] transition-all relative overflow-hidden group">
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-display text-lg md:text-xl font-black text-foreground">
+                        {basicPlan.name}
+                      </h3>
+                      {!advancedPlan && (
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[9px] font-bold uppercase tracking-wider">
+                          Full Course
+                        </span>
                       )}
                     </div>
-                    <p className="text-xs font-semibold text-foreground/90 leading-snug line-clamp-3">
-                      {h.title}
-                    </p>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#207a2c] text-white text-[11px] font-bold tracking-wide shadow-sm">
+                      {basicPlan.duration}
+                    </span>
                   </div>
-                ))}
+
+                  <ul className="space-y-1.5 text-xs text-foreground/85">
+                    {basicPlan.features.slice(0, 4).map((feat, fIdx) => (
+                      <li key={fIdx} className="flex items-start gap-2">
+                        <div className="w-3.5 h-3.5 rounded-full bg-[#e3f6dc] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                          <Check className="w-2.5 h-2.5 stroke-[3]" />
+                        </div>
+                        <span className="leading-snug line-clamp-1">{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="pt-3 mt-3 border-t border-[#e2f3d8] dark:border-border/60 flex items-center justify-between">
+                  <div>
+                    <span className="font-display font-black text-xl md:text-2xl text-foreground tracking-tight">
+                      {basicPlan.price}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleOpenEnroll(basicPlan.name)}
+                    className="rounded-full bg-[#207a2c] hover:bg-[#186323] text-white text-xs font-bold px-4 py-2 flex items-center gap-1.5 shadow-md shadow-emerald-700/20 hover:shadow-lg transition-all"
+                  >
+                    <span>Enroll Now</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
 
-              {/* 4. Pricing / Plan Cards (1 Plan or 2 Plans) */}
-              <div
-                className={`grid gap-5 pt-1 ${
-                  advancedPlan ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 max-w-xl"
-                }`}
-              >
-                {/* Card 1: Basic / Standard Plan */}
-                <div className="rounded-3xl border-2 border-[#b5e69e] dark:border-emerald-800/60 bg-[#f9fdf7] dark:bg-card/70 p-6 flex flex-col justify-between hover:shadow-xl hover:border-[#8ad46b] transition-all relative overflow-hidden group">
-                  <div className="space-y-4">
+              {/* Card 2: Advanced Plan (Rendered only if course has 2 plans) */}
+              {advancedPlan && (
+                <div className="rounded-2xl border-2 border-[#b5e69e] dark:border-emerald-800/60 bg-[#f9fdf7] dark:bg-card/70 p-4 flex flex-col justify-between hover:shadow-lg hover:border-[#8ad46b] transition-all relative overflow-hidden group">
+                  <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-display text-2xl font-black text-foreground">
-                          {basicPlan.name}
-                        </h3>
-                        {!advancedPlan && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wider">
-                            Full Course
-                          </span>
-                        )}
-                      </div>
-                      <span className="px-3.5 py-1 rounded-full bg-[#207a2c] text-white text-xs font-bold tracking-wide shadow-sm">
-                        {basicPlan.duration}
+                      <h3 className="font-display text-lg md:text-xl font-black text-foreground">
+                        {advancedPlan.name}
+                      </h3>
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#207a2c] text-white text-[11px] font-bold tracking-wide shadow-sm">
+                        {advancedPlan.duration}
                       </span>
                     </div>
 
-                    <ul className="space-y-2.5 text-xs md:text-sm text-foreground/80">
-                      {basicPlan.features.map((feat, fIdx) => (
-                        <li key={fIdx} className="flex items-start gap-2.5">
-                          <div className="w-4 h-4 rounded-full bg-[#e3f6dc] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                            <Check className="w-3 h-3 stroke-[3]" />
+                    <ul className="space-y-1.5 text-xs text-foreground/85">
+                      {advancedPlan.features.slice(0, 4).map((feat, fIdx) => (
+                        <li key={fIdx} className="flex items-start gap-2">
+                          <div className="w-3.5 h-3.5 rounded-full bg-[#e3f6dc] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                            <Check className="w-2.5 h-2.5 stroke-[3]" />
                           </div>
-                          <span className="leading-tight">{feat}</span>
+                          <span className="leading-snug line-clamp-1">{feat}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="pt-6 mt-6 border-t border-[#e2f3d8] dark:border-border/60 flex items-center justify-between">
+                  <div className="pt-3 mt-3 border-t border-[#e2f3d8] dark:border-border/60 flex items-center justify-between">
                     <div>
-                      <span className="font-display font-black text-2xl md:text-3xl text-foreground tracking-tight">
-                        {basicPlan.price}
+                      <span className="font-display font-black text-xl md:text-2xl text-foreground tracking-tight">
+                        {advancedPlan.price}
                       </span>
                     </div>
                     <button
-                      onClick={() => handleOpenEnroll(basicPlan.name)}
-                      className="rounded-full bg-[#207a2c] hover:bg-[#186323] text-white text-xs md:text-sm font-bold px-4 md:px-5 py-2.5 flex items-center gap-1.5 shadow-md shadow-emerald-700/20 hover:shadow-lg transition-all"
+                      onClick={() => handleOpenEnroll(advancedPlan.name)}
+                      className="rounded-full bg-[#207a2c] hover:bg-[#186323] text-white text-xs font-bold px-4 py-2 flex items-center gap-1.5 shadow-md shadow-emerald-700/20 hover:shadow-lg transition-all"
                     >
                       <span>Enroll Now</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
-
-                {/* Card 2: Advanced Plan (Rendered only if course has 2 plans) */}
-                {advancedPlan && (
-                  <div className="rounded-3xl border-2 border-[#b5e69e] dark:border-emerald-800/60 bg-[#f9fdf7] dark:bg-card/70 p-6 flex flex-col justify-between hover:shadow-xl hover:border-[#8ad46b] transition-all relative overflow-hidden group">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-display text-2xl font-black text-foreground">
-                          {advancedPlan.name}
-                        </h3>
-                        <span className="px-3.5 py-1 rounded-full bg-[#207a2c] text-white text-xs font-bold tracking-wide shadow-sm">
-                          {advancedPlan.duration}
-                        </span>
-                      </div>
-
-                      <ul className="space-y-2.5 text-xs md:text-sm text-foreground/80">
-                        {advancedPlan.features.map((feat, fIdx) => (
-                          <li key={fIdx} className="flex items-start gap-2.5">
-                            <div className="w-4 h-4 rounded-full bg-[#e3f6dc] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                              <Check className="w-3 h-3 stroke-[3]" />
-                            </div>
-                            <span className="leading-tight">{feat}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="pt-6 mt-6 border-t border-[#e2f3d8] dark:border-border/60 flex items-center justify-between">
-                      <div>
-                        <span className="font-display font-black text-2xl md:text-3xl text-foreground tracking-tight">
-                          {advancedPlan.price}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleOpenEnroll(advancedPlan.name)}
-                        className="rounded-full bg-[#207a2c] hover:bg-[#186323] text-white text-xs md:text-sm font-bold px-4 md:px-5 py-2.5 flex items-center gap-1.5 shadow-md shadow-emerald-700/20 hover:shadow-lg transition-all"
-                      >
-                        <span>Enroll Now</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-              </div>
+              )}
 
             </div>
 
           </div>
 
+        </div>
+
         {/* ── Bottom Feature Strip (Calendar, Online/Offline, Certificate) across full width ── */}
         <div className="w-full border-t border-[#d5f0c4] dark:border-emerald-900/60 bg-[#fbfdfa] dark:bg-card/90">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#d5f0c4] dark:divide-emerald-900/60 text-center">
-            <div className="py-2 px-4 flex items-center justify-center gap-3 text-foreground font-bold text-sm md:text-base">
-              <div className="w-8 h-8 rounded-lg bg-[#eaf8e2] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0">
-                <Calendar className="w-4 h-4" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#d5f0c4] dark:divide-emerald-900/60 text-center">
+            <div className="py-1 px-4 flex items-center justify-center gap-2.5 text-foreground font-bold text-xs sm:text-sm">
+              <div className="w-7 h-7 rounded-lg bg-[#eaf8e2] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <Calendar className="w-3.5 h-3.5" />
               </div>
               <span>{durationText}</span>
             </div>
 
-            <div className="py-2 px-4 flex items-center justify-center gap-3 text-foreground font-bold text-sm md:text-base">
-              <div className="w-8 h-8 rounded-lg bg-[#eaf8e2] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0">
-                <Monitor className="w-4 h-4" />
+            <div className="py-1 px-4 flex items-center justify-center gap-2.5 text-foreground font-bold text-xs sm:text-sm">
+              <div className="w-7 h-7 rounded-lg bg-[#eaf8e2] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <Monitor className="w-3.5 h-3.5" />
               </div>
               <span>{modeText}</span>
             </div>
 
-            <div className="py-2 px-4 flex items-center justify-center gap-3 text-foreground font-bold text-sm md:text-base">
-              <div className="w-8 h-8 rounded-lg bg-[#eaf8e2] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0">
-                <Award className="w-4 h-4" />
+            <div className="py-1 px-4 flex items-center justify-center gap-2.5 text-foreground font-bold text-xs sm:text-sm">
+              <div className="w-7 h-7 rounded-lg bg-[#eaf8e2] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <Award className="w-3.5 h-3.5" />
               </div>
               <span>{certificateText}</span>
             </div>

@@ -1,13 +1,14 @@
 """
 Single seed script to insert and synchronize all courses in the database.
-Includes:
-- Existing courses: Digital Marketing Course, Video Editing Course
-- Requested courses:
-  * Full Stack Development (6 Months)
-  * Java Programming (3 Months only)
-  * Python Programming (3 Months only)
-  * Data Structures & Algorithms / DSA (Basics 3 Months & Advanced 6 Months)
-  * Frontend Development using React (3 Months)
+Courses included:
+1. Graphic Design Course (3 & 6 Months)
+2. Digital Marketing Course (3 & 6 Months)
+3. Video Editing Course (3 Months)
+4. Full Stack Development Course (6 Months)
+5. Java Programming Course (3 Months)
+6. Python Programming Course (3 Months)
+7. Data Structures & Algorithms (DSA) Course (3 & 6 Months)
+8. Frontend Development using React Course (3 Months)
 """
 
 import sys
@@ -25,6 +26,56 @@ from app.database import get_raw_conn, release_conn
 from app.schema_bootstrap import ensure_database_schema
 
 COURSES = [
+    # Graphic Design Course (from reference flyer)
+    {
+        "title": "Graphic Design Course",
+        "slug": "graphic-design-course",
+        "badge": "GRAPHIC DESIGN COURSE",
+        "headline": "Turn Creativity into a Career.",
+        "description": "Master visual branding, graphic layouts, and industry-standard creative tools. Build real-world portfolio projects in Photoshop, Illustrator, and InDesign with professional guidance.",
+        "duration": "3 & 6 Months",
+        "tech_stack": [
+            "Photoshop",
+            "Illustrator",
+            "InDesign",
+            "Typography",
+            "Branding",
+            "Print Design",
+            "Portfolio Design"
+        ],
+        "mode": "Online & Offline",
+        "certificate": "Certificate Included",
+        "highlights": [
+            {"title": "Understand design principles and layouts", "icon": "palette"},
+            {"title": "Create strong visual identities", "icon": "sparkles"},
+            {"title": "Photoshop, Illustrator, InDesign & more", "icon": "layers"},
+            {"title": "Work on real projects & build your portfolio", "icon": "folder"}
+        ],
+        "basic_plan": {
+            "name": "Basic",
+            "duration": "3 Months",
+            "price": "₹30,000",
+            "features": [
+                "Design principles & typography",
+                "Basic tools and techniques",
+                "1-2 mini projects",
+                "Professional guidance"
+            ]
+        },
+        "advanced_plan": {
+            "name": "Advanced",
+            "duration": "6 Months",
+            "price": "₹60,000",
+            "features": [
+                "Advanced design & branding",
+                "Social media & print design",
+                "Real-world projects",
+                "Portfolio development & career support"
+            ]
+        },
+        "image_url": "/images/course-students.png"
+    },
+
     # 1. Existing Course: Digital Marketing
     {
         "title": "Digital Marketing Course",
@@ -380,7 +431,7 @@ def seed():
     print("==================================================")
     print(f"Total courses to sync/insert: {len(COURSES)}\n")
 
-    for c in COURSES:
+    for idx, c in enumerate(COURSES):
         # Check if record already exists by slug or exact title
         cur.execute(
             "SELECT id FROM courses WHERE slug = %s OR title = %s",
@@ -410,6 +461,7 @@ def seed():
                     basic_plan = %s,
                     advanced_plan = %s,
                     image_url = %s,
+                    order_index = %s,
                     updated_at = NOW()
                 WHERE id = %s
             """, (
@@ -426,6 +478,7 @@ def seed():
                 basic_plan_json,
                 advanced_plan_json,
                 c["image_url"],
+                idx,
                 course_id
             ))
             print(f"[UPDATED] ID {course_id:>2}: {c['title']} ({c['duration']}) -> slug: {c['slug']}")
@@ -433,9 +486,9 @@ def seed():
             cur.execute("""
                 INSERT INTO courses (
                     title, slug, description, duration, tech_stack, headline, badge,
-                    mode, certificate, highlights, basic_plan, advanced_plan, image_url
+                    mode, certificate, highlights, basic_plan, advanced_plan, image_url, order_index
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
             """, (
                 c["title"],
@@ -450,7 +503,8 @@ def seed():
                 highlights_json,
                 basic_plan_json,
                 advanced_plan_json,
-                c["image_url"]
+                c["image_url"],
+                idx
             ))
             new_id = cur.fetchone()[0]
             print(f"[INSERTED] ID {new_id:>2}: {c['title']} ({c['duration']}) -> slug: {c['slug']}")
@@ -462,9 +516,10 @@ def seed():
     cur.execute("""
         SELECT id, title, slug, duration,
                (basic_plan->>'duration') as b_dur,
-               (advanced_plan->>'duration') as a_dur
+               (advanced_plan->>'duration') as a_dur,
+               order_index
         FROM courses
-        ORDER BY id ASC
+        ORDER BY COALESCE(order_index, 0) ASC, id ASC
     """)
     rows = cur.fetchall()
     for r in rows:

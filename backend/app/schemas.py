@@ -290,6 +290,7 @@ class CourseBase(BaseModel):
     basicPlan: Optional[Any] = Field(default_factory=dict)
     advancedPlan: Optional[Any] = Field(default_factory=dict)
     imageUrl: Optional[str] = Field("", max_length=50000)
+    orderIndex: Optional[int] = Field(0)
 
 class CourseCreate(CourseBase):
     pass
@@ -308,6 +309,14 @@ class CourseUpdate(BaseModel):
     basicPlan: Optional[Any] = None
     advancedPlan: Optional[Any] = None
     imageUrl: Optional[str] = None
+    orderIndex: Optional[int] = None
+
+class CourseReorderItem(BaseModel):
+    id: int
+    orderIndex: int
+
+class CourseReorderRequest(BaseModel):
+    orders: List[CourseReorderItem]
 
 class CourseOut(CourseBase):
     id: int

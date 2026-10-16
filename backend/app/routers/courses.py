@@ -6,7 +6,7 @@ from psycopg2.extras import Json
 
 from app.auth import get_current_admin
 from app.database import execute, execute_returning, fetchall, fetchone, get_db
-from app.schemas import CourseCreate, CourseUpdate
+from app.schemas import CourseCreate, CourseUpdate, CourseReorderRequest
 
 router = APIRouter(prefix="/api/courses", tags=["Courses"])
 
@@ -18,7 +18,14 @@ def slugify(text: str) -> str:
 
 @router.get("")
 def list_courses(conn=Depends(get_db)):
-    return fetchall(conn, "SELECT * FROM courses ORDER BY created_at DESC")
+    return fetchall(conn, "SELECT * FROM courses ORDER BY COALESCE(order_index, 0) ASC, id ASC")
+
+
+@router.put("/reorder")
+def reorder_courses(body: CourseReorderRequest, conn=Depends(get_db), _=Depends(get_current_admin)):
+    for item in body.orders:
+        execute(conn, "UPDATE courses SET order_index=%s, updated_at=now() WHERE id=%s", (item.orderIndex, item.id))
+    return fetchall(conn, "SELECT * FROM courses ORDER BY COALESCE(order_index, 0) ASC, id ASC")
 
 
 @router.get("/{identifier}")
@@ -39,8 +46,8 @@ def create_course(body: CourseCreate, conn=Depends(get_db), _=Depends(get_curren
     clean_slug = slugify(body.slug) if body.slug else slugify(body.title)
     return execute_returning(
         conn,
-        """INSERT INTO courses (title, slug, description, duration, tech_stack, headline, badge, mode, certificate, highlights, basic_plan, advanced_plan, image_url)
-           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
+        """INSERT INTO courses (title, slug, description, duration, tech_stack, headline, badge, mode, certificate, highlights, basic_plan, advanced_plan, image_url, order_index)
+           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
         (
             body.title,
             clean_slug,
@@ -55,6 +62,7 @@ def create_course(body: CourseCreate, conn=Depends(get_db), _=Depends(get_curren
             Json(body.basicPlan) if body.basicPlan is not None else Json({}),
             Json(body.advancedPlan) if body.advancedPlan is not None else Json({}),
             body.imageUrl or "",
+            body.orderIndex or 0,
         ),
     )
 
@@ -84,6 +92,7 @@ def update_course(item_id: int, body: CourseUpdate, conn=Depends(get_db), _=Depe
                basic_plan=COALESCE(%s,basic_plan),
                advanced_plan=COALESCE(%s,advanced_plan),
                image_url=COALESCE(%s,image_url),
+               order_index=COALESCE(%s,order_index),
                updated_at=now()
            WHERE id=%s RETURNING *""",
         (
@@ -100,6 +109,7 @@ def update_course(item_id: int, body: CourseUpdate, conn=Depends(get_db), _=Depe
             Json(payload["basicPlan"]) if "basicPlan" in payload else None,
             Json(payload["advancedPlan"]) if "advancedPlan" in payload else None,
             payload.get("imageUrl"),
+            payload.get("orderIndex"),
             item_id,
         ),
     )

@@ -50,6 +50,7 @@ SCHEMA_UPDATES = [
     "ALTER TABLE courses ADD COLUMN IF NOT EXISTS basic_plan JSON DEFAULT '{}'::json",
     "ALTER TABLE courses ADD COLUMN IF NOT EXISTS advanced_plan JSON DEFAULT '{}'::json",
     "ALTER TABLE courses ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT ''",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS order_index INTEGER DEFAULT 0",
     """
     CREATE TABLE IF NOT EXISTS courses (
         id SERIAL PRIMARY KEY,

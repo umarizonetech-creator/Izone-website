@@ -338,7 +338,25 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Clock, Code2, CheckCircle2, X, BookOpen, Filter, GraduationCap, ArrowRight } from 'lucide-react';
+import {
+  Clock,
+  Code2,
+  CheckCircle2,
+  X,
+  BookOpen,
+  Filter,
+  GraduationCap,
+  ArrowRight,
+  Palette,
+  Megaphone,
+  Video,
+  Layers,
+  Terminal,
+  Cpu,
+  Globe,
+  Binary,
+  Atom,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -349,6 +367,36 @@ import { getCourseSchema, getWebPageSchema, getBreadcrumbSchema } from '@/utils/
 import { useAdmin } from '@/context/AdminContext';
 import { getCourseUrl } from '@/utils/courseSlug';
 import { toast } from 'sonner';
+
+const getCourseIcon = (course) => {
+  const text = `${course?.title || ''} ${course?.slug || ''} ${course?.badge || ''}`.toLowerCase();
+  
+  if (text.includes('graphic') || text.includes('design') || text.includes('ui/ux')) {
+    return Palette;
+  }
+  if (text.includes('marketing') || text.includes('digital') || text.includes('seo')) {
+    return Megaphone;
+  }
+  if (text.includes('video') || text.includes('editing') || text.includes('premiere') || text.includes('animation')) {
+    return Video;
+  }
+  if (text.includes('full stack') || text.includes('fullstack')) {
+    return Layers;
+  }
+  if (text.includes('java') && !text.includes('script')) {
+    return Terminal;
+  }
+  if (text.includes('python')) {
+    return Terminal;
+  }
+  if (text.includes('dsa') || text.includes('algorithm') || text.includes('data structure')) {
+    return Binary;
+  }
+  if (text.includes('react') || text.includes('frontend')) {
+    return Atom;
+  }
+  return BookOpen;
+};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -530,30 +578,32 @@ export default function Courses() {
               animate="visible"
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-              {filtered.map((course) => (
-                <motion.div
-                  key={course.id}
-                  variants={itemVariants}
-                  className="glass-card hover-glow flex flex-col rounded-2xl overflow-hidden group"
-                >
-                  {/* Card header accent */}
-                  <div className="h-1.5 bg-gradient-to-r from-primary to-emerald-400" />
+              {filtered.map((course) => {
+                const CourseIcon = getCourseIcon(course);
+                return (
+                  <motion.div
+                    key={course.id}
+                    variants={itemVariants}
+                    className="glass-card hover-glow flex flex-col rounded-2xl overflow-hidden group"
+                  >
+                    {/* Card header accent */}
+                    <div className="h-1.5 bg-gradient-to-r from-primary to-emerald-400" />
 
-                  <div className="p-6 flex flex-col flex-1 gap-4">
-                    {/* Icon + title */}
-                    <div className="flex items-start gap-3">
-                      <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                        <BookOpen className="w-5 h-5 text-primary" />
+                    <div className="p-6 flex flex-col flex-1 gap-4">
+                      {/* Icon + title */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                          <CourseIcon className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-display font-bold text-lg leading-tight">{course.title}</h3>
+                          {course.duration && (
+                            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                              <Clock className="w-3 h-3" /> {course.duration}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <h3 className="font-display font-bold text-lg leading-tight">{course.title}</h3>
-                        {course.duration && (
-                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                            <Clock className="w-3 h-3" /> {course.duration}
-                          </span>
-                        )}
-                      </div>
-                    </div>
 
                     {/* Description */}
                     {course.description && (
@@ -596,8 +646,9 @@ export default function Courses() {
                     </div>
                   </div>
                 </motion.div>
-              ))}
-            </motion.div>
+              );
+            })}
+          </motion.div>
           )}
         </div>
       </section>

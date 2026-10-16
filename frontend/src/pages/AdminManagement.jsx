@@ -25,6 +25,8 @@ import {
   Link as LinkIcon,
   BookOpen,
   ExternalLink,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import {
   AdminLayout,
@@ -2204,6 +2206,29 @@ export function CourseManagement() {
     }
   };
 
+  const handleMoveCourse = async (currentIndex, direction) => {
+    const targetIndex = currentIndex + direction;
+    if (targetIndex < 0 || targetIndex >= courses.length) return;
+
+    const newCourses = [...courses];
+    const [movedCourse] = newCourses.splice(currentIndex, 1);
+    newCourses.splice(targetIndex, 0, movedCourse);
+
+    const reorderedPayload = newCourses.map((c, idx) => ({
+      id: c.id,
+      orderIndex: idx,
+    }));
+
+    try {
+      if (courseOps.reorder) {
+        await courseOps.reorder(reorderedPayload);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update course order.");
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -2212,7 +2237,7 @@ export function CourseManagement() {
             Course Management
           </h1>
           <p className="mt-1 text-xs text-muted-foreground md:text-base">
-            Customize separate landing page contents (headline, highlights, pricing plans) for each course.
+            Customize course order, landing page contents (headline, highlights, pricing plans) for each course.
           </p>
         </div>
         {activeTab === "courses" ? (
@@ -2263,6 +2288,42 @@ export function CourseManagement() {
           <div className="space-y-4">
             <DataTable
               columns={[
+                {
+                  key: "order",
+                  label: "Order",
+                  render: (_, row) => {
+                    const currentIndex = courses.findIndex((c) => c.id === row.id);
+                    return (
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs font-bold text-muted-foreground w-6 text-center">
+                          {currentIndex + 1}
+                        </span>
+                        <div className="flex flex-col gap-0.5">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6 text-muted-foreground hover:text-foreground disabled:opacity-20"
+                            disabled={currentIndex === 0}
+                            onClick={() => handleMoveCourse(currentIndex, -1)}
+                            title="Move Up"
+                          >
+                            <ArrowUp size={12} />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6 text-muted-foreground hover:text-foreground disabled:opacity-20"
+                            disabled={currentIndex === courses.length - 1}
+                            onClick={() => handleMoveCourse(currentIndex, 1)}
+                            title="Move Down"
+                          >
+                            <ArrowDown size={12} />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  },
+                },
                 {
                   key: "title",
                   label: "Course Details",

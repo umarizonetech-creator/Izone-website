@@ -220,11 +220,12 @@ const endpointConfig = {
   serviceRequests: { path: "/api/project-inquiries", fromApi: mapProjectFromApi, toApi: mapProjectToApi },
   team: { path: "/api/team", fromApi: mapTeamMemberFromApi, toApi: mapTeamMemberToApi, method: "PUT" },
   portfolios: { path: "/api/portfolios", fromApi: mapPortfolioFromApi, toApi: mapPortfolioToApi, method: "PUT" },
-  courses: {
+    courses: {
     path: "/api/courses",
     fromApi: (item) => ({
       ...withMeta(item),
       slug: item.slug || "",
+      orderIndex: item.orderIndex ?? item.order_index ?? 0,
       techStack: parseList(item.techStack || item.tech_stack),
       headline: item.headline || "",
       badge: item.badge || "",
@@ -240,6 +241,7 @@ const endpointConfig = {
     toApi: (item) => ({
       title: item.title || "",
       slug: item.slug !== undefined ? item.slug : "",
+      orderIndex: item.orderIndex !== undefined ? Number(item.orderIndex) : 0,
       description: item.description || "",
       duration: item.duration || "",
       techStack: Array.isArray(item.techStack) ? item.techStack : parseList(item.techStack),
@@ -576,7 +578,19 @@ export const AdminProvider = ({ children }) => {
         internRoles, internRoleOps: makeApiCrud("internRoles", setInternRoles, () => internRoles),
         sitePhotos, sitePhotoOps: makeApiCrud("sitePhotos", setSitePhotos), refreshSitePhotos,
         serviceRequests, serviceRequestOps: makeApiCrud("serviceRequests", setServiceRequests, () => serviceRequests), addServiceRequest: addPublicItem("serviceRequests", setServiceRequests),
-        courses, courseOps: makeApiCrud("courses", setCourses, () => courses),
+        courses,
+        courseOps: {
+          ...makeApiCrud("courses", setCourses, () => courses),
+          reorder: async (orders) => {
+            const result = await apiRequest("/api/courses/reorder", {
+              method: "PUT",
+              body: JSON.stringify({ orders }),
+            });
+            const mapped = Array.isArray(result) ? result.map(endpointConfig.courses.fromApi) : [];
+            setCourses(mapped);
+            return mapped;
+          },
+        },
         courseApplications, courseAppOps: makeApiCrud("courseApplications", setCourseApplications), addCourseApplication: addPublicItem("courseApplications", setCourseApplications),
         departments, departmentOps: makeApiCrud("departments", setDepartments, () => departments),
         readIds, markRead,

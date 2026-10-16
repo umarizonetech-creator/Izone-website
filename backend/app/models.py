@@ -171,6 +171,7 @@ class Course(Base):
     basic_plan = Column(JSON, default={})
     advanced_plan = Column(JSON, default={})
     image_url = Column(Text, default="")
+    order_index = Column(Integer, default=0, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
