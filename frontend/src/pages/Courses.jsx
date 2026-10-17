@@ -367,7 +367,7 @@ import SEO from '@/components/SEO';
 import { getCourseSchema, getWebPageSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import { useAdmin } from '@/context/AdminContext';
 import { getCourseUrl } from '@/utils/courseSlug';
-import CourseOfferPriceDisplay, { isOfferValid, parseNumericPrice, formatRupees } from '@/components/CourseOfferPriceDisplay';
+import { isOfferValid } from '@/components/CourseOfferPriceDisplay';
 import { toast } from 'sonner';
 
 const getCourseIcon = (course) => {
@@ -582,7 +582,6 @@ export default function Courses() {
             >
               {filtered.map((course) => {
                 const CourseIcon = getCourseIcon(course);
-                const originalPrice = course.basicPlan?.price || course.basic_plan?.price || course.originalPrice;
                 const offerActive = universalOffer && universalOffer.active !== undefined
                   ? universalOffer.active
                   : Boolean(course.offerActive ?? course.offer_active);
@@ -651,29 +650,7 @@ export default function Courses() {
                       </div>
                     )}
 
-                    {/* Price and Offer Section */}
-                    {(hasValidOffer || originalPrice) && (
-                      <div className="mt-auto pt-3 border-t border-border/40 flex flex-col gap-1">
-                        {hasValidOffer ? (
-                          <CourseOfferPriceDisplay
-                            size="sm"
-                            offerBadge={effectiveOffer.badge || "Special Offer"}
-                            offerMessage={effectiveOffer.message || ""}
-                            discountPercent={effectiveOffer.discountPercent}
-                            originalPrice={originalPrice || "₹30,000"}
-                            offerDeadline={effectiveOffer.deadline}
-                            showDeadline={true}
-                          />
-                        ) : (
-                          <div className="flex items-baseline gap-1.5 text-xs text-muted-foreground">
-                            <span>Starting at</span>
-                            <span className="text-sm font-bold text-foreground">{originalPrice}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="pt-2 flex items-center gap-2">
+                    <div className="mt-auto pt-3 flex items-center gap-2">
                       <Link to={getCourseUrl(course)} className="flex-1">
                         <Button
                           variant="outline"
