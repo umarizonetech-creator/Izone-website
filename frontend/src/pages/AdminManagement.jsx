@@ -2419,19 +2419,6 @@ export function UniversalOfferManagement() {
                   {formatDeadlineReadable(universalForm.deadline)}
                 </p>
               </div>
-
-              {/* Badge Tag */}
-              <div className="sm:col-span-2 space-y-2">
-                <label className="block text-xs font-bold text-foreground uppercase tracking-wide">
-                  Secondary Tag (Optional)
-                </label>
-                <Input
-                  placeholder="e.g. Top Discount of the Sale"
-                  value={universalForm.badge}
-                  onChange={(e) => setUniversalForm((prev) => ({ ...prev, badge: e.target.value }))}
-                  className="rounded-xl border-border focus-visible:ring-purple-600 text-sm h-11"
-                />
-              </div>
             </div>
 
             {/* Live Card Preview */}
