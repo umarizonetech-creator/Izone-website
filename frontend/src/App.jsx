@@ -28,6 +28,7 @@ const ContactManagement = lazy(() => import("./pages/AdminManagement").then(m =>
 const InternManagement = lazy(() => import("./pages/AdminManagement").then(m => ({ default: m.InternManagement })));
 const JobRoleManagement = lazy(() => import("./pages/AdminManagement").then(m => ({ default: m.JobRoleManagement })));
 const CourseManagement = lazy(() => import("./pages/AdminManagement").then(m => ({ default: m.CourseManagement })));
+const UniversalOfferManagement = lazy(() => import("./pages/AdminManagement").then(m => ({ default: m.UniversalOfferManagement })));
 const PhotoManagement = lazy(() => import("./pages/AdminManagement").then(m => ({ default: m.PhotoManagement })));
 const PortfolioManagement = lazy(() => import("./pages/AdminManagement").then(m => ({ default: m.PortfolioManagement })));
 const PopupManagement = lazy(() => import("./pages/AdminManagement").then(m => ({ default: m.PopupManagement })));
@@ -92,6 +93,8 @@ const App = () => {
                   <Route path="/admin/contacts" element={<ProtectedRoute><ContactManagement /></ProtectedRoute>} />
                   <Route path="/admin/interns" element={<ProtectedRoute><InternManagement /></ProtectedRoute>} />
                   <Route path="/admin/courses" element={<ProtectedRoute><CourseManagement /></ProtectedRoute>} />
+                  <Route path="/admin/universal-offer" element={<ProtectedRoute><UniversalOfferManagement /></ProtectedRoute>} />
+                  <Route path="/admin/offers" element={<ProtectedRoute><UniversalOfferManagement /></ProtectedRoute>} />
                   <Route path="/admin/photo" element={<ProtectedRoute><PhotoManagement /></ProtectedRoute>} />
                   <Route path="/admin/service-requests" element={<ProtectedRoute><ServiceRequestManagement /></ProtectedRoute>} />
                   <Route path="/development/web-development" element={<WebDevelopment />} />

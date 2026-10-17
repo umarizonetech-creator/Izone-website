@@ -5,7 +5,7 @@ import {
   LayoutDashboard, MessageSquare, Star, Briefcase,
   Mail, Users, Building2, Menu, LogOut, X, Pencil, Trash2, ChevronRight,
   UserCircle, GraduationCap, Image, Bell, Briefcase as BriefcaseIcon, UserCheck, Phone, FolderKanban,
-  BookOpen,
+  BookOpen, Sparkles,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,6 +25,7 @@ const navItems = [
   { label: "Contacts",        icon: Mail,            path: "/admin/contacts" },
   { label: "Interns",         icon: Users,           path: "/admin/interns" },
   { label: "Courses",         icon: BookOpen,        path: "/admin/courses" },
+  { label: "Universal Offer", icon: Sparkles,        path: "/admin/universal-offer" },
   { label: "Photo",           icon: Image,           path: "/admin/photo" },
   { label: "Service Requests", icon: LayoutDashboard, path: "/admin/service-requests" },
 ];

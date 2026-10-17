@@ -4,6 +4,7 @@ which has a greenlet incompatibility with Python 3.14.
 
 Each request gets its own psycopg2 connection via get_db().
 """
+import os
 import psycopg2
 import psycopg2.extras
 from psycopg2.pool import ThreadedConnectionPool
@@ -26,8 +27,10 @@ _DB_PARAMS = dict(
 # Shared SQLAlchemy metadata for table creation scripts.
 Base = declarative_base()
 
-# Connection pool (min=1, max=10)
-_pool = ThreadedConnectionPool(1, 10, **_DB_PARAMS)
+# Connection pool (default min=2, max=30, configurable via env)
+_POOL_MIN = int(os.getenv("DB_POOL_MIN", "2"))
+_POOL_MAX = int(os.getenv("DB_POOL_MAX", "30"))
+_pool = ThreadedConnectionPool(_POOL_MIN, _POOL_MAX, **_DB_PARAMS)
 
 
 def _snake_to_camel(value: str) -> str:

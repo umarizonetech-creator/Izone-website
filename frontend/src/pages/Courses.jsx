@@ -347,6 +347,7 @@ import {
   Filter,
   GraduationCap,
   ArrowRight,
+  ArrowDown,
   Palette,
   Megaphone,
   Video,
@@ -366,6 +367,7 @@ import SEO from '@/components/SEO';
 import { getCourseSchema, getWebPageSchema, getBreadcrumbSchema } from '@/utils/seoSchemas';
 import { useAdmin } from '@/context/AdminContext';
 import { getCourseUrl } from '@/utils/courseSlug';
+import CourseOfferPriceDisplay, { isOfferValid, parseNumericPrice, formatRupees } from '@/components/CourseOfferPriceDisplay';
 import { toast } from 'sonner';
 
 const getCourseIcon = (course) => {
@@ -428,7 +430,7 @@ const isValidEmail = (email) => {
 };
 
 export default function Courses() {
-  const { courses = [], addCourseApplication, publicDataLoaded, ensureLoaded } = useAdmin();
+  const { courses = [], addCourseApplication, publicDataLoaded, ensureLoaded, universalOffer } = useAdmin();
 
   useEffect(() => {
     if (ensureLoaded) {
@@ -580,6 +582,21 @@ export default function Courses() {
             >
               {filtered.map((course) => {
                 const CourseIcon = getCourseIcon(course);
+                const originalPrice = course.basicPlan?.price || course.basic_plan?.price || course.originalPrice;
+                const offerActive = universalOffer && universalOffer.active !== undefined
+                  ? universalOffer.active
+                  : Boolean(course.offerActive ?? course.offer_active);
+                const effectiveOffer = (universalOffer && universalOffer.active)
+                  ? universalOffer
+                  : {
+                      active: offerActive,
+                      discountPercent: course.discountPercent ?? course.discount_percent,
+                      message: course.offerMessage ?? course.offer_message,
+                      badge: course.offerBadge ?? course.offer_badge,
+                      deadline: course.offerDeadline ?? course.offer_deadline,
+                    };
+                const hasValidOffer = isOfferValid(effectiveOffer);
+
                 return (
                   <motion.div
                     key={course.id}
@@ -591,18 +608,25 @@ export default function Courses() {
 
                     <div className="p-6 flex flex-col flex-1 gap-4">
                       {/* Icon + title */}
-                      <div className="flex items-start gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                          <CourseIcon className="w-5 h-5 text-primary" />
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <CourseIcon className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="font-display font-bold text-lg leading-tight">{course.title}</h3>
+                            {course.duration && (
+                              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                                <Clock className="w-3 h-3" /> {course.duration}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div className="min-w-0">
-                          <h3 className="font-display font-bold text-lg leading-tight">{course.title}</h3>
-                          {course.duration && (
-                            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                              <Clock className="w-3 h-3" /> {course.duration}
-                            </span>
-                          )}
-                        </div>
+                        {hasValidOffer && effectiveOffer.discountPercent > 0 && (
+                          <span className="shrink-0 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                            {effectiveOffer.discountPercent}% OFF
+                          </span>
+                        )}
                       </div>
 
                     {/* Description */}
@@ -627,8 +651,29 @@ export default function Courses() {
                       </div>
                     )}
 
-                    {/* Action buttons */}
-                    <div className="mt-auto pt-3 flex items-center gap-2">
+                    {/* Price and Offer Section */}
+                    {(hasValidOffer || originalPrice) && (
+                      <div className="mt-auto pt-3 border-t border-border/40 flex flex-col gap-1">
+                        {hasValidOffer ? (
+                          <CourseOfferPriceDisplay
+                            size="sm"
+                            offerBadge={effectiveOffer.badge || "Special Offer"}
+                            offerMessage={effectiveOffer.message || ""}
+                            discountPercent={effectiveOffer.discountPercent}
+                            originalPrice={originalPrice || "₹30,000"}
+                            offerDeadline={effectiveOffer.deadline}
+                            showDeadline={true}
+                          />
+                        ) : (
+                          <div className="flex items-baseline gap-1.5 text-xs text-muted-foreground">
+                            <span>Starting at</span>
+                            <span className="text-sm font-bold text-foreground">{originalPrice}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="pt-2 flex items-center gap-2">
                       <Link to={getCourseUrl(course)} className="flex-1">
                         <Button
                           variant="outline"

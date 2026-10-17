@@ -9,6 +9,8 @@ import {
   Check,
   ArrowRight,
   ArrowLeft,
+  ArrowDown,
+  Flame,
   X,
   CheckCircle2,
   Sparkles,
@@ -24,11 +26,12 @@ import { Textarea } from "@/components/ui/textarea";
 import Layout from "@/components/Layout";
 import { slugify } from "@/utils/courseSlug";
 import { renderCourseHighlightIcon } from "@/utils/courseIcons";
+import CourseOfferPriceDisplay, { isOfferValid, parseNumericPrice, formatRupees, getOfferDeadlineLabel } from "@/components/CourseOfferPriceDisplay";
 import { toast } from "sonner";
 
 export default function CourseDetails() {
   const { id } = useParams();
-  const { courses = [], addCourseApplication, ensureLoaded } = useAdmin();
+  const { courses = [], universalOffer, addCourseApplication, ensureLoaded } = useAdmin();
 
   useEffect(() => {
     if (ensureLoaded) {
@@ -193,7 +196,6 @@ export default function CourseDetails() {
               ],
       }
     : null;
-
   const courseImage = course?.imageUrl || "/images/course-students.png";
   const durationText = course?.duration || "3 & 6 Months";
   const modeText =
@@ -201,6 +203,44 @@ export default function CourseDetails() {
       ? course.mode
       : "Offline Classroom Training";
   const certificateText = course?.certificate || "Certificate Included";
+
+  // Offer and Pricing Calculation
+  // Universal offer applies automatically across all courses
+  const isUniversalActive = Boolean(universalOffer?.active);
+  let isExpired = false;
+  if (universalOffer?.deadline && String(universalOffer.deadline).trim() !== "") {
+    const end = new Date(universalOffer.deadline);
+    if (!Number.isNaN(end.getTime())) {
+      if (String(universalOffer.deadline).length === 10) end.setHours(23, 59, 59, 999);
+      if (new Date() > end) isExpired = true;
+    }
+  }
+  const offerActive = isUniversalActive && !isExpired;
+  const discountPct = offerActive ? (Number(universalOffer?.discountPercent) || 0) : 0;
+  const offerBadgeText = universalOffer?.message || universalOffer?.badge || "Special Offer";
+  const deadlineLabel = (offerActive && universalOffer?.deadline)
+    ? getOfferDeadlineLabel(universalOffer.deadline)
+    : null;
+
+  const computePlanPricing = (basePriceStr) => {
+    const numBase = parseNumericPrice(basePriceStr);
+    if (offerActive && discountPct > 0 && numBase) {
+      const discounted = Math.round(numBase * (1 - discountPct / 100));
+      return {
+        original: formatRupees(numBase),
+        final: formatRupees(discounted),
+        discount: discountPct,
+      };
+    }
+    return {
+      original: null,
+      final: basePriceStr,
+      discount: null,
+    };
+  };
+
+  const basicPricing = computePlanPricing(basicPlan.price);
+  const advancedPricing = advancedPlan ? computePlanPricing(advancedPlan.price) : null;
 
   return (
     <Layout>
@@ -347,101 +387,149 @@ export default function CourseDetails() {
               ))}
             </div>
 
-            {/* Pricing / Plan Cards (1 Plan or 2 Plans) */}
+            {/* Pricing / Plan Cards (Basic / Advanced exactly matching uploaded reference) */}
             <div
               className={`grid gap-3 pt-0.5 ${
                 advancedPlan ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 max-w-xl"
               }`}
             >
-              {/* Card 1: Basic / Standard Plan */}
-              <div className="rounded-2xl border-2 border-[#b5e69e] dark:border-emerald-800/60 bg-[#f9fdf7] dark:bg-card/70 p-4 flex flex-col justify-between hover:shadow-lg hover:border-[#8ad46b] transition-all relative overflow-hidden group">
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-display text-lg md:text-xl font-black text-foreground">
-                        {basicPlan.name}
-                      </h3>
-                      {!advancedPlan && (
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[9px] font-bold uppercase tracking-wider">
-                          Full Course
-                        </span>
-                      )}
-                    </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#207a2c] text-white text-[11px] font-bold tracking-wide shadow-sm">
-                      {basicPlan.duration}
-                    </span>
-                  </div>
-
-                  <ul className="space-y-1.5 text-xs text-foreground/85">
-                    {basicPlan.features.slice(0, 4).map((feat, fIdx) => (
-                      <li key={fIdx} className="flex items-start gap-2">
-                        <div className="w-3.5 h-3.5 rounded-full bg-[#e3f6dc] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                          <Check className="w-2.5 h-2.5 stroke-[3]" />
+                    {/* Card 1: Basic Plan */}
+                    <div className="rounded-2xl border-2 border-[#86efac] dark:border-emerald-600/60 bg-[#f9fdf7] dark:bg-card/85 p-5 flex flex-col justify-between hover:shadow-lg transition-all relative overflow-hidden group">
+                      <div className="space-y-3.5">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-display text-2xl font-black text-foreground tracking-tight">
+                            {basicPlan.name}
+                          </h3>
+                          <span className="px-3 py-1 rounded-full bg-[#1b7325] text-white text-xs font-bold tracking-wide shadow-sm">
+                            {basicPlan.duration}
+                          </span>
                         </div>
-                        <span className="leading-snug line-clamp-1">{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
 
-                <div className="pt-3 mt-3 border-t border-[#e2f3d8] dark:border-border/60 flex items-center justify-between">
-                  <div>
-                    <span className="font-display font-black text-xl md:text-2xl text-foreground tracking-tight">
-                      {basicPlan.price}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => handleOpenEnroll(basicPlan.name)}
-                    className="rounded-full bg-[#207a2c] hover:bg-[#186323] text-white text-xs font-bold px-4 py-2 flex items-center gap-1.5 shadow-md shadow-emerald-700/20 hover:shadow-lg transition-all"
-                  >
-                    <span>Enroll Now</span>
-                    <ArrowRight className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
+                        <ul className="space-y-2 text-xs sm:text-[13px] text-foreground/85">
+                          {basicPlan.features.slice(0, 4).map((feat, fIdx) => (
+                            <li key={fIdx} className="flex items-start gap-2.5">
+                              <div className="w-4 h-4 rounded-full bg-[#e3f6dc] dark:bg-emerald-950 text-[#1b7325] dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                                <Check className="w-3 h-3 stroke-[3]" />
+                              </div>
+                              <span className="leading-snug">{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
 
-              {/* Card 2: Advanced Plan (Rendered only if course has 2 plans) */}
-              {advancedPlan && (
-                <div className="rounded-2xl border-2 border-[#b5e69e] dark:border-emerald-800/60 bg-[#f9fdf7] dark:bg-card/70 p-4 flex flex-col justify-between hover:shadow-lg hover:border-[#8ad46b] transition-all relative overflow-hidden group">
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-display text-lg md:text-xl font-black text-foreground">
-                        {advancedPlan.name}
-                      </h3>
-                      <span className="px-2.5 py-0.5 rounded-full bg-[#207a2c] text-white text-[11px] font-bold tracking-wide shadow-sm">
-                        {advancedPlan.duration}
-                      </span>
-                    </div>
+                      <div className="pt-4 mt-4 border-t border-[#dcfce7] dark:border-border/60 flex items-end justify-between gap-3">
+                        <div className="flex flex-col items-start gap-1">
+                          {offerActive && basicPricing.original && (
+                            <span className="inline-block text-[11px] sm:text-xs font-bold text-white bg-[#8a0bd6] dark:bg-[#9914ec] px-2.5 py-0.5 rounded-md leading-none shadow-sm">
+                              {offerBadgeText}
+                            </span>
+                          )}
 
-                    <ul className="space-y-1.5 text-xs text-foreground/85">
-                      {advancedPlan.features.slice(0, 4).map((feat, fIdx) => (
-                        <li key={fIdx} className="flex items-start gap-2">
-                          <div className="w-3.5 h-3.5 rounded-full bg-[#e3f6dc] dark:bg-emerald-950 text-[#207a2c] dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+                            {offerActive && basicPricing.discount && (
+                              <span className="font-black text-xl sm:text-2xl text-[#0d8744] dark:text-[#22c55e] inline-flex items-center leading-none">
+                                <ArrowDown className="w-4 h-4 sm:w-5 sm:h-5 stroke-[3.5] mr-0.5" />
+                                <span>{basicPricing.discount}%</span>
+                              </span>
+                            )}
+
+                            {offerActive && basicPricing.original && (
+                              <span className="line-through font-bold text-base sm:text-lg text-neutral-500 dark:text-neutral-400 decoration-neutral-500/80 leading-none">
+                                {basicPricing.original}
+                              </span>
+                            )}
+
+                            <span className="font-black font-display text-2xl sm:text-3xl text-neutral-900 dark:text-white leading-none tracking-tight">
+                              {basicPricing.final}
+                            </span>
                           </div>
-                          <span className="leading-snug line-clamp-1">{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                          {deadlineLabel && (
+                            <div className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 px-2 py-0.5 rounded-md mt-1">
+                              <Clock className="w-2.5 h-2.5 shrink-0" />
+                              <span>{deadlineLabel}</span>
+                            </div>
+                          )}
+                        </div>
 
-                  <div className="pt-3 mt-3 border-t border-[#e2f3d8] dark:border-border/60 flex items-center justify-between">
-                    <div>
-                      <span className="font-display font-black text-xl md:text-2xl text-foreground tracking-tight">
-                        {advancedPlan.price}
-                      </span>
+                        <button
+                          onClick={() => handleOpenEnroll(basicPlan.name)}
+                          className="rounded-full bg-[#1b7325] hover:bg-[#155d1d] text-white text-xs sm:text-sm font-bold px-5 py-2.5 flex items-center gap-2 shadow-md shadow-emerald-800/20 hover:shadow-lg transition-all shrink-0"
+                        >
+                          <span>Enroll Now</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => handleOpenEnroll(advancedPlan.name)}
-                      className="rounded-full bg-[#207a2c] hover:bg-[#186323] text-white text-xs font-bold px-4 py-2 flex items-center gap-1.5 shadow-md shadow-emerald-700/20 hover:shadow-lg transition-all"
-                    >
-                      <span>Enroll Now</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
-              )}
 
+                    {/* Card 2: Advanced Plan (Rendered only if course has 2 plans) */}
+                    {advancedPlan && advancedPricing && (
+                      <div className="rounded-2xl border-2 border-[#86efac] dark:border-emerald-600/60 bg-[#f9fdf7] dark:bg-card/85 p-5 flex flex-col justify-between hover:shadow-lg transition-all relative overflow-hidden group">
+                        <div className="space-y-3.5">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-display text-2xl font-black text-foreground tracking-tight">
+                              {advancedPlan.name}
+                            </h3>
+                            <span className="px-3 py-1 rounded-full bg-[#1b7325] text-white text-xs font-bold tracking-wide shadow-sm">
+                              {advancedPlan.duration}
+                            </span>
+                          </div>
+
+                          <ul className="space-y-2 text-xs sm:text-[13px] text-foreground/85">
+                            {advancedPlan.features.slice(0, 4).map((feat, fIdx) => (
+                              <li key={fIdx} className="flex items-start gap-2.5">
+                                <div className="w-4 h-4 rounded-full bg-[#e3f6dc] dark:bg-emerald-950 text-[#1b7325] dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                                  <Check className="w-3 h-3 stroke-[3]" />
+                                </div>
+                                <span className="leading-snug">{feat}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="pt-4 mt-4 border-t border-[#dcfce7] dark:border-border/60 flex items-end justify-between gap-3">
+                          <div className="flex flex-col items-start gap-1">
+                            {offerActive && advancedPricing.original && (
+                              <span className="inline-block text-[11px] sm:text-xs font-bold text-white bg-[#8a0bd6] dark:bg-[#9914ec] px-2.5 py-0.5 rounded-md leading-none shadow-sm">
+                                {offerBadgeText}
+                              </span>
+                            )}
+
+                            <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+                              {offerActive && advancedPricing.discount && (
+                                <span className="font-black text-xl sm:text-2xl text-[#0d8744] dark:text-[#22c55e] inline-flex items-center leading-none">
+                                  <ArrowDown className="w-4 h-4 sm:w-5 sm:h-5 stroke-[3.5] mr-0.5" />
+                                  <span>{advancedPricing.discount}%</span>
+                                </span>
+                              )}
+
+                              {offerActive && advancedPricing.original && (
+                                <span className="line-through font-bold text-base sm:text-lg text-neutral-500 dark:text-neutral-400 decoration-neutral-500/80 leading-none">
+                                  {advancedPricing.original}
+                                </span>
+                              )}
+
+                              <span className="font-black font-display text-2xl sm:text-3xl text-neutral-900 dark:text-white leading-none tracking-tight">
+                                {advancedPricing.final}
+                              </span>
+                            </div>
+                            {deadlineLabel && (
+                              <div className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 px-2 py-0.5 rounded-md mt-1">
+                                <Clock className="w-2.5 h-2.5 shrink-0" />
+                                <span>{deadlineLabel}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <button
+                            onClick={() => handleOpenEnroll(advancedPlan.name)}
+                            className="rounded-full bg-[#1b7325] hover:bg-[#155d1d] text-white text-xs sm:text-sm font-bold px-5 py-2.5 flex items-center gap-2 shadow-md shadow-emerald-800/20 hover:shadow-lg transition-all shrink-0"
+                          >
+                            <span>Enroll Now</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
             </div>
 
           </div>
@@ -592,7 +680,16 @@ export default function CourseDetails() {
                         }`}
                       >
                         <div className="font-bold text-sm text-foreground">{basicPlan.name}</div>
-                        <div className="text-xs text-primary font-semibold">{basicPlan.price}</div>
+                        <div className="text-xs text-primary font-semibold">
+                          {offerActive && basicPricing.original ? (
+                            <span className="flex items-center gap-1.5">
+                              <span className="line-through text-muted-foreground">{basicPricing.original}</span>
+                              <span className="font-bold text-emerald-600 dark:text-emerald-400">{basicPricing.final}</span>
+                            </span>
+                          ) : (
+                            basicPlan.price
+                          )}
+                        </div>
                         <div className="text-[11px] text-muted-foreground">{basicPlan.duration}</div>
                       </button>
 
@@ -607,7 +704,16 @@ export default function CourseDetails() {
                           }`}
                         >
                           <div className="font-bold text-sm text-foreground">{advancedPlan.name}</div>
-                          <div className="text-xs text-primary font-semibold">{advancedPlan.price}</div>
+                          <div className="text-xs text-primary font-semibold">
+                            {offerActive && advancedPricing?.original ? (
+                              <span className="flex items-center gap-1.5">
+                                <span className="line-through text-muted-foreground">{advancedPricing.original}</span>
+                                <span className="font-bold text-emerald-600 dark:text-emerald-400">{advancedPricing.final}</span>
+                              </span>
+                            ) : (
+                              advancedPlan.price
+                            )}
+                          </div>
                           <div className="text-[11px] text-muted-foreground">{advancedPlan.duration}</div>
                         </button>
                       )}

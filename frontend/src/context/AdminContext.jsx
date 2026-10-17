@@ -237,6 +237,13 @@ const endpointConfig = {
       basicPlan: item.basicPlan || item.basic_plan || {},
       advancedPlan: item.advancedPlan || item.advanced_plan || {},
       imageUrl: item.imageUrl || item.image_url || "",
+      offerPrice: item.offerPrice ?? item.offer_price ?? "",
+      originalPrice: item.originalPrice ?? item.original_price ?? "",
+      offerDeadline: item.offerDeadline ?? item.offer_deadline ?? "",
+      offerBadge: item.offerBadge ?? item.offer_badge ?? "",
+      offerActive: item.offerActive ?? item.offer_active ?? false,
+      discountPercent: item.discountPercent ?? item.discount_percent ?? 0,
+      offerMessage: item.offerMessage ?? item.offer_message ?? "",
     }),
     toApi: (item) => ({
       title: item.title || "",
@@ -253,6 +260,13 @@ const endpointConfig = {
       basicPlan: item.basicPlan || item.basic_plan || {},
       advancedPlan: item.advancedPlan || item.advanced_plan || {},
       imageUrl: item.imageUrl || item.image_url || "",
+      offerPrice: item.offerPrice ?? "",
+      originalPrice: item.originalPrice ?? "",
+      offerDeadline: item.offerDeadline ?? "",
+      offerBadge: item.offerBadge ?? "",
+      offerActive: Boolean(item.offerActive),
+      discountPercent: item.discountPercent !== undefined ? Number(item.discountPercent) : 0,
+      offerMessage: item.offerMessage ?? "",
     }),
     method: "PUT",
   },
@@ -315,6 +329,41 @@ export const AdminProvider = ({ children }) => {
   const [courseApplications, setCourseApplications] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [publicDataLoaded, setPublicDataLoaded] = useState(false);
+  const [universalOffer, setUniversalOffer] = useState({
+    active: true,
+    message: "Vijayadasami offer",
+    discountPercent: 30,
+    badge: "Top Discount of the Sale",
+    deadline: "",
+  });
+
+  const loadUniversalOffer = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/courses/universal-offer`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data && typeof data === "object") {
+          setUniversalOffer(data);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load universal offer", err);
+    }
+  };
+
+  const updateUniversalOffer = async (payload) => {
+    const updated = await apiRequest("/api/courses/universal-offer", {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    setUniversalOffer(updated);
+    await loadList("courses", setCourses);
+    return updated;
+  };
+
+  useEffect(() => {
+    loadUniversalOffer();
+  }, []);
 
   useEffect(() => { persist("admin_interns", interns); }, [interns]);
   useEffect(() => { persist("admin_read_ids", readIds); }, [readIds]);
@@ -593,6 +642,7 @@ export const AdminProvider = ({ children }) => {
         },
         courseApplications, courseAppOps: makeApiCrud("courseApplications", setCourseApplications), addCourseApplication: addPublicItem("courseApplications", setCourseApplications),
         departments, departmentOps: makeApiCrud("departments", setDepartments, () => departments),
+        universalOffer, updateUniversalOffer, loadUniversalOffer,
         readIds, markRead,
         ensureLoaded,
       }}

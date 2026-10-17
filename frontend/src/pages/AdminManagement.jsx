@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Briefcase,
   Building2,
@@ -12,6 +13,9 @@ import {
   CalendarDays,
   FileText,
   Clock3,
+  Clock,
+  Check,
+  ArrowRight,
   Eye,
   Pencil,
   Plus,
@@ -27,6 +31,10 @@ import {
   ExternalLink,
   ArrowUp,
   ArrowDown,
+  Flame,
+  Save,
+  Sparkles,
+  CheckCircle2,
 } from "lucide-react";
 import {
   AdminLayout,
@@ -42,6 +50,7 @@ import { useAdmin } from "@/context/AdminContext";
 import { useToast } from "@/hooks/use-toast";
 import { getCourseUrl } from "@/utils/courseSlug";
 import { AVAILABLE_COURSE_ICONS } from "@/utils/courseIcons";
+import CourseOfferPriceDisplay, { isOfferValid, getOfferDeadlineLabel, formatRupees, parseNumericPrice } from "@/components/CourseOfferPriceDisplay";
 
 function SectionHeader({ title, description, action }) {
   return (
@@ -2037,10 +2046,545 @@ function InternApplicationDetailModal({ application, onClose, onDelete }) {
   );
 }
 
+export function UniversalOfferManagement() {
+  const {
+    courses = [],
+    universalOffer,
+    updateUniversalOffer,
+    ensureLoaded,
+  } = useAdmin();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (ensureLoaded) ensureLoaded("courses");
+  }, [ensureLoaded]);
+
+  const [universalForm, setUniversalForm] = useState({
+    active: true,
+    message: "Vijayadasami offer",
+    discountPercent: 30,
+    badge: "Top Discount of the Sale",
+    deadline: "",
+  });
+  const [isSavingUniversal, setIsSavingUniversal] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
+  const [universalSuccessMsg, setUniversalSuccessMsg] = useState("");
+
+  useEffect(() => {
+    if (universalOffer) {
+      setUniversalForm({
+        active: Boolean(universalOffer.active),
+        message: universalOffer.message || "Vijayadasami offer",
+        discountPercent:
+          universalOffer.discountPercent !== undefined
+            ? Number(universalOffer.discountPercent)
+            : 30,
+        badge: universalOffer.badge || "Top Discount of the Sale",
+        deadline: universalOffer.deadline || "",
+      });
+    }
+  }, [universalOffer]);
+
+  const handleToggleMasterOffer = async () => {
+    if (isToggling || isSavingUniversal) return;
+    const nextActive = !universalForm.active;
+    const updatedForm = { ...universalForm, active: nextActive };
+    
+    // Immediate optimistic local update
+    setUniversalForm(updatedForm);
+    setIsToggling(true);
+    setUniversalSuccessMsg("");
+
+    try {
+      await updateUniversalOffer(updatedForm);
+      const feedbackMsg = nextActive
+        ? `Universal offer is now ENABLED! Applied ${updatedForm.discountPercent}% OFF to all ${courses.length} courses.`
+        : `Universal offer is now DISABLED. All ${courses.length} courses returned to standard pricing.`;
+      
+      setUniversalSuccessMsg(feedbackMsg);
+      toast({
+        title: nextActive ? "Universal Offer Enabled" : "Universal Offer Disabled",
+        description: feedbackMsg,
+      });
+      setTimeout(() => setUniversalSuccessMsg(""), 5000);
+    } catch (err) {
+      console.error(err);
+      // Revert if API failed
+      setUniversalForm((prev) => ({ ...prev, active: !nextActive }));
+      toast({
+        title: "Toggle Failed",
+        description: "Could not update the universal offer status. Please check your connection.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsToggling(false);
+    }
+  };
+
+  const handleSaveUniversalOffer = async (e) => {
+    if (e) e.preventDefault();
+    setIsSavingUniversal(true);
+    setUniversalSuccessMsg("");
+    try {
+      await updateUniversalOffer(universalForm);
+      const feedbackMsg = `Universal offer saved successfully! ${
+        universalForm.active
+          ? `Active (${universalForm.discountPercent}% OFF)`
+          : "Disabled"
+      } applied across all ${courses.length} courses.`;
+      setUniversalSuccessMsg(feedbackMsg);
+      toast({
+        title: "Universal Offer Saved",
+        description: feedbackMsg,
+      });
+      setTimeout(() => setUniversalSuccessMsg(""), 5000);
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Save Failed",
+        description: "Failed to save universal offer settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingUniversal(false);
+    }
+  };
+
+  const discountPresets = [10, 15, 20, 25, 30, 40, 50];
+  const messagePresets = [
+    "Vijayadasami offer",
+    "Diwali Special Offer",
+    "Festival Offer",
+    "Special Admission Offer",
+    "Limited Period Offer",
+  ];
+
+  return (
+    <AdminLayout>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h1 className="font-display text-2xl font-bold text-foreground">
+              Universal Course Offer
+            </h1>
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
+                universalForm.active
+                  ? "bg-purple-600 text-white animate-pulse"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              {universalForm.active
+                ? `ACTIVE (${universalForm.discountPercent}% OFF)`
+                : "OFF (Standard Pricing)"}
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground sm:text-sm max-w-2xl">
+            Configure the universal offer here. Changes apply automatically to <strong>all {courses.length} courses</strong> across the website without needing per-course edits.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Link
+            to="/admin/courses"
+            className="rounded-xl border border-border bg-background hover:bg-muted/50 px-4 py-2.5 text-xs font-semibold flex items-center gap-2 transition"
+          >
+            <BookOpen className="w-4 h-4 text-primary" />
+            <span>Manage Courses ({courses.length})</span>
+          </Link>
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        {/* Main Controls Card */}
+        <div
+          className={`p-6 rounded-3xl border-2 transition-all ${
+            universalForm.active
+              ? "border-purple-500/50 bg-gradient-to-br from-purple-500/10 via-purple-500/5 to-transparent shadow-xl shadow-purple-500/5"
+              : "border-border bg-card/60"
+          }`}
+        >
+          {/* Minimal Master Offer Toggle */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border/50">
+            <div>
+              <h2 className="text-base font-bold text-foreground">
+                Master Offer Status
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Toggle ON to apply discounts across all courses; toggle OFF to revert to regular prices.
+              </p>
+            </div>
+
+            {/* Minimal Toggle Switch */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={universalForm.active}
+              onClick={handleToggleMasterOffer}
+              disabled={isToggling || isSavingUniversal}
+              aria-label={universalForm.active ? "Universal Offer Enabled" : "Universal Offer Disabled"}
+              className={`inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border transition-all text-xs font-semibold cursor-pointer select-none self-start sm:self-auto ${
+                universalForm.active
+                  ? "border-purple-500/40 bg-purple-500/10 text-purple-700 dark:text-purple-300"
+                  : "border-border bg-muted/40 hover:bg-muted/70 text-muted-foreground"
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  universalForm.active ? "bg-emerald-500 shadow-sm shadow-emerald-500/50" : "bg-neutral-400"
+                }`}
+              />
+              <span>{universalForm.active ? "Universal Offer Enabled" : "Universal Offer Disabled"}</span>
+              <div
+                className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 px-0.5 ${
+                  universalForm.active ? "bg-purple-600" : "bg-neutral-300 dark:bg-neutral-700"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                    universalForm.active ? "translate-x-4" : "translate-x-0"
+                  }`}
+                />
+              </div>
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSaveUniversalOffer} className="pt-6 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {/* Message / Title */}
+              <div className="sm:col-span-2 space-y-2">
+                <label className="block text-xs font-bold text-foreground uppercase tracking-wide">
+                  Offer Message / Headline *
+                </label>
+                <Input
+                  placeholder="e.g. Vijayadasami offer"
+                  value={universalForm.message}
+                  onChange={(e) =>
+                    setUniversalForm((prev) => ({ ...prev, message: e.target.value }))
+                  }
+                  className="rounded-xl border-border focus-visible:ring-purple-600 font-semibold text-sm h-11"
+                />
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="text-[11px] text-muted-foreground mr-1">Quick presets:</span>
+                  {messagePresets.map((msg) => (
+                    <button
+                      key={msg}
+                      type="button"
+                      onClick={() => setUniversalForm((prev) => ({ ...prev, message: msg }))}
+                      className="text-[11px] px-2 py-0.5 rounded-md bg-muted/80 hover:bg-purple-500/10 hover:text-purple-600 dark:hover:text-purple-400 text-muted-foreground transition font-medium"
+                    >
+                      {msg}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Discount Percentage */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-foreground uppercase tracking-wide">
+                  Discount Percentage (%) *
+                </label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="100"
+                  placeholder="e.g. 30"
+                  value={universalForm.discountPercent}
+                  onChange={(e) =>
+                    setUniversalForm((prev) => ({
+                      ...prev,
+                      discountPercent: Math.min(100, Math.max(0, Number(e.target.value) || 0)),
+                    }))
+                  }
+                  className="rounded-xl border-border focus-visible:ring-purple-600 font-black text-sm h-11 text-emerald-600 dark:text-emerald-400"
+                />
+                <div className="flex flex-wrap items-center gap-1 pt-1">
+                  {discountPresets.map((pct) => (
+                    <button
+                      key={pct}
+                      type="button"
+                      onClick={() => setUniversalForm((prev) => ({ ...prev, discountPercent: pct }))}
+                      className={`text-[11px] px-2 py-0.5 rounded-md font-bold transition ${
+                        Number(universalForm.discountPercent) === pct
+                          ? "bg-purple-600 text-white"
+                          : "bg-muted/80 hover:bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {pct}%
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Expiry Date */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-foreground uppercase tracking-wide">
+                    Offer Expiry (Optional)
+                  </label>
+                  {universalForm.deadline && (
+                    <button
+                      type="button"
+                      onClick={() => setUniversalForm((prev) => ({ ...prev, deadline: "" }))}
+                      className="text-[11px] text-destructive hover:underline"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+                <Input
+                  type="date"
+                  value={universalForm.deadline ? universalForm.deadline.substring(0, 10) : ""}
+                  onChange={(e) =>
+                    setUniversalForm((prev) => ({ ...prev, deadline: e.target.value }))
+                  }
+                  className="rounded-xl border-border focus-visible:ring-purple-600 font-medium text-sm h-11"
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  {universalForm.deadline
+                    ? `Offer ends on ${new Date(universalForm.deadline).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}`
+                    : "No expiry (runs continuously)"}
+                </p>
+              </div>
+
+              {/* Badge Tag */}
+              <div className="sm:col-span-2 space-y-2">
+                <label className="block text-xs font-bold text-foreground uppercase tracking-wide">
+                  Secondary Tag (Optional)
+                </label>
+                <Input
+                  placeholder="e.g. Top Discount of the Sale"
+                  value={universalForm.badge}
+                  onChange={(e) => setUniversalForm((prev) => ({ ...prev, badge: e.target.value }))}
+                  className="rounded-xl border-border focus-visible:ring-purple-600 text-sm h-11"
+                />
+              </div>
+            </div>
+
+            {/* Live Card Preview */}
+            <div className="rounded-2xl border border-purple-500/30 bg-background/90 p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-sm">
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
+                  Live Preview on Course Pricing Cards:
+                </span>
+                <div className="flex flex-col items-start gap-1.5 p-3 rounded-xl bg-muted/20 border border-border/60">
+                  <span className="inline-block text-xs font-bold text-white bg-[#8a0bd6] dark:bg-[#9914ec] px-3 py-1 rounded-md leading-none shadow-sm">
+                    {universalForm.message || "Vijayadasami offer"}
+                  </span>
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <span className="font-black text-2xl text-[#0d8744] dark:text-[#22c55e] inline-flex items-center leading-none">
+                      <ArrowDown className="w-5 h-5 stroke-[3.5] mr-0.5" />
+                      <span>{universalForm.discountPercent || 30}%</span>
+                    </span>
+                    <span className="line-through font-bold text-base text-neutral-400 leading-none">
+                      ₹30,000
+                    </span>
+                    <span className="font-black text-3xl text-neutral-900 dark:text-white leading-none tracking-tight">
+                      {formatRupees(Math.round(30000 * (1 - (universalForm.discountPercent || 30) / 100)))}
+                    </span>
+                  </div>
+                  {universalForm.deadline && (
+                    <div className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1 mt-1">
+                      <Clock3 className="w-3 h-3" />
+                      <span>Valid till {new Date(universalForm.deadline).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Minimal Action Buttons */}
+              <div className="flex items-center gap-3 self-end sm:self-center">
+                {universalSuccessMsg && (
+                  <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 animate-fade-in">
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                    <span>Saved</span>
+                  </span>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={isSavingUniversal}
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold h-9 px-4 rounded-xl shadow-sm transition-all flex items-center gap-1.5 text-xs shrink-0"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>{isSavingUniversal ? "Saving..." : "Save Changes"}</span>
+                </Button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {/* Live Course Breakdown Table showing EVERY course */}
+        <div className="rounded-3xl border border-border bg-card p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border">
+            <div>
+              <h2 className="font-display text-lg font-bold text-foreground">
+                Live Pricing Breakdown Across All Courses ({courses.length})
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Here is the exact pricing calculated for every course with the current offer settings.
+              </p>
+            </div>
+            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary w-fit">
+              {universalForm.active ? `Universal ${universalForm.discountPercent}% OFF Active` : "Standard Pricing Active"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+            {courses.map((course) => {
+              const bp = course.basicPlan || {};
+              const ap = course.advancedPlan || {};
+              const bpOriginal = parseNumericPrice(bp.price) || 30000;
+              const bpDiscounted = universalForm.active
+                ? Math.round(bpOriginal * (1 - (universalForm.discountPercent || 30) / 100))
+                : bpOriginal;
+
+              const hasAp = ap && ap.price && ap.price.trim() !== "" && ap.price !== "₹0";
+              const apOriginal = hasAp ? parseNumericPrice(ap.price) || 60000 : null;
+              const apDiscounted = (hasAp && universalForm.active)
+                ? Math.round(apOriginal * (1 - (universalForm.discountPercent || 30) / 100))
+                : apOriginal;
+
+              return (
+                <div
+                  key={course.id}
+                  className="rounded-2xl border border-border/80 bg-background/60 p-4 space-y-3 hover:border-purple-500/40 transition-all flex flex-col justify-between"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-bold text-sm text-foreground leading-tight line-clamp-1">
+                        {course.title}
+                      </h3>
+                      <Link
+                        to={getCourseUrl(course)}
+                        target="_blank"
+                        className="text-muted-foreground hover:text-primary transition p-1"
+                        title="View Course Page"
+                      >
+                        <ExternalLink size={13} />
+                      </Link>
+                    </div>
+                    {course.duration && (
+                      <span className="text-[11px] text-muted-foreground block">
+                        {course.duration}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-border/60 text-xs">
+                    {/* Basic Plan */}
+                    <div className="flex items-center justify-between gap-2 bg-muted/30 px-2.5 py-1.5 rounded-lg">
+                      <span className="font-semibold text-muted-foreground">
+                        {bp.name || "Basic Plan"}:
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        {universalForm.active && (
+                          <span className="line-through text-neutral-400 text-[11px]">
+                            {formatRupees(bpOriginal)}
+                          </span>
+                        )}
+                        <span className="font-black text-foreground">
+                          {formatRupees(bpDiscounted)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Advanced Plan if present */}
+                    {hasAp && (
+                      <div className="flex items-center justify-between gap-2 bg-muted/30 px-2.5 py-1.5 rounded-lg">
+                        <span className="font-semibold text-muted-foreground">
+                          {ap.name || "Advanced"}:
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          {universalForm.active && (
+                            <span className="line-through text-neutral-400 text-[11px]">
+                              {formatRupees(apOriginal)}
+                            </span>
+                          )}
+                          <span className="font-black text-foreground">
+                            {formatRupees(apDiscounted)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-1 flex items-center justify-between text-[11px]">
+                    <span className={`font-bold ${universalForm.active ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}>
+                      {universalForm.active ? `✓ ${universalForm.discountPercent}% OFF Applied` : "Standard Pricing"}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {course.mode || "Classroom"}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </AdminLayout>
+  );
+}
+
 export function CourseManagement() {
-  const { courses, courseOps, courseApplications, courseAppOps } = useAdmin();
+  const {
+    courses,
+    courseOps,
+    courseApplications,
+    courseAppOps,
+    universalOffer,
+    updateUniversalOffer,
+  } = useAdmin();
   const [activeTab, setActiveTab] = useState("courses");
   const [selectedApplication, setSelectedApplication] = useState(null);
+
+  // Universal Offer state
+  const [universalForm, setUniversalForm] = useState({
+    active: true,
+    message: "Vijayadasami offer",
+    discountPercent: 30,
+    badge: "Top Discount of the Sale",
+    deadline: "",
+  });
+  const [isSavingUniversal, setIsSavingUniversal] = useState(false);
+  const [universalSuccessMsg, setUniversalSuccessMsg] = useState("");
+
+  useEffect(() => {
+    if (universalOffer) {
+      setUniversalForm({
+        active: Boolean(universalOffer.active),
+        message: universalOffer.message || "Vijayadasami offer",
+        discountPercent:
+          universalOffer.discountPercent !== undefined
+            ? universalOffer.discountPercent
+            : 30,
+        badge: universalOffer.badge || "Top Discount of the Sale",
+        deadline: universalOffer.deadline || "",
+      });
+    }
+  }, [universalOffer]);
+
+  const handleSaveUniversalOffer = async (e) => {
+    if (e) e.preventDefault();
+    setIsSavingUniversal(true);
+    setUniversalSuccessMsg("");
+    try {
+      await updateUniversalOffer(universalForm);
+      setUniversalSuccessMsg("Universal offer updated and applied to all courses successfully!");
+      setTimeout(() => setUniversalSuccessMsg(""), 4000);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save universal offer.");
+    } finally {
+      setIsSavingUniversal(false);
+    }
+  };
 
   // Course Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -2076,6 +2620,13 @@ export function CourseManagement() {
     advancedPlanPrice: "₹60,000",
     advancedPlanFeatures: "Complete 13+ Advanced Modules\nAdvanced Performance & Paid Ad Strategies\nSearch Engine Optimization (SEO) & Analytics\nFreelancing, Client Acquisition & Monetization\nMultiple Live Client Projects & Budget Execution\n100% Placement Support & Career Mentorship",
     imageUrl: "/images/course-students.png",
+    offerActive: false,
+    offerBadge: "Top Discount of the Sale",
+    offerPrice: "",
+    originalPrice: "",
+    offerDeadline: "",
+    discountPercent: 0,
+    offerMessage: "",
   };
 
   const [formData, setFormData] = useState(defaultCourseForm);
@@ -2120,6 +2671,13 @@ export function CourseManagement() {
       advancedPlanPrice: ap.price || "₹60,000",
       advancedPlanFeatures: Array.isArray(ap.features) ? ap.features.join("\n") : (ap.features || ""),
       imageUrl: course.imageUrl || "/images/course-students.png",
+      offerActive: Boolean(course.offerActive ?? course.offer_active),
+      offerBadge: course.offerBadge || course.offer_badge || "Top Discount of the Sale",
+      offerPrice: course.offerPrice || course.offer_price || "",
+      originalPrice: course.originalPrice || course.original_price || "",
+      offerDeadline: course.offerDeadline || course.offer_deadline || "",
+      discountPercent: course.discountPercent ?? course.discount_percent ?? 0,
+      offerMessage: course.offerMessage || course.offer_message || "",
     };
   };
 
@@ -2285,7 +2843,79 @@ export function CourseManagement() {
         </div>
 
         {activeTab === "courses" ? (
-          <div className="space-y-4">
+          <div className="space-y-6">
+            {/* Universal Course Offer Banner in CourseManagement */}
+            <div className={`p-5 rounded-2xl border-2 transition-all ${
+              universalOffer?.active
+                ? "border-purple-500/40 bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-transparent shadow-md shadow-purple-500/5"
+                : "border-border bg-card/60"
+            }`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                    universalOffer?.active
+                      ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
+                      : "bg-muted text-muted-foreground"
+                  }`}>
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-display font-bold text-base text-foreground">
+                        Universal Course Offer
+                      </h3>
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                        universalOffer?.active ? "bg-purple-600 text-white animate-pulse" : "bg-muted text-muted-foreground"
+                      }`}>
+                        {universalOffer?.active ? `ACTIVE (${universalOffer?.discountPercent}% OFF)` : "DISABLED"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {universalOffer?.active
+                        ? `Applied to all ${courses.length} courses: "${universalOffer?.message || 'Vijayadasami offer'}" • ↓${universalOffer?.discountPercent}% discount`
+                        : "Universal offer is currently turned off. All courses show standard prices."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
+                  <div className="flex items-center gap-2 bg-background/80 border border-border px-3 py-1.5 rounded-xl">
+                    <span className="text-xs font-semibold text-foreground">
+                      {universalOffer?.active ? "Active" : "Off"}
+                    </span>
+                    <label className="relative inline-flex items-center cursor-pointer" title="Quick toggle universal offer">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(universalOffer?.active)}
+                        onChange={async () => {
+                          const next = !Boolean(universalOffer?.active);
+                          try {
+                            await updateUniversalOffer({
+                              ...universalOffer,
+                              active: next,
+                            });
+                          } catch (err) {
+                            console.error(err);
+                            alert("Failed to toggle universal offer");
+                          }
+                        }}
+                        className="sr-only peer"
+                      />
+                      <div className="w-10 h-5 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                    </label>
+                  </div>
+
+                  <Link
+                    to="/admin/universal-offer"
+                    className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2.5 shadow-sm transition flex items-center gap-1.5"
+                  >
+                    <span>Universal Offer Settings</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+
             <DataTable
               columns={[
                 {
@@ -2371,8 +3001,11 @@ export function CourseManagement() {
                       ap.price?.trim() !== "₹0" &&
                       ap.price?.trim() !== "0";
 
+                    const offerOn = isOfferValid(row);
+                    const deadlineLabel = getOfferDeadlineLabel(row.offerDeadline);
+
                     return (
-                      <div className="text-xs space-y-0.5">
+                      <div className="text-xs space-y-1">
                         <div className="text-foreground">
                           <strong>{bp.name || "Plan"}:</strong> {bp.price || "₹30,000"} ({bp.duration || "3 Months"})
                         </div>
@@ -2383,6 +3016,34 @@ export function CourseManagement() {
                         ) : (
                           <div className="text-muted-foreground text-[11px] italic">
                             (Single Plan Only)
+                          </div>
+                        )}
+                        {offerOn && (
+                          <div className="pt-1 border-t border-border/40 space-y-0.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#8a0bd6] text-white">
+                                <Flame className="w-2.5 h-2.5" />
+                                {row.offerMessage || row.offerBadge || "Special Offer"}
+                              </span>
+                              {(Number(row.discountPercent) > 0 || (row.originalPrice && row.offerPrice)) && (
+                                <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">
+                                  {Number(row.discountPercent) > 0 ? `↓${row.discountPercent}% OFF` : ""}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[11px] text-foreground font-semibold">
+                              <span>Offer: {row.offerPrice || "Discount Applied"}</span>
+                              {row.originalPrice && (
+                                <span className="ml-1 text-[10px] line-through text-muted-foreground font-normal">
+                                  {row.originalPrice}
+                                </span>
+                              )}
+                            </div>
+                            {deadlineLabel && (
+                              <div className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                                {deadlineLabel}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
@@ -2531,8 +3192,9 @@ export function CourseManagement() {
             {[
               { id: "basic", label: "1. Basic Info" },
               { id: "highlights", label: "2. Right Highlights (4)" },
-              { id: "plans", label: "3. Pricing Plans (Basic & Adv)" },
-              { id: "visuals", label: "4. Visuals & Mode" },
+              { id: "plans", label: "3. Pricing Plans" },
+              { id: "offer", label: "4. Universal Offer 🏷️" },
+              { id: "visuals", label: "5. Visuals & Mode" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -2813,7 +3475,81 @@ export function CourseManagement() {
             </div>
           )}
 
-          {/* Section 4: Visuals, Mode & Certificate */}
+          {/* Section 4: Universal Offer Overview */}
+          {activeModalSection === "offer" && (
+            <div className="space-y-4">
+              <div className="p-5 rounded-2xl border-2 border-purple-500/30 bg-purple-500/5 space-y-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 ${
+                      universalOffer?.active ? "bg-purple-600 shadow-md shadow-purple-600/30" : "bg-muted text-muted-foreground"
+                    }`}>
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-bold text-base text-foreground">
+                          Universal Course Offer
+                        </h4>
+                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
+                          universalOffer?.active ? "bg-purple-600 text-white" : "bg-muted text-muted-foreground"
+                        }`}>
+                          {universalOffer?.active ? `ACTIVE (${universalOffer?.discountPercent}% OFF)` : "OFF"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Course offers are managed universally across all courses so all pricing stays 100% consistent.
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/admin/universal-offer"
+                    className="shrink-0 text-xs font-semibold px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white shadow-sm flex items-center gap-1.5 transition-all"
+                  >
+                    <span>Configure Offer</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-purple-200 dark:border-purple-900/40 text-xs">
+                  <div className="p-3 rounded-xl bg-background border border-border">
+                    <span className="text-muted-foreground block text-[11px]">Campaign Title</span>
+                    <span className="font-bold text-foreground text-sm">{universalOffer?.message || "Vijayadasami offer"}</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-background border border-border">
+                    <span className="text-muted-foreground block text-[11px]">Discount Percentage</span>
+                    <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm">↓{universalOffer?.discountPercent || 30}% OFF</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-background border border-border">
+                    <span className="text-muted-foreground block text-[11px]">Global Status</span>
+                    <span className="font-semibold text-foreground text-sm">
+                      {universalOffer?.active ? "Applied to all courses" : "Disabled (Standard Price)"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Live Preview on this specific course */}
+                <div className="pt-2">
+                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-2">
+                    Live Display on this Course:
+                  </span>
+                  <div className="p-4 rounded-xl bg-background border border-border flex items-center justify-start shadow-inner">
+                    <CourseOfferPriceDisplay
+                      offerBadge={universalOffer?.badge || "Top Discount of the Sale"}
+                      offerMessage={universalOffer?.message || "Vijayadasami offer"}
+                      discountPercent={Number(universalOffer?.discountPercent) || 30}
+                      originalPrice={formData.basicPlanPrice || "₹30,000"}
+                      offerDeadline={universalOffer?.deadline}
+                      size="md"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Section 5: Visuals, Mode & Certificate */}
           {activeModalSection === "visuals" && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

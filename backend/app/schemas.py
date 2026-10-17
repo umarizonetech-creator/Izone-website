@@ -291,6 +291,13 @@ class CourseBase(BaseModel):
     advancedPlan: Optional[Any] = Field(default_factory=dict)
     imageUrl: Optional[str] = Field("", max_length=50000)
     orderIndex: Optional[int] = Field(0)
+    offerPrice: Optional[str] = Field("", max_length=100)
+    originalPrice: Optional[str] = Field("", max_length=100)
+    offerDeadline: Optional[str] = Field("", max_length=100)
+    offerBadge: Optional[str] = Field("", max_length=100)
+    offerActive: Optional[bool] = Field(False)
+    discountPercent: Optional[int] = Field(0)
+    offerMessage: Optional[str] = Field("", max_length=255)
 
 class CourseCreate(CourseBase):
     pass
@@ -310,6 +317,13 @@ class CourseUpdate(BaseModel):
     advancedPlan: Optional[Any] = None
     imageUrl: Optional[str] = None
     orderIndex: Optional[int] = None
+    offerPrice: Optional[str] = None
+    originalPrice: Optional[str] = None
+    offerDeadline: Optional[str] = None
+    offerBadge: Optional[str] = None
+    offerActive: Optional[bool] = None
+    discountPercent: Optional[int] = None
+    offerMessage: Optional[str] = None
 
 class CourseReorderItem(BaseModel):
     id: int
@@ -323,6 +337,14 @@ class CourseOut(CourseBase):
     createdAt: Optional[datetime] = None
     updatedAt: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
+
+
+class UniversalCourseOffer(BaseModel):
+    active: bool = False
+    message: str = Field("Vijayadasami offer", max_length=255)
+    discountPercent: int = Field(30, ge=0, le=100)
+    badge: str = Field("Top Discount of the Sale", max_length=100)
+    deadline: str = Field("", max_length=100)
 
 
 # Course Application

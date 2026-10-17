@@ -51,6 +51,13 @@ SCHEMA_UPDATES = [
     "ALTER TABLE courses ADD COLUMN IF NOT EXISTS advanced_plan JSON DEFAULT '{}'::json",
     "ALTER TABLE courses ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT ''",
     "ALTER TABLE courses ADD COLUMN IF NOT EXISTS order_index INTEGER DEFAULT 0",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS offer_price VARCHAR(100) DEFAULT ''",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS original_price VARCHAR(100) DEFAULT ''",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS offer_deadline VARCHAR(100) DEFAULT ''",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS offer_badge VARCHAR(100) DEFAULT ''",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS offer_active BOOLEAN DEFAULT false",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS discount_percent INTEGER DEFAULT 0",
+    "ALTER TABLE courses ADD COLUMN IF NOT EXISTS offer_message VARCHAR(255) DEFAULT ''",
     """
     CREATE TABLE IF NOT EXISTS courses (
         id SERIAL PRIMARY KEY,
@@ -84,6 +91,18 @@ SCHEMA_UPDATES = [
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
     )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS site_settings (
+        key VARCHAR(100) PRIMARY KEY,
+        value JSON DEFAULT '{}'::json,
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+    """,
+    """
+    INSERT INTO site_settings (key, value)
+    VALUES ('universal_course_offer', '{"active": true, "message": "Vijayadasami offer", "discountPercent": 30, "badge": "Top Discount of the Sale", "deadline": ""}'::json)
+    ON CONFLICT (key) DO NOTHING;
     """,
 ]
 
