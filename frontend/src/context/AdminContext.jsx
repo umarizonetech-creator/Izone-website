@@ -337,13 +337,27 @@ export const AdminProvider = ({ children }) => {
     deadline: "",
   });
 
+  const isDeadlinePassed = (deadlineStr) => {
+    if (!deadlineStr || String(deadlineStr).trim() === "") return false;
+    const end = new Date(deadlineStr);
+    if (Number.isNaN(end.getTime())) return false;
+    if (String(deadlineStr).length === 10) {
+      end.setHours(23, 59, 59, 999);
+    }
+    return new Date() > end;
+  };
+
   const loadUniversalOffer = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/courses/universal-offer`);
       if (response.ok) {
         const data = await response.json();
         if (data && typeof data === "object") {
-          setUniversalOffer(data);
+          const offerObj = { ...data };
+          if (offerObj.active && isDeadlinePassed(offerObj.deadline)) {
+            offerObj.active = false;
+          }
+          setUniversalOffer(offerObj);
         }
       }
     } catch (err) {
@@ -352,9 +366,13 @@ export const AdminProvider = ({ children }) => {
   };
 
   const updateUniversalOffer = async (payload) => {
+    const toSend = { ...payload };
+    if (toSend.active && isDeadlinePassed(toSend.deadline)) {
+      toSend.active = false;
+    }
     const updated = await apiRequest("/api/courses/universal-offer", {
       method: "PUT",
-      body: JSON.stringify(payload),
+      body: JSON.stringify(toSend),
     });
     setUniversalOffer(updated);
     await loadList("courses", setCourses);
@@ -363,6 +381,19 @@ export const AdminProvider = ({ children }) => {
 
   useEffect(() => {
     loadUniversalOffer();
+  }, []);
+
+  // Automatically check every 15 seconds if universal offer deadline has passed, and auto-disable if so
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setUniversalOffer((current) => {
+        if (current && current.active && current.deadline && isDeadlinePassed(current.deadline)) {
+          return { ...current, active: false };
+        }
+        return current;
+      });
+    }, 15000);
+    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => { persist("admin_interns", interns); }, [interns]);

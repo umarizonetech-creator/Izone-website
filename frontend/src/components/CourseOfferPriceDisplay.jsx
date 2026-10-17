@@ -72,7 +72,7 @@ export function getOfferDeadlineLabel(deadlineStr) {
 
   const now = new Date();
   const diffMs = end.getTime() - now.getTime();
-  if (diffMs <= 0) return "Offer expired";
+  if (diffMs <= 0) return null;
 
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);

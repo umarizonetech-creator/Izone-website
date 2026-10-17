@@ -1,6 +1,7 @@
 """Courses CRUD - public list + admin create/update/delete."""
 
 import re
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extras import Json
 
@@ -16,26 +17,64 @@ def slugify(text: str) -> str:
     return cleaned.strip('-')
 
 
+def _is_deadline_passed(deadline_str: str) -> bool:
+    if not deadline_str or not str(deadline_str).strip():
+        return False
+    clean = str(deadline_str).strip()
+    try:
+        # Handle YYYY-MM-DD (treat as end of that day in local time)
+        if len(clean) == 10 and clean.count('-') == 2:
+            dt = datetime.strptime(clean, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+            return datetime.now() > dt
+        # Handle ISO / datetime-local format (e.g. 2026-10-25T18:00 or 2026-10-25T18:00:00)
+        clean_iso = clean.replace('Z', '+00:00')
+        dt = datetime.fromisoformat(clean_iso)
+        if dt.tzinfo is not None:
+            now = datetime.now(timezone.utc)
+        else:
+            now = datetime.now()
+        return now > dt
+    except Exception:
+        return False
+
+
 def _get_universal_offer_dict(conn) -> dict:
     row = fetchone(conn, "SELECT value FROM site_settings WHERE key='universal_course_offer'")
     if row and row.get("value") and isinstance(row["value"], dict):
-        return row["value"]
-    return {
-        "active": False,
-        "message": "Vijayadasami offer",
-        "discountPercent": 30,
-        "badge": "Top Discount of the Sale",
-        "deadline": "",
-    }
+        offer = dict(row["value"])
+    else:
+        offer = {
+            "active": False,
+            "message": "Vijayadasami offer",
+            "discountPercent": 30,
+            "badge": "Top Discount of the Sale",
+            "deadline": "",
+        }
+
+    # Automatically disable the offer if the time set by admin has arrived
+    if offer.get("active") and offer.get("deadline"):
+        if _is_deadline_passed(offer["deadline"]):
+            offer["active"] = False
+            try:
+                execute(
+                    conn,
+                    "UPDATE site_settings SET value = %s, updated_at = now() WHERE key = 'universal_course_offer'",
+                    (Json(offer),),
+                )
+                execute(conn, "UPDATE courses SET offer_active = false, updated_at = now()")
+            except Exception:
+                pass
+    return offer
 
 
 def _apply_universal_offer(item: dict, offer: dict) -> dict:
     if not item:
         return item
-    item["offer_active"] = bool(offer.get("active", False))
-    item["discount_percent"] = int(offer.get("discountPercent", 0))
-    item["offer_message"] = offer.get("message", "")
-    item["offer_badge"] = offer.get("badge", "")
+    is_active = bool(offer.get("active", False)) and not _is_deadline_passed(offer.get("deadline", ""))
+    item["offer_active"] = is_active
+    item["discount_percent"] = int(offer.get("discountPercent", 0)) if is_active else 0
+    item["offer_message"] = offer.get("message", "") if is_active else ""
+    item["offer_badge"] = offer.get("badge", "") if is_active else ""
     item["offer_deadline"] = offer.get("deadline", "")
     return item
 
@@ -57,6 +96,10 @@ def get_universal_offer(conn=Depends(get_db)):
 @router.put("/universal-offer")
 def update_universal_offer(body: UniversalCourseOffer, conn=Depends(get_db), _=Depends(get_current_admin)):
     data = body.model_dump()
+    # If the admin set a deadline that has already passed, automatically mark active as False
+    if data.get("active") and data.get("deadline") and _is_deadline_passed(data["deadline"]):
+        data["active"] = False
+
     execute(
         conn,
         """INSERT INTO site_settings (key, value, updated_at)
@@ -75,11 +118,11 @@ def update_universal_offer(body: UniversalCourseOffer, conn=Depends(get_db), _=D
                offer_deadline=%s,
                updated_at=now()""",
         (
-            body.active,
-            body.discountPercent,
-            body.message,
-            body.badge,
-            body.deadline,
+            data["active"],
+            data["discountPercent"] if data["active"] else 0,
+            data["message"] if data["active"] else "",
+            data["badge"] if data["active"] else "",
+            data["deadline"],
         ),
     )
     return data

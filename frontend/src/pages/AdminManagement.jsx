@@ -2150,6 +2150,57 @@ export function UniversalOfferManagement() {
     }
   };
 
+  const formatDeadlineReadable = (deadlineStr) => {
+    if (!deadlineStr || String(deadlineStr).trim() === "") return "Runs continuously (no auto-disable)";
+    const d = new Date(deadlineStr);
+    if (Number.isNaN(d.getTime())) return "Invalid date";
+    
+    const now = new Date();
+    const isPast = now > d;
+    const formatted = d.toLocaleString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+    
+    if (isPast) {
+      return `Time passed • Offer auto-disabled on ${formatted}`;
+    }
+    
+    const diffHours = Math.round((d.getTime() - now.getTime()) / (1000 * 60 * 60));
+    if (diffHours < 24) {
+      return `Auto-disables at ${d.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })} (in ~${Math.max(1, diffHours)}h)`;
+    }
+    const diffDays = Math.ceil(diffHours / 24);
+    return `Auto-disables on ${formatted} (in ~${diffDays} days)`;
+  };
+
+  const setDeadlinePreset = (hoursFromNow) => {
+    if (hoursFromNow === null) {
+      setUniversalForm((prev) => ({ ...prev, deadline: "" }));
+      return;
+    }
+    const d = new Date();
+    d.setHours(d.getHours() + hoursFromNow);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    const hours = String(d.getHours()).padStart(2, "0");
+    const mins = String(d.getMinutes()).padStart(2, "0");
+    const localIso = `${year}-${month}-${day}T${hours}:${mins}`;
+    setUniversalForm((prev) => ({ ...prev, deadline: localIso }));
+  };
+
+  const getDatetimeInputValue = (val) => {
+    if (!val) return "";
+    if (val.length === 10) return `${val}T23:59`;
+    if (val.includes("T")) return val.substring(0, 16);
+    return val;
+  };
+
   const discountPresets = [10, 15, 20, 25, 30, 40, 50];
   const messagePresets = [
     "Vijayadasami offer",
@@ -2317,38 +2368,55 @@ export function UniversalOfferManagement() {
                 </div>
               </div>
 
-              {/* Expiry Date */}
+              {/* Auto-Disable Date & Time */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-bold text-foreground uppercase tracking-wide">
-                    Offer Expiry (Optional)
+                    Auto-Disable Time (Optional)
                   </label>
                   {universalForm.deadline && (
                     <button
                       type="button"
-                      onClick={() => setUniversalForm((prev) => ({ ...prev, deadline: "" }))}
-                      className="text-[11px] text-destructive hover:underline"
+                      onClick={() => setDeadlinePreset(null)}
+                      className="text-[11px] text-destructive hover:underline font-semibold"
                     >
                       Clear
                     </button>
                   )}
                 </div>
                 <Input
-                  type="date"
-                  value={universalForm.deadline ? universalForm.deadline.substring(0, 10) : ""}
+                  type="datetime-local"
+                  value={getDatetimeInputValue(universalForm.deadline)}
                   onChange={(e) =>
                     setUniversalForm((prev) => ({ ...prev, deadline: e.target.value }))
                   }
-                  className="rounded-xl border-border focus-visible:ring-purple-600 font-medium text-sm h-11"
+                  className="rounded-xl border-border focus-visible:ring-purple-600 font-medium text-xs sm:text-sm h-11"
                 />
-                <p className="text-[11px] text-muted-foreground">
-                  {universalForm.deadline
-                    ? `Offer ends on ${new Date(universalForm.deadline).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}`
-                    : "No expiry (runs continuously)"}
+                <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setDeadlinePreset(24)}
+                    className="text-[10px] px-2 py-0.5 rounded bg-muted/80 hover:bg-muted font-medium text-muted-foreground transition"
+                  >
+                    +24h (Tomorrow)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeadlinePreset(72)}
+                    className="text-[10px] px-2 py-0.5 rounded bg-muted/80 hover:bg-muted font-medium text-muted-foreground transition"
+                  >
+                    +3 Days
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeadlinePreset(168)}
+                    className="text-[10px] px-2 py-0.5 rounded bg-muted/80 hover:bg-muted font-medium text-muted-foreground transition"
+                  >
+                    +7 Days
+                  </button>
+                </div>
+                <p className="text-[11px] font-medium text-muted-foreground">
+                  {formatDeadlineReadable(universalForm.deadline)}
                 </p>
               </div>
 
@@ -2391,7 +2459,11 @@ export function UniversalOfferManagement() {
                   {universalForm.deadline && (
                     <div className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1 mt-1">
                       <Clock3 className="w-3 h-3" />
-                      <span>Valid till {new Date(universalForm.deadline).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                      <span>
+                        {new Date(universalForm.deadline) > new Date()
+                          ? `Valid till ${new Date(universalForm.deadline).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true })}`
+                          : "Expired & Auto-Disabled"}
+                      </span>
                     </div>
                   )}
                 </div>

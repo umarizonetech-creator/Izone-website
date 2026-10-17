@@ -7,6 +7,7 @@ import {
   Monitor,
   Award,
   Check,
+  Clock,
   ArrowRight,
   ArrowLeft,
   ArrowDown,
