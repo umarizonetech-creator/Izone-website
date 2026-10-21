@@ -38,6 +38,7 @@ const footerLinks = {
   services: [
     { name: "SEO Services", path: "/services/seo-services" },
     { name: "Digital Marketing", path: "/services/digital-marketing" },
+    { name: "Content Creation", path: "/services/content-creation" },
     { name: "IT Consulting Services", path: "/services/it-consulting" },
     { name: "Political Digital Campaigns", path: "/services/digital-election-campaign" },
     { name: "Website Maintenance & Support", path: "/services/website-maintenance-support" },

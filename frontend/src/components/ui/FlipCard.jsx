@@ -10,7 +10,7 @@ import {
   Mic, Volume2, Radio, MessageCircle, LayoutDashboard, MapPin,
   Palette, ShieldCheck, Newspaper,
   Settings, Headphones, Database, Bot, LineChart, Briefcase, TrendingUp, Search, Mail,
-  Target, MessageSquare
+  Target, MessageSquare, Video
 } from 'lucide-react';
 import {
   FaReact, FaJava, FaPaintBrush, FaRegEye, FaSearch, 
@@ -305,6 +305,9 @@ const getCardConfig = (title) => {
   }
   if (norm === "digital election campaign") {
     return { tag: "ELECTORAL SERVICES", themeColor: "orange", icon: Vote };
+  }
+  if (norm === "content creation" || norm.includes("content creation")) {
+    return { tag: "CREATIVE STUDIO", themeColor: "purple", icon: Video };
   }
 
   // --- Web Development Cards ---

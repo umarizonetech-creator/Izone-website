@@ -631,6 +631,7 @@ import {
   PhoneCall,
   MessageCircle,
   BrainCircuit,
+  Video,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -650,6 +651,7 @@ const services = [
   { id: 'software', icon: Code, label: 'Software Development' },
   { id: 'design', icon: Palette, label: 'Graphics Design' },
   { id: 'marketing', icon: MessageSquare, label: 'Digital Marketing' },
+  { id: 'content-creation', icon: Video, label: 'Content Creation' },
   { id: 'content', icon: PenTool, label: 'Content Writing' },
   { id: 'sms', icon: Zap, label: 'Bulk SMS Services' },
   { id: 'voice', icon: PhoneCall, label: 'Voice SMS' },
@@ -697,6 +699,14 @@ const subServiceOptions = {
     'Product Descriptions',
     'Technical Writing',
     'Content Editing & Proofreading',
+  ],
+  'content-creation': [
+    'Commercial Video Production',
+    'Viral Social Reels & Shorts',
+    'Motion Graphics & 2D/3D Animation',
+    'Studio Podcasting & Audio',
+    'Brand Identity & Creative Visuals',
+    'Direct-Response Scriptwriting',
   ],
   sms: [
     'Bulk SMS (Promotional)',
@@ -1082,6 +1092,12 @@ const GetStarted = () => {
                               'WhatsApp Bulk Messaging': 'Send personalized promotional messages to a large audience.',
                               'WhatsApp Business API': 'Official API integration for scalable business communication.',
                               'WhatsApp Chatbot': 'AI-powered customer support',
+                              'Commercial Video Production': 'Cinematic brand films, corporate shoots, and high-impact commercials.',
+                              'Viral Social Reels & Shorts': 'High-retention 9:16 vertical videos for Instagram, YouTube, and TikTok.',
+                              'Motion Graphics & 2D/3D Animation': 'Dynamic kinetic typography, explainer animations, and logo reveals.',
+                              'Studio Podcasting & Audio': 'Multi-mic broadcast recording, sound mastering, and viral social clips.',
+                              'Brand Identity & Creative Visuals': 'High-CTR ad banners, social media carousels, and visual identity kits.',
+                              'Direct-Response Scriptwriting': 'Compelling scene scripts, viral video hooks, and persuasive storytelling.',
                             }[option] || 'Professional and scalable digital solutions tailored for your business.';
 
                             const isSelected = formData.subServices.includes(option);

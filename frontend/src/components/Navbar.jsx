@@ -22,6 +22,7 @@ import {
   MessageCircle,
   Megaphone,
   Vote,
+  Video,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -39,6 +40,7 @@ const developmentServices = [
 const servicesItems = [
   { name: "SEO Services", path: "/services/seo-services", icon: Search },
   { name: "Digital Marketing", path: "/services/digital-marketing", icon: Megaphone },
+  { name: "Content Creation", path: "/services/content-creation", icon: Video },
   { name: "IT Consulting Services", path: "/services/it-consulting", icon: Settings },
   { name: "Political Digital Campaigns", path: "/services/digital-election-campaign", icon: Vote },
   { name: "Website Maintenance & Support", path: "/services/website-maintenance-support", icon: Headphones },

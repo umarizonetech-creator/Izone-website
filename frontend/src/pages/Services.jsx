@@ -5,6 +5,7 @@ import {
   MessageCircle,
   Megaphone,
   Vote,
+  Video,
   ArrowRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -106,6 +107,25 @@ const services = [
     shape3D: "cube",
     accent: "indigo",
     category: "Campaigns",
+  },
+  {
+    title: "Content Creation",
+    summary:
+      "Cinema-grade video production, viral social reels, motion graphics, and high-impact digital storytelling.",
+    fullContent:
+      "Transform your brand presence with captivating multimedia content. From 4K commercial videos and viral Instagram reels to podcast production and high-converting ad creatives, we craft stories that inspire action and drive engagement.",
+    icon: <Video className="w-7 h-7 text-primary" />,
+    features: [
+      "Commercial & Brand Films",
+      "Viral Social Reels & Shorts",
+      "Motion Graphics & 2D/3D",
+      "Studio Podcast Production",
+      "Ad Creatives & Visual Kits",
+      "Multi-Platform Optimization",
+    ],
+    shape3D: "sphere",
+    accent: "purple",
+    category: "Creative",
   },
 ];
 

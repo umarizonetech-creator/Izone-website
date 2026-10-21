@@ -49,6 +49,7 @@ const GovernmentTenders = lazy(() => import("./pages/development/GovernmentTende
 
 const SeoServices = lazy(() => import("./pages/services/SeoServices"));
 const DigitalMarketing = lazy(() => import("./pages/services/DigitalMarketing"));
+const ContentCreation = lazy(() => import("./pages/services/ContentCreation"));
 const ITConsulting = lazy(() => import("./pages/services/ITConsulting"));
 const WebsiteMaintenanceSupport = lazy(() => import("./pages/services/WebsiteMaintenanceSupport"));
 const BulkSms = lazy(() => import("./pages/services/BulkSms"));
@@ -109,6 +110,7 @@ const App = () => {
                   <Route path="/development/government-digital-solutions" element={<GovernmentTenders />} />
                   <Route path="/services/seo-services" element={<SeoServices />} />
                   <Route path="/services/digital-marketing" element={<DigitalMarketing />} />
+                  <Route path="/services/content-creation" element={<ContentCreation />} />
                   <Route path="/services/it-consulting" element={<ITConsulting />} />
                   <Route path="/services/website-maintenance-support" element={<WebsiteMaintenanceSupport />} />
                   <Route path="/services/bulk-sms" element={<BulkSms />} />

@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
-import { Search, Home, Briefcase, FolderGit2, PhoneCall, ArrowUpRight, Compass, HelpCircle, Code, Cpu, Smartphone } from "lucide-react";
+import { Search, Home, Briefcase, FolderGit2, PhoneCall, ArrowUpRight, Compass, HelpCircle, Code, Cpu, Smartphone, Video } from "lucide-react";
 
 const SITE_PAGES = [
   { name: "Home Page", path: "/", category: "Main", icon: Home, desc: "Return to the main homepage" },
@@ -14,6 +14,7 @@ const SITE_PAGES = [
   { name: "Mobile App Development", path: "/development/app-development", category: "Development", icon: Smartphone, desc: "iOS, Android, and Flutter mobile apps" },
   { name: "SEO Services", path: "/services/seo-services", category: "Services", icon: Search, desc: "Search engine optimization and local SEO" },
   { name: "Digital Marketing", path: "/services/digital-marketing", category: "Services", icon: Briefcase, desc: "Google Ads, Meta campaigns, and lead gen" },
+  { name: "Content Creation", path: "/services/content-creation", category: "Services", icon: Video, desc: "Cinema-grade video production, viral social reels, and brand media" },
   { name: "About Us", path: "/about", category: "Company", icon: Compass, desc: "Learn about iZone Technologies team & story" },
   { name: "Contact Us", path: "/contact", category: "Company", icon: PhoneCall, desc: "Get in touch with our engineering team" },
 ];
